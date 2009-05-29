@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>Asdf</title>
+<style>
+
+body {
+  background-color: #ccc;
+}
+
+</style>
+</head>
+<body>
+
+<?include "header.html" ?><br/>
+
+Request parameter asdf=[<?echo request.asdf ?>]<br/>
+
+<br/>
+<br/>
+
+<?if (response.asdf == "teste") then ?>
+asdf = teste;<br/>
+<?elseif (response.asdf == "pedro") then?>
+asdf pedro;<br/>
+<?else ?>
+asdf none;<br/>
+<?endif ?>
+
+<table border="1">
+<?foreach row in request.table?>
+<?if (odd_ == 1) then?>
+<tr class="odd">
+<?else ?>
+<tr>
+<?endif?>
+<td> <?echo count_ ?> </td>
+<td> line_count: <?echo odd_ ?> </td>
+</tr>
+<?endforeach ?>
+</table>
+
+</body>
+</html>

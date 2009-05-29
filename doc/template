@@ -1,0 +1,48 @@
+
+Linguagem dos templates:
+
+todos os comandos ficam entre <? ?>
+
+existem duas variáveis globais registradas, que contém todos os dados necessários para gerar a página
+  - request:
+  	contém todos os dados enviados no request (tanto do GET quanto POST).
+  - response:
+  	contém os dados definidos pelo usuário do framework
+  	
+os dados são acessados sempre da seguinte maneira:
+   response.teste => retorna variável registrada como teste na aplicação
+   request.detail => retorna variável detail do request (ie.: app/do.list?detail=1)
+
+A linguagem possui os seguintes comandos disponíveis:
+
+  - echo	escreve variáveis exportadas pelo cgi;
+  - include	inclui arquivos (base é o document_root do wnserver)
+
+  - if		
+  - elseif
+  - else
+  - endif
+
+  - foreach	itera sobre list / tabela
+  - endforeach
+ 
+=== echo ===
+Escreve variáveis exportadas pelo CGI; Também pode escrever strings entre aspas duplas;
+
+Exemplos:
+  <? echo request.asdf ?>
+  escreve o parametro asdf que está armazenado em request;
+  
+  <? echo response.qwer ?>
+  escreve o parametro qwer que está armazenado em response;
+ 
+=== include ===
+Inclui arquivo definido entre aspas ou através de uma variável após a keyword include.
+
+Exemplo:
+  <?include "html/menu.html" ?>
+  <?include resquest.inc ?>
+  
+=== condições ===
+
+
