@@ -36,6 +36,10 @@ node *create_value_node (int type, void *value) {
 		n->value.lnum = (long int) value;
 		n->value_type = type;
 		break;
+	case DOUBLE:
+		n->value.dnum = *(double *)value;
+		n->value_type = type;
+		break;
 	default:
 		break;
 	}
@@ -121,32 +125,60 @@ int destroy_include (node *n) {
 
 	tmp->destroy (tmp);
 
+	tmp = n->children[1];
+	tmp->destroy (tmp);
+
 	free (n->children);
 	free (n);
 	return 1;
 }
 
 int print_include (node *n, struct _context *c) {
-	printf ("include");
+
+	node *tmp;
+	node *root;
+	int i;
+
+	root = n->children [1];
+
+	if (root == NULL)
+		return -1;
+	
+	if (root->children_count > 0) {
+		for (i = 0; i < root->children_count; i++) {
+			tmp = root->children[i];
+			tmp->print(tmp, c);
+		}
+	}
 	return 1;
 }
 
-node *create_include_node (node *n) {
+node *create_include_node (struct _context *c, node *n) {
+	char *filename;
 	node *nn;
 
 	nn = malloc (sizeof (node));
 
 	nn->type = INCLUDE;
 
-	nn->children = calloc (1, sizeof (node));
+	if (n->type == VARIABLE) {
+
+	} else if (n->type == VALUE) {
+		filename = strdup (n->value.str);
+	}
+
+	nn->children = calloc (2, sizeof (node));
 	nn->children [0] = n;
-	nn->children_count = 1;
+	nn->children [1] = template_parse_include (c, filename);;
+	nn->children_count = 2;
 
 	nn->destroy = destroy_include;
 	nn->print = print_include;
 	
 	n->parent = nn;
 
+	free (filename);
+	
 	return nn;
 }
 
@@ -165,12 +197,20 @@ int destroy_echo (node *n) {
 
 int print_echo (node *n, struct _context *c) {
 	node *tmp;
-	char *value;
+	data *value;
 	tmp = n->children[0];
 
 	if (tmp->type == VARIABLE) {
-		value = (char *)template_get_variable (c, tmp->value.str);
-		printf ("%s", value);	
+		value = template_get_variable (c, tmp->value.str);
+
+		if (value == NULL)
+			return -1;
+		
+		if (value->type == STRING) {		
+			printf ("%s", value->value.u_str);	
+		} else if (value->type == INTEGER) {
+			printf ("%d", value->value.u_int);
+		}
 	} else if (tmp->type == VALUE) {
 		printf ("%s", tmp->value.str);
 	}
@@ -223,7 +263,7 @@ int print_if (node *n, struct _context *c) {
 
 	exp = n->value.exp;
 	
-	int result = exp->value.lnum;
+	int result = evaluate (exp);
 
 	if (result == 1) {
 		tmp = n->children [0];
@@ -258,8 +298,6 @@ node *create_if_node (exp_node *exp, node *block, node *e) {
 	nn->children[1] = e;
 
 	nn->children_count = 2;
-
-	printf ("creating if_node\n");
 	
 	nn->destroy = destroy_if;
 	nn->print = print_if;
@@ -298,7 +336,7 @@ int print_elseif (node *n, struct _context *c) {
 
 	exp = n->value.exp;
 	
-	int result = exp->value.lnum;
+	int result = evaluate (exp);
 
 	if (result == 1) {
 		tmp = n->children [0];
@@ -427,31 +465,12 @@ node *create_foreach_node (node *var, node *items, node *block) {
 	nn->children[1] = items;
 	nn->children[2] = block;
 	nn->children_count = 3;
-
-	printf ("creating foreach node\n");
 	
 	nn->destroy = destroy_foreach;
 	nn->print = print_foreach;
 	
 	return nn;
 	
-}
-
-node *create_exp_node (node *left, node *right, int op_type) {
-	node *nn;
-
-	nn = malloc (sizeof (node));
-
-	nn->type = EXP;
-	nn->children = calloc (2, sizeof(node));
-	nn->children[0] = left;
-	nn->children[1] = right;
-	
-	nn->children_count = 2;
-
-	nn->op_type = op_type;
-	
-	return nn;
 }
 
 node *add_chunk_node (node *cur, node *n) {

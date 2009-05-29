@@ -1,4 +1,5 @@
 %{
+#include <stdlib.h>
 #include "template.h"
 #include "template_parser.h"
 
@@ -21,7 +22,7 @@
 LNUM    [0-9]+
 DNUM    ([0-9]*"."[0-9]+)|([0-9]+"."[0-9]*)
 EXPONENT_DNUM   (({LNUM}|{DNUM})[eE][+-]?{LNUM})
-LABEL   [a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*
+LABEL   [a-zA-Z_\x7f-\xff\/\.][a-zA-Z0-9_\x7f-\xff\/\.]*
 WHITESPACE [ \n\r\t]+
 LINEBREAK [\n\r]+
 TABS_AND_SPACES [ \t]*
@@ -54,7 +55,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	"||"            	{ return T_OR; }
 	"&&"            	{ return T_AND; }
 	{LNUM}			{ yylval->lnumber = atoi (yytext); return T_LNUMBER;}
-	{DNUM}|{EXPONENT_DNUM}	{ return T_DNUMBER;}
+	{DNUM}|{EXPONENT_DNUM}	{ yylval->dnumber = atof (yytext); return T_DNUMBER;}
 	{LABEL}((\.)?{LABEL})*	{ yylval->text = strdup (yytext); return T_VARIABLE; }
 	\"			{ 
 		string_buf_ptr = malloc (sizeof(char));

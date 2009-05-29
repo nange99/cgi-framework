@@ -18,7 +18,7 @@ int template_context_destroy (context *c);
 
 int template_draw (char *filename, struct request *req, struct response *resp);
 
-char *template_get_variable (context *c, char *variable);
+data *template_get_variable (context *c, char *variable);
 
 int template_register_variable (context *c, char *variable, void *v, int type);
 int template_update_variable (context *c, char *variable, void *v, int type);

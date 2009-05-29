@@ -5,7 +5,7 @@
 #include "tree.h"
 #include "template.h"
 
-char *template_get_variable (context *c, char *variable) {
+data *template_get_variable (context *c, char *variable) {
 
 	char *v;
 	data *d;
@@ -17,27 +17,22 @@ char *template_get_variable (context *c, char *variable) {
 		d = htable_lookup(c->request, v);
 		
 		if (d != NULL)
-			return d->value.u_str;
+			return d;
 	} else if (strncmp (v, "response", 8) == 0) {
 		v += 9;
 		d = htable_lookup(c->response, v);
 		
 		if (d != NULL)
-			return d->value.u_str;
+			return d;
 	} else {
 		d = htable_lookup(c->variables, v);
 
 		if (d != NULL) {
-			if (d->type == INTEGER) {
-				char *tmp;
-				tmp = malloc (sizeof (char) * 10);
-				sprintf (tmp, "%d", d->value.u_int);
-				return tmp;
-			}
+			return d;
 		}
 	}
 	
-	return v;
+	return NULL;
 }
 
 int template_register_variable (context *c, char *variable, void *v, int type) {
@@ -115,6 +110,40 @@ int template_context_destroy (context *c) {
 	destroy_tree (c->root);
 	
 	free (c);
+}
+
+node *template_parse_include (context *c, char *filename) {
+
+	node *n;
+	FILE *f;
+	context *local;
+	
+	f = fopen (filename, "r");
+
+	if (f == NULL) {
+		//printf ("include not found. [%s]", filename);
+		return NULL;
+	}
+	
+	local = template_context_alloc (c->request, c->response);
+	destroy_htable (local->variables);
+	local->variables = c->variables;
+
+	template_lex_init (&(local->scanner));
+	template_set_in (f, local->scanner);
+
+	template_parse (local);
+
+	template_lex_destroy (local->scanner);
+
+	local->root->destroy = destroy_tree;
+
+	n = local->root;
+
+	free (local);
+	fclose (f);
+
+	return n;
 }
 
 int template_draw (char *filename, struct request *req, struct response *resp) {

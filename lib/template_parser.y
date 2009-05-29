@@ -85,7 +85,7 @@ statements:
 
 atomdir:
     T_ECHO term 		{ $$ = create_echo_node ($2); }
-    | T_INCLUDE term 		{ $$ = create_include_node ($2); }
+    | T_INCLUDE term 		{ $$ = create_include_node (context, $2); }
     | T_INLINE_HTML		{ $$ = create_html_node ($1); }
     ;
 
@@ -108,19 +108,20 @@ term:
     T_STRING				{ $$ = create_value_node (STR, $1); }
     | T_VARIABLE			{ $$ = create_variable_node ($1); } 
     | T_LNUMBER				{ $$ = create_value_node (LONG, (void *) $1); }
+    | T_DNUMBER				{ $$ = create_value_node (DOUBLE, (double *) &$1); }
     ;
 
 expr:
-    expr T_MORE_OR_EQUAL expr		{ $$ = eval_expression ($1, $3, MORE_EQUAL); }
-    | expr T_LESS_OR_EQUAL expr		{ $$ = eval_expression ($1, $3, LESS_EQUAL); }
-    | expr T_EQUAL expr			{ $$ = eval_expression ($1, $3, EQUAL); }
-    | expr T_NOT_EQUAL expr		{ $$ = eval_expression ($1, $3, NOT_EQUAL); }
-    | expr T_MORE expr			{ $$ = eval_expression ($1, $3, MORE); }
-    | expr T_LESS expr			{ $$ = eval_expression ($1, $3, LESS); }
-    | expr T_OR expr			{ $$ = eval_expression ($1, $3, OR); }
-    | expr T_AND expr			{ $$ = eval_expression ($1, $3, AND); }
+    expr T_MORE_OR_EQUAL expr		{ $$ = create_exp_node ($1, $3, MORE_EQUAL); }
+    | expr T_LESS_OR_EQUAL expr		{ $$ = create_exp_node ($1, $3, LESS_EQUAL); }
+    | expr T_EQUAL expr			{ $$ = create_exp_node ($1, $3, EQUAL); }
+    | expr T_NOT_EQUAL expr		{ $$ = create_exp_node ($1, $3, NOT_EQUAL); }
+    | expr T_MORE expr			{ $$ = create_exp_node ($1, $3, MORE); }
+    | expr T_LESS expr			{ $$ = create_exp_node ($1, $3, LESS); }
+    | expr T_OR expr			{ $$ = create_exp_node ($1, $3, OR); }
+    | expr T_AND expr			{ $$ = create_exp_node ($1, $3, AND); }
     | '(' expr ')'			{ $$ = $2; }
-    | term				{ $$ = get_value_for_term (context, $1);}
+    | term				{ $$ = create_exp_node_for_term ($1);}
     ;
 
 %%

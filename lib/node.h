@@ -20,7 +20,8 @@ enum value_type {
 	LONG = 1,
 	DOUBLE,
 	STR,
-	BOOL
+	BOOL,
+	VAR
 };
 
 enum op_type {
@@ -40,8 +41,12 @@ typedef struct _exp_node {
 	int type;
 	union {
 		int lnum;
+		double dnum;
 		char *str;
 	} value;
+	int value_type;
+	struct _exp_node *right;
+	struct _exp_node *left;
 } exp_node;
 
 typedef struct _node {
