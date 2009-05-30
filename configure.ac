@@ -23,11 +23,12 @@ MAYBE_WARN="-Wall -Wextra -std=c99 -pedantic \
 -Wpointer-arith -Wwrite-strings -Wstrict-prototypes \
 -Wmissing-prototypes -Wmissing-declarations -Wnested-externs \
 -Wpacked -Wswitch-enum -Wmissing-format-attribute \
--Wstrict-aliasing=2 -Winit-self -Wunsafe-loop-optimizations \
+-Wstrict-aliasing=2 -Winit-self  \
 -Wdeclaration-after-statement -Wold-style-definition \
 -Wno-missing-field-initializers -Wno-unused-parameter \
--Wno-attributes -Wno-long-long -Winline"
+ -Wno-long-long -Winline"
 
+#MAYBE_WARN="$MAYBE_WARN -Wunsafe-loop-optimizations -Wno-attributes"
 MAYBE_WARN="$MAYBE_WARN -fno-strict-aliasing -fno-common"
 
 MAYBE_WARN="$MAYBE_WARN -Wp,-D_FORTIFY_SOURCE=2"
