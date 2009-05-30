@@ -1,8 +1,8 @@
 #ifndef _TEMPLATE_H
 #define _TEMPLATE_H
 
-#include "util/hashtable.h"
-#include "cgi_servlet.h"
+#include "hashtable.h"
+#include "../cgi_servlet.h"
 #include "node.h"
 
 typedef struct _context {

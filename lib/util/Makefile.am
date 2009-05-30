@@ -11,9 +11,4 @@ libutil_la_SOURCES = \
 	hashtable.c \
 	list.h \
 	list.c
-	
-
-
-
-## File created by the gnome-build tools
 

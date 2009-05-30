@@ -73,6 +73,7 @@ AM_PROG_LIBTOOL
 AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  lib/util/Makefile
+		 lib/template/Makefile
                  test/Makefile])
 AC_OUTPUT
 

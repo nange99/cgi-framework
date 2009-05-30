@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "util/hashtable.h"
+#include "hashtable.h"
 #include "tree.h"
 #include "template.h"
 
