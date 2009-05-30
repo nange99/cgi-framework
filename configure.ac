@@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
 
+AC_CONFIG_MACRO_DIR([m4])
+
 AC_ARG_ENABLE(gcc-warnings,
 [  --enable-gcc-warnings   turn on lots of GCC warnings (not recommended)],
 [case "${enableval}" in
