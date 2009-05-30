@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
+#include "eval.h"
 #include "template.h"
 
 int destroy_value (node *n) {
@@ -355,7 +356,7 @@ int destroy_elseif (node *n) {
 }
 
 int print_elseif (node *n, struct _context *c) {
-	int i, result;
+	int result;
 	node *tmp;
 	expr_node *exp;
 
@@ -471,7 +472,7 @@ int print_foreach (node *n, struct _context *c) {
 	
 	for (i = 0; i < 10; i++) {
 		block->print (block, c);
-		template_update_variable (c, "count_", (void *) i+1, LONG);
+		template_update_variable (c, "count_", (void *) (i+1), LONG);
 		template_update_variable (c, "odd_", (void *) ((i+1)%2), LONG);
 	}
 	return 1;
@@ -558,7 +559,7 @@ void destroy_tree (node *n) {
 	free (n);
 }
 
-void print_tree (node *n, int level) {
+void debug_print_tree (node *n, int level) {
 
 	int i = 0;
 	char *tabs;
@@ -582,7 +583,7 @@ void print_tree (node *n, int level) {
 		level++;
 		for (i = 0; i < n->children_count; i++) {
 			tmp = n->children[i];
-			print_tree (tmp, level);
+			debug_print_tree (tmp, level);
 		}
 	}
 }

@@ -190,6 +190,7 @@ int destroy_expr (expr_node *n) {
 	}
 	
 	free (n);
+	return 1;
 }
 
 expr_node *create_expr_node (expr_node *right, expr_node *left, op_type op) {

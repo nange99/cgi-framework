@@ -19,7 +19,35 @@ node *create_foreach_node (node *var, node *items, node *block);
 
 node *add_chunk_node (node *cur, node *n);
 
+/* destructors */
+int destroy_value (node *n);
+int destroy_variable_node (node *n);
+int destroy_html (node *n);
+
+int destroy_include (node *n);
+int destroy_echo (node *n);
+
+int destroy_if (node *n);
+int destroy_elseif (node *n);
+int destroy_else (node *n);
+int destroy_foreach (node *n);
+
 void destroy_tree (node *n);
-void print_tree (node *n, int level);
+
+/* recursive printer */
+int print_value (node *n, struct _context *c);
+int print_variable_node (node *n, struct _context *c);
+int print_html (node *n, struct _context *c);
+
+int print_include (node *n, struct _context *c);
+int print_echo (node *n, struct _context *c);
+
+int print_if (node *n, struct _context *c);
+int print_elseif (node *n, struct _context *c);
+int print_else (node *n, struct _context *c);
+int print_foreach (node *n, struct _context *c);
+
+/* debug */
+void debug_print_tree (node *n, int level);
 
 #endif

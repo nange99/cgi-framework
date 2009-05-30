@@ -2,7 +2,6 @@
 #define _TEMPLATE_H
 
 #include "hashtable.h"
-#include "../cgi_servlet.h"
 #include "node.h"
 
 typedef struct _context {
@@ -16,12 +15,17 @@ typedef struct _context {
 context * template_context_alloc (htable *req, htable *resp);
 int template_context_destroy (context *c);
 
-int template_draw (char *filename, struct request *req, struct response *resp);
+node *template_parse_include (context *c, char *filename);
+
+void template_print (node *n, context *c);
+
+int template_draw (char *filename, htable *req, htable *resp);
 
 data *template_get_variable (context *c, char *variable);
-
 int template_register_variable (context *c, char *variable, void *v, int type);
 int template_update_variable (context *c, char *variable, void *v, int type);
 
+
+extern int template_parse (context *c);
 
 #endif

@@ -4,6 +4,8 @@
 #include "hashtable.h"
 #include "tree.h"
 #include "template.h"
+#include "template_scanner.h"
+#include "template_parser.h"
 
 data *template_get_variable (context *c, char *variable) {
 
@@ -110,6 +112,7 @@ int template_context_destroy (context *c) {
 	destroy_tree (c->root);
 	
 	free (c);
+	return 1;
 }
 
 node *template_parse_include (context *c, char *filename) {
@@ -146,7 +149,7 @@ node *template_parse_include (context *c, char *filename) {
 	return n;
 }
 
-int template_draw (char *filename, struct request *req, struct response *resp) {
+int template_draw (char *filename, htable *req, htable *resp) {
 
 	context *c;
 	FILE *f;
@@ -157,7 +160,7 @@ int template_draw (char *filename, struct request *req, struct response *resp) {
 		return 0;
 	}
 
-	c = template_context_alloc (req->parameters, resp->parameters);
+	c = template_context_alloc (req, resp);
 	
 	template_lex_init (&(c->scanner));
 	template_set_in (f, c->scanner);
