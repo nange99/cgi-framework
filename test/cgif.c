@@ -32,8 +32,6 @@ int main(int argc, char *argv[])
 
 int handle_list (struct request *req, struct response *resp) {
 
-	printf ("handle_list ()\n");
-
 	if (cgi_request_get_parameter (req, "detail") != NULL) {
 		resp->html = strdup ("html/detail.html");
 	} else {

@@ -18,9 +18,9 @@ Request parameter asdf=[<?echo request.asdf ?>]<br/>
 <br/>
 <br/>
 
-<?if (response.asdf == "teste") then ?>
+<?if (request.asdf == "teste") then ?>
 asdf = teste;<br/>
-<?elseif (response.asdf == "pedro") then?>
+<?elseif (request.asdf == "pedro") then?>
 asdf pedro;<br/>
 <?else ?>
 asdf none;<br/>
