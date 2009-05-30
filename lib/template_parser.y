@@ -27,7 +27,7 @@ int template_error ();
 	long int lnumber;
 	double dnumber;
 	struct _node *node;
-	struct _exp_node *snode;
+	struct _expr_node *snode;
 }
 
 %left T_INCLUDE
@@ -112,16 +112,16 @@ term:
     ;
 
 expr:
-    expr T_MORE_OR_EQUAL expr		{ $$ = create_exp_node ($1, $3, MORE_EQUAL); }
-    | expr T_LESS_OR_EQUAL expr		{ $$ = create_exp_node ($1, $3, LESS_EQUAL); }
-    | expr T_EQUAL expr			{ $$ = create_exp_node ($1, $3, EQUAL); }
-    | expr T_NOT_EQUAL expr		{ $$ = create_exp_node ($1, $3, NOT_EQUAL); }
-    | expr T_MORE expr			{ $$ = create_exp_node ($1, $3, MORE); }
-    | expr T_LESS expr			{ $$ = create_exp_node ($1, $3, LESS); }
-    | expr T_OR expr			{ $$ = create_exp_node ($1, $3, OR); }
-    | expr T_AND expr			{ $$ = create_exp_node ($1, $3, AND); }
+    expr T_MORE_OR_EQUAL expr		{ $$ = create_expr_node ($1, $3, MORE_EQUAL); }
+    | expr T_LESS_OR_EQUAL expr		{ $$ = create_expr_node ($1, $3, LESS_EQUAL); }
+    | expr T_EQUAL expr			{ $$ = create_expr_node ($1, $3, EQUAL); }
+    | expr T_NOT_EQUAL expr		{ $$ = create_expr_node ($1, $3, NOT_EQUAL); }
+    | expr T_MORE expr			{ $$ = create_expr_node ($1, $3, MORE); }
+    | expr T_LESS expr			{ $$ = create_expr_node ($1, $3, LESS); }
+    | expr T_OR expr			{ $$ = create_expr_node ($1, $3, OR); }
+    | expr T_AND expr			{ $$ = create_expr_node ($1, $3, AND); }
     | '(' expr ')'			{ $$ = $2; }
-    | term				{ $$ = create_exp_node_for_term ($1);}
+    | term				{ $$ = create_expr_node_for_term ($1);}
     ;
 
 %%

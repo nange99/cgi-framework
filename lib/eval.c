@@ -5,170 +5,176 @@
 #include "tree.h"
 #include "template.h"
 
-int op_equal (exp_node *right, exp_node *left) {
-
-	if (right->type == BOOL && left->type == BOOL) {
-		return (right->value.lnum == left->value.lnum);
-	}
-
-	if (right->type == LONG && left->type == LONG) {
-		return (right->value.lnum == left->value.lnum);
+expr_node *create_expr_node_for_variable (struct _context *c, char *variable) {
+	expr_node *tmp;
+	data *d;
+	
+	tmp = malloc (sizeof (expr_node));
+	tmp->op = NONE;
+	
+	d = template_get_variable (c, variable);
+	
+	if (d == NULL) {
+		free (tmp);
+		return NULL;
 	}
 	
-	if (right->type == STR && left->type == STR) {
-		return (strcmp (right->value.str, left->value.str) == 0);
-	}
-
-	return -1;
-}
-
-int op_not_equal (exp_node *right, exp_node *left) {
-
-	if (right->type == BOOL && left->type == BOOL) {
-		return (right->value.lnum != left->value.lnum);
-	}
-
-	if (right->type == LONG && left->type == LONG) {
-		return (right->value.lnum != left->value.lnum);
-	}
-	
-	if (right->type == STR && left->type != STR) {
-		return (strcmp (right->value.str, left->value.str) == 0);
-	}
-
-	return -1;
-}
-
-int op_and (exp_node *right, exp_node *left) {
-
-	if (right->type == BOOL && left->type == BOOL) {
-		return (right->value.lnum && left->value.lnum);
-	}
-
-	if (right->type == LONG && left->type == LONG) {
-		return (right->value.lnum && left->value.lnum);
-	}
-
-	return -1;
-}
-
-int op_or (exp_node *right, exp_node *left) {
-
-	if (right->type == BOOL && left->type == BOOL) {
-		return (right->value.lnum && left->value.lnum);
-	}
-
-	if (right->type == LONG && left->type == LONG) {
-		return (right->value.lnum && left->value.lnum);
-	}
-
-	return -1;
-}
-
-int op_less (exp_node *right, exp_node *left) {
-	return -1;
-}
-
-int op_less_equal (exp_node *right, exp_node *left) {
-	return -1;
-}
-
-int op_more (exp_node *right, exp_node *left) {
-	return -1;
-}
-
-int op_more_equal (exp_node *right, exp_node *left) {
-	return -1;
-}
-
-int evaluate (exp_node *n) {
-
-	exp_node *result;
-
-	result = eval_expression (n->right, n->left, n->type);
-
-	printf ("result == [%d]", result->value.lnum);
-
-	return result->value.lnum;
-}
-
-exp_node *eval_expression (exp_node *right, exp_node *left, int op) {
-
-	exp_node *n;
-	
-	n = malloc (sizeof(exp_node));
-	n->type = 0;
-
-	switch (op) {
-
-	case AND:
-		n->value.lnum = op_and (right, left);
-		n->type = BOOL;
-		//printf ("and result == [%d]\n", n->value.lnum);
+	switch (d->type) {
+	case STR:
+		tmp->value.str = d->value.u_str;
+		tmp->type = STR;
 		break;
+	case INTEGER:
+		tmp->value.lnum = d->value.u_int;
+		tmp->type = LONG;
+		break;
+	}
+	
+	return tmp;
+}
+
+int eval_op_equal (struct _context *c, expr_node *r, expr_node *l) {
+
+	if (r->type == BOOL && l->type == BOOL) {
+		return (r->value.lnum == l->value.lnum);
+	}
+
+	if (r->type == LONG && l->type == LONG) {
+		return (r->value.lnum == l->value.lnum);
+	}
+	
+	if (r->type == STR && l->type == STR) {
+		return (strcmp (r->value.str, l->value.str) == 0);
+	}
+	
+	if (r->type == VAR && l->type != VAR) {
+		int result;
+		expr_node *tmp;
 		
+		tmp = create_expr_node_for_variable (c, r->value.str);
+		if (tmp != NULL) {
+			result = eval_op_equal (c, tmp, l);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type != VAR && l->type == VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, l->value.str);
+		if (tmp != NULL) {
+			result = eval_op_equal (c, r, tmp);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+
+	return -1;
+}
+
+int eval_op_not_equal (struct _context *c, expr_node *r, expr_node *l) {
+
+	if (r->type == BOOL && l->type == BOOL) {
+		return (r->value.lnum != l->value.lnum);
+	}
+
+	if (r->type == LONG && l->type == LONG) {
+		return (r->value.lnum != l->value.lnum);
+	}
+	
+	if (r->type == STR && l->type != STR) {
+		return (strcmp (r->value.str, l->value.str) != 0);
+	}
+
+	if (r->type == VAR && l->type != VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, r->value.str);
+		if (tmp != NULL) {
+			result = eval_op_not_equal (c, tmp, l);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type != VAR && l->type == VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, l->value.str);
+		if (tmp != NULL) {
+			result = eval_op_not_equal (c, r, tmp);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+
+	return -1;
+}
+
+int eval_op_less (struct _context *c, expr_node *right, expr_node *left) {
+	return -1;
+}
+
+int eval_op_less_equal (struct _context *c, expr_node *right, expr_node *left) {
+	return -1;
+}
+
+int eval_op_more (struct _context *c, expr_node *right, expr_node *left) {
+	return -1;
+}
+
+int eval_op_more_equal (struct _context *c, expr_node *right, expr_node *left) {
+	return -1;
+}
+
+int eval_expression (struct _context *c, expr_node *n) {
+	switch (n->op) {
 	case OR:
-		n->value.lnum = op_or (right, left);
-		n->type = BOOL;
-		//printf ("or result == [%d]\n", n->value.lnum);
-		break;
-	
-	case LESS:
-		break;
-	
-	case LESS_EQUAL:
-		break;
+		return (eval_expression (c, n->right) || eval_expression (c, n->left));
 		
-	case MORE:
-		break;
-		
-	case MORE_EQUAL:
-		break;	
-		
-	case NOT_EQUAL:
-		n->value.lnum = op_equal (right, left);
-		n->type = BOOL;
-		//printf ("not equal result == [%d]\n", n->value.lnum);
-		break;
+	case AND:
+		return (eval_expression (c, n->right) && eval_expression (c, n->left));
 		
 	case EQUAL:
-		n->value.lnum = op_equal (right, left);
-		n->type = BOOL;
-		//printf ("equal result == [%d]\n", n->value.lnum);
+		return eval_op_equal (c, n->right, n->left);
+	case NOT_EQUAL:
+		return eval_op_not_equal (c, n->right, n->left);
+	case LESS:
 		break;
-	case 0:
-		printf ("zero");
+	case LESS_EQUAL:
+		break;
+	case MORE:
+		break;
+	case MORE_EQUAL:
+		break;
+	case NONE:
+		printf ("NONE!!!");
 		break;
 	}
-
-	/*
-	if (right != NULL) {
-		if (right->type == STR) {
-			free (right->value.str);
-		}
-		free (right);
-	}
-	
-	if (left != NULL) {
-		if (left->type == STR) {
-			free (left->value.str);
-		}
-		free (left);
-	}
-	*/
-
-	return n;
+	return -1;
 }
 
-exp_node *get_value_for_term (struct _context *c, node *n) {
+expr_node *get_value_for_term (struct _context *c, node *n) {
 
-	exp_node *exp;
+	expr_node *exp;
 
-	exp = malloc (sizeof(exp_node));
+	exp = malloc (sizeof(expr_node));
 	exp->type = 0;
 	
 	if (n->type == VARIABLE) {
-		exp->value.str = strdup (template_get_variable (c, n->value.str));
+		exp->value.str = strdup ((char *)template_get_variable (c, n->value.str));
 		exp->type = STR;
 
 		//printf ("[%s]\n", exp->value.str);
@@ -191,12 +197,12 @@ exp_node *get_value_for_term (struct _context *c, node *n) {
 	return exp;
 }
 
-exp_node *create_exp_node (exp_node *left, exp_node *right, int op) {
+expr_node *create_expr_node (expr_node *left, expr_node *right, op_type op) {
 
-	exp_node *n;
+	expr_node *n;
 	
-	n = malloc (sizeof(exp_node));
-	n->type = op;
+	n = malloc (sizeof(expr_node));
+	n->op = op;
 
 	n->left = left;
 	n->right = right;
@@ -204,11 +210,11 @@ exp_node *create_exp_node (exp_node *left, exp_node *right, int op) {
 	return n;
 }
 
-exp_node *create_exp_node_for_term (node *n) {
+expr_node *create_expr_node_for_term (node *n) {
 
-	exp_node *exp;
+	expr_node *exp;
 
-	exp = malloc (sizeof(exp_node));
+	exp = malloc (sizeof(expr_node));
 	exp->type = 0;
 
 	if (n->type == VARIABLE) {
@@ -219,14 +225,14 @@ exp_node *create_exp_node_for_term (node *n) {
 	} else if (n->type == VALUE) {
 		if (n->value_type == STR) {
 			exp->value.str = strdup (n->value.str);
-			exp->value_type = STR;
+			exp->type = STR;
 			free (n->value.str);
 		} else if (n->value_type == LONG) {
 			exp->value.lnum = n->value.lnum;
-			exp->value_type = LONG;
+			exp->type = LONG;
 		} else if (n->value_type == DOUBLE) {
 			exp->value.dnum = n->value.dnum;
-			exp->value_type = DOUBLE;
+			exp->type = DOUBLE;
 		}
 	}
 

@@ -1,7 +1,7 @@
 #ifndef _NODE_H
 #define _NODE_H
 
-enum node_type {
+typedef enum {
 	HTML = 1,
 	VALUE,
 	VARIABLE,
@@ -14,17 +14,17 @@ enum node_type {
 	CHUNK,
 	ROOT,
 	EXP
-};
+} node_type;
 
-enum value_type {
+typedef enum {
 	LONG = 1,
 	DOUBLE,
 	STR,
 	BOOL,
 	VAR
-};
+} value_type;
 
-enum op_type {
+typedef enum {
 	EQUAL = 1,
 	NOT_EQUAL,
 	MORE,
@@ -32,30 +32,31 @@ enum op_type {
 	LESS,
 	LESS_EQUAL,
 	OR,
-	AND
-};
+	AND,
+	NONE
+} op_type;
 
 struct _context;
 
-typedef struct _exp_node {
-	int type;
+typedef struct _expr_node {
+	op_type op;
 	union {
 		int lnum;
 		double dnum;
 		char *str;
 	} value;
-	int value_type;
-	struct _exp_node *right;
-	struct _exp_node *left;
-} exp_node;
+	value_type type;
+	struct _expr_node *right;
+	struct _expr_node *left;
+} expr_node;
 
 typedef struct _node {
-	int type;
+	node_type type;
 	union {
 		int lnum;
 		double dnum;
 		char *str;
-		exp_node *exp;
+		expr_node *exp;
 	} value;
 	int value_type;
 	int children_count;

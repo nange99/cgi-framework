@@ -124,9 +124,11 @@ int destroy_include (node *n) {
 	tmp = n->children[0];
 
 	tmp->destroy (tmp);
-
-	tmp = n->children[1];
-	tmp->destroy (tmp);
+	
+	if (n->children[1] != NULL) {
+		tmp = n->children[1];
+		tmp->destroy (tmp);
+	}
 
 	free (n->children);
 	free (n);
@@ -169,7 +171,7 @@ node *create_include_node (struct _context *c, node *n) {
 
 	nn->children = calloc (2, sizeof (node));
 	nn->children [0] = n;
-	nn->children [1] = template_parse_include (c, filename);;
+	nn->children [1] = (node *)template_parse_include (c, filename);;
 	nn->children_count = 2;
 
 	nn->destroy = destroy_include;
@@ -259,11 +261,11 @@ int print_if (node *n, struct _context *c) {
 	
 	int i;
 	node *tmp;
-	exp_node *exp;
+	expr_node *exp;
 
 	exp = n->value.exp;
 	
-	int result = evaluate (exp);
+	int result = eval_expression (c, exp);
 
 	if (result == 1) {
 		tmp = n->children [0];
@@ -285,7 +287,7 @@ int print_if (node *n, struct _context *c) {
 	return 1;
 }
 
-node *create_if_node (exp_node *exp, node *block, node *e) {
+node *create_if_node (expr_node *exp, node *block, node *e) {
 
 	node *nn;
 
@@ -332,11 +334,11 @@ int destroy_elseif (node *n) {
 
 int print_elseif (node *n, struct _context *c) {
 	node *tmp;
-	exp_node *exp;
+	expr_node *exp;
 
 	exp = n->value.exp;
 	
-	int result = evaluate (exp);
+	int result = eval_expression (exp);
 
 	if (result == 1) {
 		tmp = n->children [0];
@@ -350,7 +352,7 @@ int print_elseif (node *n, struct _context *c) {
 	return 1;
 }
 
-node *create_elseif_node (exp_node *exp, node *block, node *e) {
+node *create_elseif_node (expr_node *exp, node *block, node *e) {
 
 	node *nn;
 

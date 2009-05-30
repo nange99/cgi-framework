@@ -3,13 +3,22 @@
 
 #include "node.h"
 
-exp_node *create_exp_node (exp_node *left, exp_node *right, int op);
-exp_node *create_exp_node_for_term (node *n);
+expr_node *create_expr_node (expr_node *left, expr_node *right, op_type op);
+expr_node *create_expr_node_for_term (node *n);
 
-exp_node *eval_expression (exp_node *right, exp_node *left, int op);
+expr_node *create_expr_node_for_variable (struct _context *c, char *variable);
 
-exp_node *get_value_for_term (struct _context *c, node *n);
+int eval_op_equal (struct _context *c, expr_node *r, expr_node *l);
+int eval_op_not_equal (struct _context *c, expr_node *r, expr_node *l);
+int eval_op_less (struct _context *c, expr_node *right, expr_node *left); 
+int eval_op_less_equal (struct _context *c, expr_node *right, expr_node *left);
+int eval_op_more (struct _context *c, expr_node *right, expr_node *left);
+int eval_op_more_equal (struct _context *c, expr_node *right, expr_node *left);
 
-int evaluate (exp_node *n);
+int eval_expression (struct _context *c, expr_node *n);
+
+expr_node *get_value_for_term (struct _context *c, node *n);
+
+int evaluate (expr_node *n);
 
 #endif
