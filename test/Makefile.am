@@ -1,13 +1,6 @@
 
 bin_PROGRAMS = \
-	test_cgi \
-	test_template
-
-test_template_SOURCES = \
-	template.c
-
-test_template_LDADD = \
-	@top_srcdir@/lib/libcgiservlet.la
+	test_cgi 
 
 test_cgi_SOURCES = \
 	cgif.c    \
