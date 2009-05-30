@@ -240,7 +240,9 @@ node *create_echo_node (node *n) {
 
 int destroy_if (node *n) {
 
+	int i;
 	node *tmp;
+	expr_node *exp;
 
 	tmp = n->children[0];
 
@@ -251,7 +253,16 @@ int destroy_if (node *n) {
 		tmp->destroy (tmp);
 	}
 	
-	free (n->value.exp);
+	if (n->children_count > 2) {
+		for (i = 2; i < n->children_count; i++) {
+			tmp = n->children [i];
+			tmp->destroy (tmp);
+		}
+	}
+	
+	exp = n->value.exp;
+	exp->destroy (exp);
+	
 	free (n->children);
 	free (n);
 	return 1;
@@ -259,13 +270,13 @@ int destroy_if (node *n) {
 
 int print_if (node *n, struct _context *c) {
 	
-	int i;
+	int i, result;
 	node *tmp;
 	expr_node *exp;
 
 	exp = n->value.exp;
 	
-	int result = eval_expression (c, exp);
+	result = eval_expression (c, exp);
 
 	if (result == 1) {
 		tmp = n->children [0];
@@ -315,7 +326,9 @@ node *create_if_node (expr_node *exp, node *block, node *e) {
 }
 
 int destroy_elseif (node *n) {
+	int i;
 	node *tmp;
+	expr_node *exp;
 
 	tmp = n->children[0];
 
@@ -326,19 +339,29 @@ int destroy_elseif (node *n) {
 		tmp->destroy (tmp);
 	}
 	
-	free (n->value.exp);
+	if (n->children_count > 2) {
+		for (i = 2; i < n->children_count; i++) {
+			tmp = n->children [i];
+			tmp->destroy (tmp);
+		}
+	}
+	
+	exp = n->value.exp;
+	exp->destroy (exp);
+	
 	free (n->children);
 	free (n);
 	return 1;
 }
 
 int print_elseif (node *n, struct _context *c) {
+	int i, result;
 	node *tmp;
 	expr_node *exp;
 
 	exp = n->value.exp;
 	
-	int result = eval_expression (exp);
+	result = eval_expression (c, exp);
 
 	if (result == 1) {
 		tmp = n->children [0];

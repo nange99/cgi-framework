@@ -20,7 +20,7 @@ expr_node *create_expr_node_for_variable (struct _context *c, char *variable) {
 	}
 	
 	switch (d->type) {
-	case STR:
+	case STRING:
 		tmp->value.str = d->value.u_str;
 		tmp->type = STR;
 		break;
@@ -166,43 +166,41 @@ int eval_expression (struct _context *c, expr_node *n) {
 	return -1;
 }
 
-expr_node *get_value_for_term (struct _context *c, node *n) {
-
-	expr_node *exp;
-
-	exp = malloc (sizeof(expr_node));
-	exp->type = 0;
+int destroy_expr (expr_node *n) {
 	
-	if (n->type == VARIABLE) {
-		exp->value.str = strdup ((char *)template_get_variable (c, n->value.str));
-		exp->type = STR;
-
-		//printf ("[%s]\n", exp->value.str);
-		free (n->value.str);
-		
-	} else if (n->type == VALUE) {
-		if (n->value_type == STR) {
-			exp->value.str = strdup (n->value.str);
-			exp->type = STR;
-
+	expr_node *tmp;
+	
+	if (n->left != NULL) {
+		tmp = n->left;
+		tmp->destroy (tmp);
+	}
+	
+	
+	if (n->right != NULL) {
+		tmp = n->right;
+		tmp->destroy (tmp);
+	}
+	
+	if (n->op == NONE) {
+		if (n->type == VAR) {
 			free (n->value.str);
-		} else if (n->value_type == LONG) {
-			exp->value.lnum = n->value.lnum;
-			exp->type = LONG;
+		} else if (n->type == STR) {
+			free (n->value.str);
 		}
 	}
-
-	free (n);
 	
-	return exp;
+	free (n);
 }
 
-expr_node *create_expr_node (expr_node *left, expr_node *right, op_type op) {
+expr_node *create_expr_node (expr_node *right, expr_node *left, op_type op) {
 
 	expr_node *n;
 	
 	n = malloc (sizeof(expr_node));
 	n->op = op;
+	n->type = 0;
+
+	n->destroy = destroy_expr;
 
 	n->left = left;
 	n->right = right;
@@ -215,8 +213,12 @@ expr_node *create_expr_node_for_term (node *n) {
 	expr_node *exp;
 
 	exp = malloc (sizeof(expr_node));
-	exp->type = 0;
+	exp->destroy = destroy_expr;
 
+	exp->op = NONE;
+	exp->left = NULL;
+	exp->right = NULL;
+	
 	if (n->type == VARIABLE) {
 		exp->value.str = strdup (n->value.str);
 		exp->type = VAR;

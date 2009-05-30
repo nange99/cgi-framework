@@ -46,6 +46,7 @@ typedef struct _expr_node {
 		char *str;
 	} value;
 	value_type type;
+	int (*destroy) (struct _expr_node *node);
 	struct _expr_node *right;
 	struct _expr_node *left;
 } expr_node;

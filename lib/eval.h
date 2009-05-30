@@ -8,6 +8,8 @@ expr_node *create_expr_node_for_term (node *n);
 
 expr_node *create_expr_node_for_variable (struct _context *c, char *variable);
 
+int destroy_expr (expr_node *n);
+
 int eval_op_equal (struct _context *c, expr_node *r, expr_node *l);
 int eval_op_not_equal (struct _context *c, expr_node *r, expr_node *l);
 int eval_op_less (struct _context *c, expr_node *right, expr_node *left); 
