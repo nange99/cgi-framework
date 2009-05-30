@@ -46,3 +46,58 @@ Exemplo:
 === condições ===
 
 
+Precedência da avaliação das expressões
+<source>
+( a ) && (b || d)
+op_type=[AND] 
+ |--> op_type=[VALUE] 
+ |--> op_type=[OR] 
+	|--> op_type=[VALUE] 
+	|--> op_type=[VALUE] 
+
+( a ) || b && d
+op_type=[OR] 
+ |--> op_type=[VALUE] 
+ |--> op_type=[AND] 
+	 |--> op_type=[VALUE] 
+	 |--> op_type=[VALUE] 
+
+a || b < 2
+op_type=[OR] 
+ |--> op_type=[VALUE] 
+ |--> op_type=[LESS] 
+	|--> op_type=[VALUE] 
+	|--> op_type=[VALUE] 
+
+a < 2 == 0
+op_type=[EQUAL] 
+ |--> op_type=[LESS] 
+	 |--> op_type=[VALUE] 
+	 |--> op_type=[VALUE] 
+ |--> op_type=[VALUE] 
+
+a <= 2 == 0
+op_type=[EQUAL] 
+ |--> op_type=[LESS_EQUAL] 
+	 |--> op_type=[VALUE] 
+	 |--> op_type=[VALUE] 
+ |--> op_type=[VALUE] 
+</source>
+
+
+=== foreach ===
+
+O comando foreach intera sobre o conteúdo de um array ou de uma lista que foi exportada pela aplicação / request.
+
+Possui a seguinte sintaxe:
+<?foreach row in request.table ?>
+  ...
+  <?echo row.valor2 ?>
+  ...
+<?endforeach ?>
+
+A variável row vai receber o valor da linha para cada interação do loop, até que se tenha percorrido toda a lista/tabela.
+O conteúdo até a tag endforeach é repetido as n vezes conforme o número de linhas da tabela.
+
+Além da variável definida para receber o valor da linha, também são geradas mais duas variáveis a count_ e a odd_,
+a primeira é um contador, incrementado a cada interação, a segunda indica se a linha é par ou impar.
