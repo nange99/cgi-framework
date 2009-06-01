@@ -28,12 +28,18 @@ int main(int argc, char *argv[])
 
 int handle_list (struct request *req, struct response *resp) {
 
+	double d;
+
+	d = 3.1415;
+	
 	if (cgi_request_get_parameter (req, "detail") != NULL) {
 		cgi_response_set_html (resp, "html/detail.html");
 	} else {
 		cgi_response_set_html (resp, "html/teste.html");
 
 		cgi_response_add_parameter (resp, "teste", "valor de teste$!", CGI_STRING);
+		cgi_response_add_parameter (resp, "number", (void *)3222, CGI_INT);
+		cgi_response_add_parameter (resp, "pi", (double *) &d, CGI_DOUBLE);	
 	}
 
 	cgi_response_add_cookie (resp, "nome", "valor", NULL, NULL, NULL, 0);

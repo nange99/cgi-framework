@@ -28,7 +28,13 @@ Nome: <input type="text" name="nome"/>
 <input type="submit" value="Enviar" />
 </form>
 
-<?echo response.teste ?> </br>
+<p>
+Response values:<br/>
+var teste = <?echo response.teste ?> <br/>
+var number = <?echo response.number ?><br/>
+var pi = <?echo response.pi ?></br>
+</p>
+
 
 <?if (request.asdf == "teste") then ?>
 if teste;<br/>
