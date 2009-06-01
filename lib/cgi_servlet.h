@@ -1,22 +1,17 @@
 #ifndef _CGI_SERVLET_H
 #define _CGI_SERVLET_H
 
-#include "util/data.h"
-#include "util/hashtable.h"
-#include "util/list.h"
+typedef enum {
+	CGI_STRING,
+	CGI_INT,
+	CGI_DOUBLE,
+	CGI_LIST,
+	CGI_ARRAY
+} parameter_type;
 
-struct request {
-	char *url;
-	char method [10];
-	htable *parameters;
-};
-
-struct response {
-	int status;
-	htable *headers;
-	htable *parameters;
-	char *html;
-};
+/* user of this API shouldn't bother with the implementation details */ 
+struct request;
+struct response;
 
 struct url_mapping {
 	char *url;
@@ -39,7 +34,8 @@ char *cgi_url_encode (char *str);
 
 char *cgi_request_get_parameter (struct request *req, char *name);
 
-int cgi_response_add_parameter(struct response *resp, char *key, void *value, int type);
+void cgi_response_set_html (struct response *resp, char *file);
+int cgi_response_add_parameter(struct response *resp, char *key, void *value, parameter_type type);
 
 int cgi_response_set_content_type (struct response *resp);
 int cgi_response_add_cookie (struct response *resp, char *name, char *value, char *max_age, char *path, char *domain, int secure);

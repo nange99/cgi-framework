@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "util/data.h"
+#include "util/hashtable.h"
+#include "util/list.h"
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
 

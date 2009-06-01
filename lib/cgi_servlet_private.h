@@ -1,7 +1,24 @@
 #ifndef _CGI_SERVLET_PRIVATE_H
 #define _CGI_SERVLET_PRIVATE_H
 
+#include "util/data.h"
+#include "util/hashtable.h"
+#include "util/list.h"
+
 #include "cgi_servlet.h"
+
+struct request {
+	char *url;
+	char method [10];
+	htable *parameters;
+};
+
+struct response {
+	int status;
+	htable *headers;
+	htable *parameters;
+	char *html;
+};
 
 int parse_data_string (struct request *req, char *string, int length);
 

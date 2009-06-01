@@ -1,27 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "util/data.h"
+#include "util/hashtable.h"
+#include "util/list.h"
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
 
-int cgi_response_add_parameter(struct response *resp, char *key, void *value, int type) {
+int cgi_response_add_parameter(struct response *resp, char *key, void *value, parameter_type type) {
 
 	data *d;
 
 	d = malloc (sizeof (data));
 	
 	switch (type) {
-
-	case STRING:
-		d->value.u_str = cgi_url_encode (value);
+	case CGI_STRING:
+		d->value.u_str = strdup (value);
 		d->type = STRING;
-
 		break;	
+	case CGI_INT:
+		d->value.u_int = (int) value;
+		d->type = INTEGER;
+		break;
+	case CGI_DOUBLE:
+		d->value.u_double = *(double *)value;
+		d->type = FLOAT;
+		break;
+	case CGI_LIST:
+		break;
+	case CGI_ARRAY:
+		break;
 	}
 
 	htable_insert (resp->parameters, key, d);
 
 	return 1;
+}
+
+void cgi_response_set_html (struct response *resp, char *file) {
+	resp->html = strdup (file);
+	return;
 }
 
 int cgi_response_set_content_type (struct response *resp) {
