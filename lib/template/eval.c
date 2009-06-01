@@ -28,6 +28,12 @@ expr_node *create_expr_node_for_variable (struct _context *c, char *variable) {
 		tmp->value.lnum = d->value.u_int;
 		tmp->type = LONG;
 		break;
+	case FLOAT:
+		tmp->value.dnum = d->value.u_double;
+		tmp->type = DOUBLE;
+		break;
+	default:
+		tmp->type = -1;
 	}
 	
 	return tmp;
@@ -70,6 +76,23 @@ int eval_op_equal (struct _context *c, expr_node *r, expr_node *l) {
 			result = eval_op_equal (c, r, tmp);
 		
 			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type == VAR && l->type == VAR) {
+		int result;
+		expr_node *rtmp;
+		expr_node *ltmp;
+		
+		rtmp = create_expr_node_for_variable (c, r->value.str);
+		ltmp = create_expr_node_for_variable (c, l->value.str);
+		if (rtmp != NULL && ltmp != NULL) {
+			result = eval_op_equal (c, rtmp, ltmp);
+		
+			free (ltmp);
+			free (rtmp);
 			return result;
 		}
 		return -1;
@@ -119,23 +142,254 @@ int eval_op_not_equal (struct _context *c, expr_node *r, expr_node *l) {
 		}
 		return -1;
 	}
+	
+	if (r->type == VAR && l->type == VAR) {
+		int result;
+		expr_node *rtmp;
+		expr_node *ltmp;
+		
+		rtmp = create_expr_node_for_variable (c, r->value.str);
+		ltmp = create_expr_node_for_variable (c, l->value.str);
+		if (rtmp != NULL && ltmp != NULL) {
+			result = eval_op_not_equal (c, rtmp, ltmp);
+		
+			free (ltmp);
+			free (rtmp);
+			return result;
+		}
+		return -1;
+	}
 
 	return -1;
 }
 
-int eval_op_less (struct _context *c, expr_node *right, expr_node *left) {
+int eval_op_less (struct _context *c, expr_node *r, expr_node *l) {
+	
+	if (r->type == LONG && l->type == LONG) {
+		return (r->value.lnum < l->value.lnum);
+	}
+	
+	if (r->type == STR && l->type != STR) {
+		return (strlen (r->value.str) < strlen(l->value.str));
+	}
+
+	if (r->type == VAR && l->type != VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, r->value.str);
+		if (tmp != NULL) {
+			result = eval_op_less (c, tmp, l);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type != VAR && l->type == VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, l->value.str);
+		if (tmp != NULL) {
+			result = eval_op_less (c, r, tmp);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type == VAR && l->type == VAR) {
+		int result;
+		expr_node *rtmp;
+		expr_node *ltmp;
+		
+		rtmp = create_expr_node_for_variable (c, r->value.str);
+		ltmp = create_expr_node_for_variable (c, l->value.str);
+		if (rtmp != NULL && ltmp != NULL) {
+			result = eval_op_less (c, rtmp, ltmp);
+		
+			free (ltmp);
+			free (rtmp);
+			return result;
+		}
+		return -1;
+	}
+	
 	return -1;
 }
 
-int eval_op_less_equal (struct _context *c, expr_node *right, expr_node *left) {
+int eval_op_less_equal (struct _context *c, expr_node *r, expr_node *l) {
+	
+	if (r->type == LONG && l->type == LONG) {
+		return (r->value.lnum <= l->value.lnum);
+	}
+	
+	if (r->type == STR && l->type != STR) {
+		return (strlen (r->value.str) <= strlen(l->value.str));
+	}
+
+	if (r->type == VAR && l->type != VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, r->value.str);
+		if (tmp != NULL) {
+			result = eval_op_less_equal (c, tmp, l);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type != VAR && l->type == VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, l->value.str);
+		if (tmp != NULL) {
+			result = eval_op_less_equal (c, r, tmp);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type == VAR && l->type == VAR) {
+		int result;
+		expr_node *rtmp;
+		expr_node *ltmp;
+		
+		rtmp = create_expr_node_for_variable (c, r->value.str);
+		ltmp = create_expr_node_for_variable (c, l->value.str);
+		if (rtmp != NULL && ltmp != NULL) {
+			result = eval_op_less_equal (c, rtmp, ltmp);
+		
+			free (ltmp);
+			free (rtmp);
+			return result;
+		}
+		return -1;
+	}
+	
 	return -1;
 }
 
-int eval_op_more (struct _context *c, expr_node *right, expr_node *left) {
+int eval_op_more (struct _context *c, expr_node *r, expr_node *l) {
+	if (r->type == LONG && l->type == LONG) {
+		return (r->value.lnum > l->value.lnum);
+	}
+	
+	if (r->type == STR && l->type != STR) {
+		return (strlen (r->value.str) > strlen(l->value.str));
+	}
+
+	if (r->type == VAR && l->type != VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, r->value.str);
+		if (tmp != NULL) {
+			result = eval_op_more (c, tmp, l);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type != VAR && l->type == VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, l->value.str);
+		if (tmp != NULL) {
+			result = eval_op_more (c, r, tmp);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type == VAR && l->type == VAR) {
+		int result;
+		expr_node *rtmp;
+		expr_node *ltmp;
+		
+		rtmp = create_expr_node_for_variable (c, r->value.str);
+		ltmp = create_expr_node_for_variable (c, l->value.str);
+		if (rtmp != NULL && ltmp != NULL) {
+			result = eval_op_more (c, rtmp, ltmp);
+		
+			free (ltmp);
+			free (rtmp);
+			return result;
+		}
+		return -1;
+	}
+	
 	return -1;
 }
 
-int eval_op_more_equal (struct _context *c, expr_node *right, expr_node *left) {
+int eval_op_more_equal (struct _context *c, expr_node *r, expr_node *l) {
+	if (r->type == LONG && l->type == LONG) {
+		return (r->value.lnum >= l->value.lnum);
+	}
+	
+	if (r->type == STR && l->type != STR) {
+		return (strlen (r->value.str) >= strlen(l->value.str));
+	}
+
+	if (r->type == VAR && l->type != VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, r->value.str);
+		if (tmp != NULL) {
+			result = eval_op_more_equal (c, tmp, l);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type != VAR && l->type == VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, l->value.str);
+		if (tmp != NULL) {
+			result = eval_op_more_equal (c, r, tmp);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	if (r->type == VAR && l->type == VAR) {
+		int result;
+		expr_node *rtmp;
+		expr_node *ltmp;
+		
+		rtmp = create_expr_node_for_variable (c, r->value.str);
+		ltmp = create_expr_node_for_variable (c, l->value.str);
+		if (rtmp != NULL && ltmp != NULL) {
+			result = eval_op_more_equal (c, rtmp, ltmp);
+		
+			free (ltmp);
+			free (rtmp);
+			return result;
+		}
+		return -1;
+	}
+	
 	return -1;
 }
 
@@ -152,13 +406,13 @@ int eval_expression (struct _context *c, expr_node *n) {
 	case NOT_EQUAL:
 		return eval_op_not_equal (c, n->right, n->left);
 	case LESS:
-		break;
+		return eval_op_less (c, n->right, n->left);
 	case LESS_EQUAL:
-		break;
+		return eval_op_less_equal (c, n->right, n->left);
 	case MORE:
-		break;
+		return eval_op_more (c, n->right, n->left);
 	case MORE_EQUAL:
-		break;
+		return eval_op_more_equal (c, n->right, n->left);
 	case NONE:
 		printf ("NONE!!!");
 		break;
