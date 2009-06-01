@@ -43,7 +43,7 @@ void cgi_response_set_html (struct response *resp, char *file) {
 }
 
 int cgi_response_set_content_type (struct response *resp) {
-	
+	return 1;
 }
 
 int cgi_response_add_cookie (struct response *resp, char *name, char *value, char *max_age, char *path, char *domain, int secure) {
@@ -107,11 +107,12 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 
 	htable_insert (resp->headers, "cookie", d);
 	
-	return 0;
+	return 1;
 }
 
 int cgi_response_add_header (struct response *resp) {
 
+	return 1;
 }
 
 void cgi_response_free (struct response *resp) {
