@@ -1,21 +1,11 @@
 SUBDIRS = \
-	util
-
-AM_YFLAGS = -d 
+	util \
+	template
 
 lib_LTLIBRARIES = \
 	libcgiservlet.la
 
 libcgiservlet_la_SOURCES = \
-	template_parser.y \
-	template_scanner.l \
-	eval.c \
-	eval.h \
-	tree.c \
-	tree.h \
-	node.h \
-	template.c \
-	template.h \
 	cgi_servlet.c     \
 	cgi_servlet.h     \
 	cgi_request.c \
@@ -23,7 +13,9 @@ libcgiservlet_la_SOURCES = \
 	cgi_servlet_private.h
 
 libcgiservlet_la_LIBADD = \
-	./util/libutil.la
+	./util/libutil.la \
+	./template/libtemplate.la
 
 AM_CFLAGS = \
-	-I$(top_srcdir)/lib/util
+	-I$(top_srcdir)/lib/util \
+	-I$(top_srcdir)/lib/template

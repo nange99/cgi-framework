@@ -204,13 +204,14 @@ int print_headers (struct response *resp) {
 	
 	printf ("Content-Type: text/html\r\n\r\n");
 	
+	return 1;
 }
 
 int draw_page (struct request *req, struct response *resp) {
 	
 	print_headers (resp);
 
-	template_draw (resp->html, req, resp);
+	template_draw (resp->html, req->parameters, resp->parameters);
 	
 	return 0;
 }
