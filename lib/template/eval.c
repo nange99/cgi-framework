@@ -403,16 +403,22 @@ int eval_expression (struct _context *c, expr_node *n) {
 		
 	case EQUAL:
 		return eval_op_equal (c, n->right, n->left);
+		
 	case NOT_EQUAL:
 		return eval_op_not_equal (c, n->right, n->left);
+		
 	case LESS:
 		return eval_op_less (c, n->right, n->left);
+		
 	case LESS_EQUAL:
 		return eval_op_less_equal (c, n->right, n->left);
+		
 	case MORE:
 		return eval_op_more (c, n->right, n->left);
+		
 	case MORE_EQUAL:
 		return eval_op_more_equal (c, n->right, n->left);
+		
 	case NONE:
 		printf ("NONE!!!");
 		break;
