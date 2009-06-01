@@ -14,7 +14,7 @@
   c=c-a;  c=c-b;  c=c^(b>>15); \
 }
 
-unsigned long int hash( register unsigned char *k,
+unsigned long int hash( register char *k,
 			unsigned long int length,
 			unsigned long int initval );
 

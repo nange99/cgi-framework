@@ -93,7 +93,7 @@ int htable_insert (htable *ht, char *key, data *v) {
 
 	struct _htable_node *new_hnode;
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash ((unsigned char *)key, sizeof (unsigned long int), HASH_INIT_VAL);
+	unsigned long int hashval = hash (key, strlen (key), HASH_INIT_VAL);
 	unsigned long int hashpos = hashval % ht->size;
 
 	DEBUGP ("+++ insert key[%s] as [%lu] [%lu]\n", key, hashpos, hashval );
@@ -136,7 +136,7 @@ int htable_insert (htable *ht, char *key, data *v) {
 void htable_remove (htable *ht, char *key) {
 
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash ((unsigned char *)key, sizeof (unsigned long int), HASH_INIT_VAL);
+	unsigned long int hashval = hash (key, strlen(key), HASH_INIT_VAL);
 	unsigned long int hashpos = hashval % ht -> size;
 
 	cur_hnode = _htable_lookup (ht, key);
@@ -168,7 +168,7 @@ void htable_remove (htable *ht, char *key) {
 struct _htable_node *_htable_lookup (htable *ht, char *key) {
 
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash ((unsigned char *)key, sizeof (unsigned long int), HASH_INIT_VAL);
+	unsigned long int hashval = hash (key, strlen (key), HASH_INIT_VAL);
 	unsigned long int hashpos = hashval % ht -> size;
 
 	DEBUGP ("+++ looking up key[%s] with pos [%lu] - hash [%lu]\n", key, hashpos, hashval );
@@ -358,7 +358,7 @@ void _htable_resize_size (htable *ht, int size) {
 			temp = cur_hnode;
 			next_temp = (cur_hnode -> next) ? cur_hnode -> next : NULL;
 
-			hashval = hash ((unsigned char *)temp->key, sizeof (unsigned long int), HASH_INIT_VAL);
+			hashval = hash (temp->key, strlen(temp->key), HASH_INIT_VAL);
 			hashpos = hashval % size;
 
 			temp->next = ht->table [hashpos];
@@ -372,7 +372,7 @@ void _htable_resize_size (htable *ht, int size) {
 	}
 
 	ht->size = size;
-	//printf ("new_ht - num_elem [%d] - size [%d]\n", ht -> num_elem, ht -> size);
+	DEBUGP("new_ht - num_elem [%d] - size [%d]\n", ht -> num_elem, ht -> size);
 	free (old_table);
 
 }

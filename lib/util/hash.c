@@ -24,7 +24,7 @@ typedef unsigned char  u1;
  * @param length the length of the key in bytes
  * @param initval the previous hash, or an arbitrary value
  */
-unsigned long int hash( register unsigned char *k,  
+unsigned long int hash( register char *k,  
 			unsigned long int length,   
 			unsigned long int initval ) 
 {
