@@ -159,11 +159,7 @@ int eval_op_not_equal (struct _context *c, expr_node *r, expr_node *l) {
 		return result;
 	}
 
-	if (r->type == BOOL && l->type == BOOL) {
-		return (r->value.lnum != l->value.lnum);
-	}
-
-	if (r->type == LONG && l->type == LONG) {
+	if ( (r->type == BOOL || r->type == LONG) && (l->type == BOOL || l->type == LONG)) {
 		return (r->value.lnum != l->value.lnum);
 	}
 	
