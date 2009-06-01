@@ -41,11 +41,37 @@ expr_node *create_expr_node_for_variable (struct _context *c, char *variable) {
 
 int eval_op_equal (struct _context *c, expr_node *r, expr_node *l) {
 
-	if (r->type == BOOL && l->type == BOOL) {
-		return (r->value.lnum == l->value.lnum);
+	if (r->type == OP) {
+		int result;
+		expr_node *tmp;
+
+		tmp = malloc (sizeof (expr_node));
+		tmp->op = NONE;
+		tmp->type = BOOL;
+		tmp->value.lnum = eval_expression (c, r);
+		
+		result = eval_op_equal (c, tmp, l);
+		
+		free (tmp);
+		return result;
+	}
+	
+	if (l->type == OP) {
+		int result;
+		expr_node *tmp;
+
+		tmp = malloc (sizeof (expr_node));
+		tmp->op = NONE;
+		tmp->type = BOOL;
+		tmp->value.lnum = eval_expression (c, l);
+		
+		result = eval_op_equal (c, r, tmp);
+		
+		free (tmp);
+		return result;
 	}
 
-	if (r->type == LONG && l->type == LONG) {
+	if ( (r->type == BOOL || r->type == LONG) && (l->type == BOOL || l->type == LONG)) {
 		return (r->value.lnum == l->value.lnum);
 	}
 	
@@ -102,6 +128,36 @@ int eval_op_equal (struct _context *c, expr_node *r, expr_node *l) {
 }
 
 int eval_op_not_equal (struct _context *c, expr_node *r, expr_node *l) {
+
+	if (r->type == OP) {
+		int result;
+		expr_node *tmp;
+
+		tmp = malloc (sizeof (expr_node));
+		tmp->op = NONE;
+		tmp->type = BOOL;
+		tmp->value.lnum = eval_expression (c, r);
+		
+		result = eval_op_not_equal (c, tmp, l);
+		
+		free (tmp);
+		return result;
+	}
+	
+	if (l->type == OP) {
+		int result;
+		expr_node *tmp;
+
+		tmp = malloc (sizeof (expr_node));
+		tmp->op = NONE;
+		tmp->type = BOOL;
+		tmp->value.lnum = eval_expression (c, l);
+		
+		result = eval_op_not_equal (c, r, tmp);
+		
+		free (tmp);
+		return result;
+	}
 
 	if (r->type == BOOL && l->type == BOOL) {
 		return (r->value.lnum != l->value.lnum);
@@ -393,6 +449,32 @@ int eval_op_more_equal (struct _context *c, expr_node *r, expr_node *l) {
 	return -1;
 }
 
+int eval_op_none (struct _context *c, expr_node *n) {
+	if (n->type == LONG) {
+		return n->value.lnum > 0 ? 1 : 0;
+	}
+	
+	if (n->type == STR) {
+		return strlen (n->value.str) > 0 ? 1 : 0 ;
+	}
+	
+	if (n->type == VAR) {
+		int result;
+		expr_node *tmp;
+		
+		tmp = create_expr_node_for_variable (c, n->value.str);
+		if (tmp != NULL) {
+			result = eval_op_none (c, tmp);
+		
+			free (tmp);
+			return result;
+		}
+		return -1;
+	}
+	
+	return -1;
+}
+
 int eval_expression (struct _context *c, expr_node *n) {
 	switch (n->op) {
 	case OR:
@@ -420,8 +502,7 @@ int eval_expression (struct _context *c, expr_node *n) {
 		return eval_op_more_equal (c, n->right, n->left);
 		
 	case NONE:
-		printf ("NONE!!!");
-		break;
+		return eval_op_none (c, n);
 	}
 	return -1;
 }
@@ -459,7 +540,7 @@ expr_node *create_expr_node (expr_node *right, expr_node *left, op_type op) {
 	
 	n = malloc (sizeof(expr_node));
 	n->op = op;
-	n->type = 0;
+	n->type = OP;
 
 	n->destroy = destroy_expr;
 

@@ -1,0 +1,68 @@
+<html>
+<head>
+  <title> Expressions Test Case </title>
+</head>
+<body>
+
+a = <?echo response.a?><br/>
+b = <?echo response.b?><br/>
+d = <?echo response.d?><br/>
+
+<ul>
+  <li> Teste 1 <br/>
+    ( a ) && (b || d) --> expects True <br/>
+  <?if ( response.a ) && (response.b || response.d) then?>
+   True
+  <?else?>
+   False
+  <?endif?>
+  </li>
+
+  <li> Teste 2 <br/>
+      ( a ) || b && d --> expects True <br/>
+  <?if ( response.a ) || response.b && response.d then?>
+   True
+  <?else?>
+   False
+  <?endif?>
+  </li>
+  
+  <li> Teste 3 <br/>
+      a || b < 2 --> expects True <br/>
+  <?if response.a || response.b < 2 then?>
+   True
+  <?else?>
+   False
+  <?endif?>
+  </li>
+  
+  <li> Teste 4 <br/>
+      a < 2 == 1 --> expects True <br/>
+  <?if response.a < 2 == 1 then?>
+   True
+  <?else?>
+   False
+  <?endif?>
+  </li>
+  
+  <li> Teste 5 <br/>
+      a <= 2 == 0 --> expects False <br/>
+  <?if response.a <= 2 == 0 then?>
+   True
+  <?else?>
+   False
+  <?endif?>
+  </li>
+
+  <li> Teste 6 <br/>
+      a <= 2 == d >= 11 --> expects False <br/>
+  <?if response.a <= 2 == response.d >= 11 then?>
+   True
+  <?else?>
+   False
+  <?endif?>
+  </li>
+</ul>
+
+</body>
+</html>

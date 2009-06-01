@@ -21,7 +21,8 @@ typedef enum {
 	DOUBLE,
 	STR,
 	BOOL,
-	VAR
+	VAR,
+	OP
 } value_type;
 
 typedef enum {

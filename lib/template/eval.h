@@ -17,6 +17,8 @@ int eval_op_less_equal (struct _context *c, expr_node *right, expr_node *left);
 int eval_op_more (struct _context *c, expr_node *right, expr_node *left);
 int eval_op_more_equal (struct _context *c, expr_node *right, expr_node *left);
 
+int eval_op_none (struct _context *c, expr_node *n);
+
 int eval_expression (struct _context *c, expr_node *n);
 
 expr_node *get_value_for_term (struct _context *c, node *n);
