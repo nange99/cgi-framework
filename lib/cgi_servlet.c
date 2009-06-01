@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
 #include "template.h"
+
+FILE *errfile;
 
 int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_length, struct filter_mapping *filters[]) {
 	int r;
@@ -11,6 +14,10 @@ int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_le
 	struct request *req;
 	struct response *resp;
 
+	errfile = fopen ("/tmp/cgi_servlet.log", "a+");
+
+	fprintf (errfile, "begin cgi_servlet\n");
+	
 	req = malloc (sizeof (struct request));
 	resp = malloc (sizeof (struct response));
 	
@@ -32,6 +39,10 @@ int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_le
 
 	cgi_request_free (req);
 	cgi_response_free (resp);
+
+	fprintf (errfile, "end cgi_servlet\n");
+	
+	fclose (errfile);
 	
 	return 0;
 }
@@ -42,6 +53,7 @@ int process_request (struct request *req) {
 	
 	if (getenv ("REQUEST_METHOD") != NULL) {
 		strcpy (req->method, getenv ("REQUEST_METHOD"));
+		fprintf (errfile, "got method = [%s]\n", req->method);
 	}
 
 	if (getenv ("PATH_INFO") != NULL) {
@@ -70,9 +82,12 @@ int process_request (struct request *req) {
 		parse_data_string (req, getenv ("QUERY_STRING"), content_length);
 	}
 
-	if (strcmp (req->method, "POST")) {
+	if (strcmp (req->method, "POST") == 0) {
 		int content_length;
+		int read;
 		char *content_data;
+
+		fprintf (errfile, "parsing post...\n");
 		
 		if (getenv ("CONTENT_LENGTH") == NULL) {
 			return 0;
@@ -80,18 +95,93 @@ int process_request (struct request *req) {
 
 		content_length = atoi (getenv ("CONTENT_LENGTH"));
 
+		fprintf (errfile, "content_length = %d\n", content_length);
+		
 		content_data = malloc ((content_length + 1) * sizeof(char));
 		if (content_data == NULL) {
 			// FIXME: no memory, bailout!
 		}
 		
-		fread (content_data, content_lenght, 1, stdin);
-		content_data[content_lenght] = '\0';
+		read = fread (content_data, content_length, 1, stdin);
+		content_data[content_length] = '\0';
+
+		fprintf (errfile, "got content = [%s]\n", content_data);
 		
-		parse_data_string (req, content_data, content_lenght);
+		parse_data_string (req, content_data, content_length);
+
+		free (content_data);
 	}
 	
 	return 0;
+}
+
+char *cgi_url_decode (char *str) {
+	int i;
+	char *result, *tmp;
+
+	result = malloc ( (strlen (str) + 1) * sizeof (char));
+	memset (result, '\0', strlen (str) + 1);
+	
+	
+	tmp = result;
+	while (str != NULL && *str != '\0') {
+		if (*str == '%' && *(str + 1) != '\0' && *(str + 2) != '\0') {
+			for (i = 0, str++; i < 2; i++, str++) {
+				(*tmp) += ((isdigit(*str) ?  *str - '0' : ((tolower(*str) - 'a')) + 10) * ( i ? 1 : 16));
+			}
+			tmp++;
+		} else if (*str == '+') {
+			*tmp++ = ' ';
+			str++;
+		} else {
+			*tmp++ = *str++;
+		}
+	}
+	return result;
+}
+
+char *cgi_url_encode (char *str) {
+
+	static char safechars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:[]/\\=+";
+	char *result, *tmp;
+	int length;
+
+	length = strlen (str) + 1;
+	
+	result = malloc ( length * sizeof (char));
+	memset (result, '\0', length );
+	
+	tmp = result;
+
+	while (*str != '\0') {
+		if (strchr (safechars, *str) != NULL) {
+			*tmp++ = *str++;
+		} else {
+			char buf [4];
+			char *pbuf;
+			int current_length;
+			int i;
+
+			length += 3;
+			current_length = tmp - result;
+			
+			result = realloc (result, (length) * sizeof (char));
+
+			tmp = result + current_length;
+			
+			sprintf (buf, "%%%02x", (int) *str);
+
+			pbuf = buf;
+			for (i = 0; i < 3; i++) {
+				*tmp++ = *pbuf++;
+			}
+
+			*str++;
+		}
+	}
+	*tmp = '\0';
+	
+	return result;
 }
 
 int parse_data_string (struct request *req, char *string, int length) {
@@ -102,7 +192,7 @@ int parse_data_string (struct request *req, char *string, int length) {
 	const char sep1 = '&';
 	const char sep2 = ';';
 	int str_length, position;
-	char *aux;
+	char *aux, *tmp;
 	char *key, *value;
 	data *d;
 
@@ -145,6 +235,14 @@ int parse_data_string (struct request *req, char *string, int length) {
 		}
 		strncpy (value, string, position);
 		value[position] = '\0';
+
+		tmp = cgi_url_decode (value);
+
+		if (tmp != NULL) {
+			free (value);
+		}
+
+		value = tmp;
 		
 		printf ("[%s]\n", value);
 

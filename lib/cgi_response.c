@@ -4,6 +4,25 @@
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
 
+int cgi_response_add_parameter(struct response *resp, char *key, void *value, int type) {
+
+	data *d;
+
+	d = malloc (sizeof (data));
+	
+	switch (type) {
+
+	case STRING:
+		d->value.u_str = cgi_url_encode (value);
+		d->type = STRING;
+
+		break;	
+	}
+
+	htable_insert (resp->parameters, key, d);
+
+	return 1;
+}
 
 int cgi_response_set_content_type (struct response *resp) {
 	

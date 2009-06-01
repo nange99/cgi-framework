@@ -34,10 +34,12 @@ struct config {
 
 int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_length, struct filter_mapping *filters[]);
 
+char *cgi_url_decode (char *str);
+char *cgi_url_encode (char *str);
+
 char *cgi_request_get_parameter (struct request *req, char *name);
 
-int cgi_response_add_parameter_int (struct response *resp, char *key, int value);
-int cgi_response_add_parameter_str (struct response *resp, char *key, char *value);
+int cgi_response_add_parameter(struct response *resp, char *key, void *value, int type);
 
 int cgi_response_set_content_type (struct response *resp);
 int cgi_response_add_cookie (struct response *resp, char *name, char *value, char *max_age, char *path, char *domain, int secure);
