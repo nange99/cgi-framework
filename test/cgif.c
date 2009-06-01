@@ -39,12 +39,6 @@ int handle_list (struct request *req, struct response *resp) {
 	}
 
 	cgi_response_add_cookie (resp, "nome", "valor", NULL, NULL, NULL, 0);
-
-	/*
-	strcat (resp->html, "list");
-	strcat (resp->html, "<br/>");
-	strcat (resp->html, cgi_request_get_parameter (req, "chave_1"));
-	*/
 	
 	return 0;
 }

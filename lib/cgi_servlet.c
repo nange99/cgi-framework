@@ -85,7 +85,10 @@ int process_request (struct request *req) {
 			// FIXME: no memory, bailout!
 		}
 		
+		fread (content_data, content_lenght, 1, stdin);
+		content_data[content_lenght] = '\0';
 		
+		parse_data_string (req, content_data, content_lenght);
 	}
 	
 	return 0;
@@ -204,9 +207,6 @@ int print_headers (struct response *resp) {
 }
 
 int draw_page (struct request *req, struct response *resp) {
-
-	FILE *html;
-	char buffer[255];
 	
 	print_headers (resp);
 
