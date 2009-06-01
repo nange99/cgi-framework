@@ -1,0 +1,44 @@
+=== URL Mapping ===
+
+A estrutura abaixo descreve o mapeamento entre a url chamada e a função que será executada:
+
+struct url_mapping {
+	char *url;
+	int (*handler) (struct request *req, 
+			struct response *resp);
+};
+
+O usuário da api deverá implementar a função de handler para cada url necessária. 
+Cada handler pode retornar quantas views forem necessárias, dependendo dos paramêtros 
+recebidos pela função de handler.
+
+=== Servlet Init ===
+
+Todos os handlers com seus mapeamentos devem ser passados para a função abaixo:
+
+int cgi_servlet_init (struct config *conf, 
+		      struct url_mapping *map[], 
+		      int map_length, 
+		      struct filter_mapping *filters[]);
+
+Esta função se encarregará de iniciar todas as variáveis corretamente, receber os 
+valores de GET e POST, chamar o handler registrado para a url e finalmente desenhar
+o template.
+
+=== Request ===
+
+char *cgi_request_get_parameter (struct request *req, char *name);
+
+
+=== Response ===
+void cgi_response_set_html (struct response *resp, char *file);
+int cgi_response_add_parameter(struct response *resp, char *key, void *value, parameter_type type);
+
+int cgi_response_set_content_type (struct response *resp);
+int cgi_response_add_cookie (struct response *resp, char *name, char *value, char *max_age, char *path, char *domain, int secure);
+int cgi_response_add_header (struct response *resp);
+
+=== Funções Auxiliares ===
+
+char *cgi_url_decode (char *str);
+char *cgi_url_encode (char *str);
