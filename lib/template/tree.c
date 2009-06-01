@@ -213,6 +213,8 @@ int print_echo (node *n, struct _context *c) {
 			printf ("%s", value->value.u_str);	
 		} else if (value->type == INTEGER) {
 			printf ("%d", value->value.u_int);
+		} else if (value->type == FLOAT) {
+			printf ("%f", value->value.u_double);
 		}
 	} else if (tmp->type == VALUE) {
 		printf ("%s", tmp->value.str);
