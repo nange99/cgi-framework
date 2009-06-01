@@ -225,13 +225,13 @@ void htable_print (htable *ht) {
 			printf ("\t[%s]->", hnode -> key);
 			switch (hnode -> data -> type) {
 				case STRING:
-					printf ("[%s]\n", hnode -> data -> value . u_str);
+					printf ("[%s]\n", hnode->data->value.u_str);
 					break;
 				case INTEGER:
-					printf ("[%d]\n", hnode -> data -> value . u_int);
+					printf ("[%d]\n", hnode->data->value.u_int);
 					break;
 				case FLOAT:
-					printf ("[%f]\n", hnode -> data -> value . u_float);
+					printf ("[%f]\n", hnode->data->value.u_double);
 			}
 			hnode = hnode -> next;
 		}

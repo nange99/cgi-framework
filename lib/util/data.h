@@ -33,7 +33,7 @@ struct _data {
 	/**> union with the value */
 	union {
 		int u_int;
-		float u_float;
+		double u_double;
 		char *u_str;
 		void *u_hash;
 	} value; 
