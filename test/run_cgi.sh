@@ -1,4 +1,6 @@
 #!/bin/bash
 export REQUEST_METHOD="GET"
 export PATH_INFO="/app/do.list"
-libtool --mode=execute valgrind --tool=memcheck -v --leak-check=full --show-reachable=yes ./test_cgi
+export QUERY_STRING="user=Pedro%20Kiefer&asdf=pedro"
+libtool --mode=execute valgrind --tool=memcheck -v --track-origins=yes --leak-check=full --show-reachable=yes ./test_cgi
+#libtool --mode=execute ./test_cgi

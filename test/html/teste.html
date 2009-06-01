@@ -7,6 +7,10 @@ body {
   background-color: #ccc;
 }
 
+.odd {
+  background-color: #eee;
+}
+
 </style>
 </head>
 <body>
@@ -18,12 +22,20 @@ Request parameter asdf=[<?echo request.asdf ?>]<br/>
 <br/>
 <br/>
 
+<form method="POST" action="/app/do.list">
+<input type="hidden" name="detail" value="1"/>
+Nome: <input type="text" name="nome"/>
+<input type="submit" value="Enviar" />
+</form>
+
+<?echo response.teste ?> </br>
+
 <?if (request.asdf == "teste") then ?>
-asdf = teste;<br/>
+if teste;<br/>
 <?elseif (request.asdf == "pedro") then?>
-asdf pedro;<br/>
+elseif pedro;<br/>
 <?else ?>
-asdf none;<br/>
+else none;<br/>
 <?endif ?>
 
 <table border="1">

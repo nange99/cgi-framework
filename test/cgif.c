@@ -36,6 +36,8 @@ int handle_list (struct request *req, struct response *resp) {
 		resp->html = strdup ("html/detail.html");
 	} else {
 		resp->html = strdup ("html/teste.html");
+
+		cgi_response_add_parameter (resp, "teste", "valor de teste$!", STRING);
 	}
 
 	cgi_response_add_cookie (resp, "nome", "valor", NULL, NULL, NULL, 0);
