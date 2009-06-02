@@ -1,7 +1,7 @@
 
 Linguagem dos templates:
 
-todos os comandos ficam entre <? ?>
+Todos os comandos ficam entre <? ?>
 
 existem duas variáveis globais registradas, que contém todos os dados necessários para gerar a página
   - request:
@@ -38,6 +38,8 @@ Exemplos:
  
 === include ===
 Inclui arquivo definido entre aspas ou através de uma variável após a keyword include.
+O arquivo incluido será processado pelo mesmo sistema de templates, com todas as variáveis expostas que
+foram exportadas para o arquivo que está sendo processado atualmente.
 
 Exemplo:
   <?include "html/menu.html" ?>
@@ -45,7 +47,28 @@ Exemplo:
   
 === condições ===
 
+Exemplo de bloco de if:
 
+<?if ( response.valor1 == 2 ) then?>
+...
+<?elseif ( response.valor1 == 3) then?>
+
+<?else ?>
+
+<?endif ?>
+
+Os parenteses nas expressões são opcionais.
+
+Os seguintes operadores são suportados:
+ == -> compara se é igual, aceita variáveis, expressões, strings e inteiros
+ != -> compara se é diferente, aceita variáveis, expressões, strings e inteiros
+ >= -> aceita variáveis e inteiros em ambos lados da expressão 
+ >  -> aceita variáveis e inteiros em ambos lados da expressão 
+ <= -> aceita variáveis e inteiros em ambos lados da expressão 
+ <  -> aceita variáveis e inteiros em ambos lados da expressão 
+ && -> realiza a operação AND entre duas expressões
+ || -> realiza a operação OR entre duas expressões
+ 
 Precedência da avaliação das expressões (mais informações e exemplos em expr.html)
 <source>
 ( a ) && (b || d)

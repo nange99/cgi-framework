@@ -26,19 +26,75 @@ valores de GET e POST, chamar o handler registrado para a url e finalmente desen
 o template.
 
 === Request ===
+Todas os parametros recebidos estão armazenados dentro da estrutura do request. 
+Para acessar qualquer um desses parametros se utiliza a seguinte função:
 
 char *cgi_request_get_parameter (struct request *req, char *name);
 
+A função retorna sempre uma string, ficando a cargo do usuário da API transformar o valor 
+recebido conforme a necessidade da aplicação.
 
 === Response ===
+
+As funções que começam com cgi_response alteram os valores da resposta do servidor.
+
+Com a função abaixo se define qual será o arquivo html que será interpretado e enviado pelo servidor.
+Todo o handler deve conter uma chama para esta função - pode ocorrer mais de uma chama (ie.: diversas
+views para um mesmo conteúdo.).
+
 void cgi_response_set_html (struct response *resp, char *file);
+
+As contantes abaixos definem os tipos de dados que podem ser passados para a camada de apresentação:
+typedef enum {
+	CGI_STRING,
+	CGI_INT,
+	CGI_DOUBLE,
+	CGI_LIST,
+	CGI_ARRAY
+} parameter_type;
+
+Para adicionar um parametro a cama de apresentação chama-se a seguinte função: 
 int cgi_response_add_parameter(struct response *resp, char *key, void *value, parameter_type type);
 
-int cgi_response_set_content_type (struct response *resp);
+Ela irá disponibilizar ao template a variável com o nome da chave passada, precedida de "response."
+Exemplo:
+No handler:
+cgi_response_add_parameter (resp, "inteiro", (void *) 5, CGI_INT); 
+No template:
+<?echo response.inteiro ?>
+No browser:
+5
+
+As funções abaixo alteram o cabeçalho enviado ao browser.
+
 int cgi_response_add_cookie (struct response *resp, char *name, char *value, char *max_age, char *path, char *domain, int secure);
-int cgi_response_add_header (struct response *resp);
+Adiciona um cookie com nome name e valor value, também é possível definir a idade máxima do cookie, o caminho para cookie, dominio, e se o cookie é "seguro".
 
 === Funções Auxiliares ===
 
 char *cgi_url_decode (char *str);
 char *cgi_url_encode (char *str);
+
+
+=== list ==
+A biblioteca exporta um tipo de lista:
+typedef struct _list list;
+
+Para criar uma lista basta:
+list *cgi_create_list ();
+
+A função abaixo destroy uma lista e todo seu conteúdo. Se a lista for passada como parametro de resposta não é necessários destruir a lista.
+void cgi_destroy_list (list *l);
+
+
+int cgi_list_append (list *l, void *value, parameter_type t);
+
+int cgi_list_preppend (list *l, void *value, parameter_type t);
+
+int cgi_list_insert_after (list *l, int index, void *value, parameter_type t);
+
+void *cgi_list_get (list *l, int index, int *type);
+
+int cgi_list_remove (list *l, int index);
+
+int cgi_list_size (list *l);
