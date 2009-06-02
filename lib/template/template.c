@@ -37,6 +37,11 @@ data *template_get_variable (context *c, char *variable) {
 	return NULL;
 }
 
+int template_register_variable_data (context *c, char *variable, data *d) {
+	
+	return htable_insert (c->variables, variable, d);
+}
+
 int template_register_variable (context *c, char *variable, void *v, int type) {
 
 	data *d;
@@ -56,6 +61,23 @@ int template_register_variable (context *c, char *variable, void *v, int type) {
 	return htable_insert (c->variables, variable, d);
 }
 
+int template_register_update_variable_data (context *c, char *variable, data *d) {
+	data *tmp;
+
+	tmp = htable_lookup (c->variables, variable);
+	
+	if (tmp == NULL) {
+		htable_insert (c->variables, variable, d);
+	} else {
+		htable_update (c->variables, variable, d);
+	}
+}
+
+int template_update_variable_data (context *c, char *variable, data *d) {
+
+	return htable_update (c->variables, variable, d);
+}
+
 int template_update_variable (context *c, char *variable, void *v, int type) {
 
 	data *d;
@@ -66,6 +88,12 @@ int template_update_variable (context *c, char *variable, void *v, int type) {
 		d->value.u_int = (int) v;
 	}
 	
+	return 1;
+}
+
+int template_unregister_variable (context *c, char *variable) {
+	
+	htable_remove_entry (c->variables, variable);
 	return 1;
 }
 

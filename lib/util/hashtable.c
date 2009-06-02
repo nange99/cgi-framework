@@ -133,6 +133,7 @@ int htable_insert (htable *ht, char *key, data *v) {
  * @param ht a hash table object.
  * @param key the key to be removed.
  */
+
 void htable_remove (htable *ht, char *key) {
 
 	struct _htable_node *cur_hnode;
@@ -158,6 +159,43 @@ void htable_remove (htable *ht, char *key) {
 
 }
 
+void htable_remove_entry (htable *ht, char *key) {
+
+	struct _htable_node *cur_hnode;
+	unsigned long int hashval = hash (key, strlen(key), HASH_INIT_VAL);
+	unsigned long int hashpos = hashval % ht -> size;
+
+	cur_hnode = _htable_lookup (ht, key);
+
+	if (cur_hnode == NULL)
+		return;
+
+	ht->table [hashpos] = NULL;
+	ht->num_elem--;
+
+	// tries to shrink the hashtable
+	_htable_shrink (ht);
+
+	return;
+
+}
+
+int htable_update (htable *ht, char *key, data *d) {
+
+	struct _htable_node *cur_hnode;
+	unsigned long int hashval = hash (key, strlen(key), HASH_INIT_VAL);
+	unsigned long int hashpos = hashval % ht -> size;
+
+	cur_hnode = _htable_lookup (ht, key);
+
+	if (cur_hnode == NULL)
+		return 0;
+
+	cur_hnode->data = d;
+
+	return 1;
+
+}
 /**
  * Internal hash table lookup implementation.
  * 

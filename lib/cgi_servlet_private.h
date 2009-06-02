@@ -20,6 +20,11 @@ struct response {
 	char *html;
 };
 
+struct _list {
+	struct list_head list;
+	data *data;
+};
+
 int parse_data_string (struct request *req, char *string, int length);
 
 int do_filters (struct request *req, struct response *resp);

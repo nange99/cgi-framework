@@ -47,9 +47,11 @@ void destroy_htable (htable *ht);
 
 int htable_insert (htable *ht, char *key, data *v);
 void htable_remove (htable *ht, char *key);
+void htable_remove_entry (htable *ht, char *key);
 
 struct _htable_node *_htable_lookup (htable *ht, char *key);
 data *htable_lookup (htable *ht, char *key);
+int htable_update (htable *ht, char *key, data *d);
 
 void htable_print (htable *ht);
 

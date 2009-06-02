@@ -4,6 +4,8 @@
 #include "tree.h"
 #include "eval.h"
 #include "template.h"
+#include "../cgi_servlet_private.h"
+#include "list.h"
 
 int destroy_value (node *n) {
 
@@ -463,12 +465,52 @@ int destroy_foreach (node *n) {
 	return 1;
 }
 
+int print_foreach_list (list *l, node *var, node *block, struct _context *c) {
+	int i = 0;
+	list *tmp;
+	struct list_head *pos;
+	char *varname;
+	
+	varname = var->value.str;
+	
+	pos = (&l->list)->next;
+	tmp = list_entry (pos, list, list);
+	
+	template_register_variable (c, "count_", 0, LONG);
+	template_register_variable (c, "odd_", 0, LONG);
+	
+	list_for_each (pos, &l->list) {
+		tmp = list_entry(pos, list, list);
+		
+		template_register_update_variable_data (c, varname, tmp->data);
+		
+		block->print (block, c);
+		
+		template_update_variable (c, "count_", (void *) (i+1), LONG);
+		template_update_variable (c, "odd_", (void *) ((i+1)%2), LONG);
+		i++;
+	}
+	
+	template_unregister_variable (c, varname);
+	template_unregister_variable (c, "count_");
+	template_unregister_variable (c, "odd_");
+	
+	return 1;
+}
+
 int print_foreach (node *n, struct _context *c) {
-	int i;
-	node *block;
+	node *items;
+	data *value;
+	
+	items = n->children[1];
+	value = template_get_variable (c, items->value.str);
 
-	block = n->children[2];
-
+	if (value->type == LIST) {
+		printf (" === Temos uma lista === \n");
+		return print_foreach_list ( (list *) value->value.u_hash, n->children[0], n->children[2], c);
+	}
+	
+	/*
 	template_register_variable (c, "count_", 0, LONG);
 	template_register_variable (c, "odd_", 0, LONG);
 	
@@ -477,6 +519,7 @@ int print_foreach (node *n, struct _context *c) {
 		template_update_variable (c, "count_", (void *) (i+1), LONG);
 		template_update_variable (c, "odd_", (void *) ((i+1)%2), LONG);
 	}
+	*/
 	return 1;
 }
 

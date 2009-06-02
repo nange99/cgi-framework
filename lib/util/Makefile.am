@@ -9,6 +9,5 @@ libutil_la_SOURCES = \
 	data.c \
 	hashtable.h \
 	hashtable.c \
-	list.h \
-	list.c
+	list.h
 

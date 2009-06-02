@@ -41,5 +41,17 @@ int cgi_response_set_content_type (struct response *resp);
 int cgi_response_add_cookie (struct response *resp, char *name, char *value, char *max_age, char *path, char *domain, int secure);
 int cgi_response_add_header (struct response *resp);
 
+/* list */
+typedef struct _list list;
+
+list *cgi_create_list ();
+void cgi_destroy_list (list *l);
+
+int cgi_list_append (list *l, void *value, parameter_type t);
+int cgi_list_preppend (list *l, void *value, parameter_type t);
+int cgi_list_insert_after (list *l, int index, void *value, parameter_type t);
+void *cgi_list_get (list *l, int index, int *type);
+int cgi_list_remove (list *l, int index);
+int cgi_list_size (list *l);
 
 #endif

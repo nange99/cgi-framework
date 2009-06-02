@@ -3,6 +3,7 @@
 #include <string.h>
 #include "lib/cgi_servlet.h"
 
+int handle_test (struct request *req, struct response *resp);
 int handle_list (struct request *req, struct response *resp);
 int handle_expr (struct request *req, struct response *resp);
 int handle_asdf (struct request *req, struct response *resp);
@@ -11,9 +12,9 @@ int main(int argc, char *argv[])
 {
 
 	struct url_mapping map[] = { 
-		{"/do.list", handle_list},
+		{"/do.test", handle_test},
 		{"/do.expr", handle_expr},
-		{"/do.login", handle_list},
+		{"/do.list", handle_list},
 		{"/do.qwer", handle_asdf},
 		{"/do.zxcv", handle_list}
 	};
@@ -27,7 +28,7 @@ int main(int argc, char *argv[])
 
 }
 
-int handle_list (struct request *req, struct response *resp) {
+int handle_test (struct request *req, struct response *resp) {
 
 	double d;
 
@@ -48,11 +49,39 @@ int handle_list (struct request *req, struct response *resp) {
 	return 1;
 }
 
-int handle_asdf (struct request *req, struct response *resp) {
+int handle_list (struct request *req, struct response *resp) {
 
-	printf ("handle_asdf( )\n");
+	int i;
+	list *l;
+	char *v;
+	void *valor;
+	int type;
+	
+	l = cgi_create_list ();
+	
+	for (i = 0; i < 5; i++) {
+		v = malloc (sizeof (char) * 10);
+		sprintf (v, "valor %d", i);
+		cgi_list_append (l, (void *)v, CGI_STRING);
+	}
 
-	cgi_response_set_html (resp, "html/asdf.html");
+	cgi_list_remove (l, 3);
+	
+	/*
+	valor = cgi_list_get (l, 2, &type);
+	
+	if (valor != NULL) {
+		printf ("type = [%d] ==> valor = [%s]", type, (char *) valor);
+	}
+	
+	printf ("list size = [%d]", cgi_list_size (l));
+	
+	printf ("list size = [%d]", cgi_list_size (l));
+	*/
+	
+	cgi_response_add_parameter (resp, "list", l, CGI_LIST);
+	
+	cgi_response_set_html (resp, "html/list.html");
 	
 	return 1;
 }
@@ -64,6 +93,13 @@ int handle_expr (struct request *req, struct response *resp) {
 	cgi_response_add_parameter (resp, "d", (void *) 10, CGI_INT);
 	
 	cgi_response_set_html (resp, "html/expr.html");
+	
+	return 1;
+}
+
+int handle_asdf (struct request *req, struct response *resp) {
+	
+	cgi_response_set_html (resp, "html/asdf.html");
 	
 	return 1;
 }
