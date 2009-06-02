@@ -27,6 +27,8 @@ int cgi_response_add_parameter(struct response *resp, char *key, void *value, pa
 		d->type = FLOAT;
 		break;
 	case CGI_LIST:
+		d->value.u_hash = value;
+		d->type = LIST;
 		break;
 	case CGI_ARRAY:
 		break;
