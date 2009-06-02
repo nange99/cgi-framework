@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 
 	cgi_servlet_init (&conf, &map, 5, NULL);
 
+	return 0;
 }
 
 int handle_test (struct request *req, struct response *resp) {
@@ -63,6 +64,7 @@ int handle_list (struct request *req, struct response *resp) {
 		v = malloc (sizeof (char) * 10);
 		sprintf (v, "valor %d", i);
 		cgi_list_append (l, (void *)v, CGI_STRING);
+		free (v);
 	}
 
 	cgi_list_remove (l, 3);

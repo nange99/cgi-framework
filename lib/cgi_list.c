@@ -26,6 +26,8 @@ void cgi_destroy_list (list *l) {
 		destroy_data(tmp->data);
 		free (tmp);
 	}
+
+	free (l);
 	return;
 }
 

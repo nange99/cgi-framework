@@ -30,6 +30,7 @@ int template_update_variable_data (context *c, char *variable, data *d);
 int template_register_update_variable_data (context *c, char *variable, data *d);
 
 int template_unregister_variable (context *c, char *variable);
+int template_unregister_free_variable (context *c, char *variable);
 
 extern int template_parse (context *c);
 

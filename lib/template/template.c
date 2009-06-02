@@ -91,6 +91,12 @@ int template_update_variable (context *c, char *variable, void *v, int type) {
 	return 1;
 }
 
+int template_unregister_free_variable (context *c, char *variable) {
+
+	htable_remove (c->variables, variable);
+	return 1;
+}
+
 int template_unregister_variable (context *c, char *variable) {
 	
 	htable_remove_entry (c->variables, variable);

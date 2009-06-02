@@ -470,6 +470,7 @@ int print_foreach_list (list *l, node *var, node *block, struct _context *c) {
 	list *tmp;
 	struct list_head *pos;
 	char *varname;
+	data *d;
 	
 	varname = var->value.str;
 	
@@ -492,8 +493,9 @@ int print_foreach_list (list *l, node *var, node *block, struct _context *c) {
 	}
 	
 	template_unregister_variable (c, varname);
-	template_unregister_variable (c, "count_");
-	template_unregister_variable (c, "odd_");
+
+	template_unregister_free_variable (c, "count_");
+	template_unregister_free_variable (c, "odd_");
 	
 	return 1;
 }
@@ -505,8 +507,10 @@ int print_foreach (node *n, struct _context *c) {
 	items = n->children[1];
 	value = template_get_variable (c, items->value.str);
 
+	if (value == NULL)
+		return 0;
+	
 	if (value->type == LIST) {
-		printf (" === Temos uma lista === \n");
 		return print_foreach_list ( (list *) value->value.u_hash, n->children[0], n->children[2], c);
 	}
 	

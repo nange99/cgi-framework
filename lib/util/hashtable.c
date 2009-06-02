@@ -145,8 +145,8 @@ void htable_remove (htable *ht, char *key) {
 	if (cur_hnode == NULL)
 		return;
 
-	free (cur_hnode -> key); 
-	free (cur_hnode -> data);
+	free (cur_hnode->key); 
+	destroy_data (cur_hnode->data);
 	free (cur_hnode);
 
 	ht->table [hashpos] = NULL;
@@ -170,6 +170,9 @@ void htable_remove_entry (htable *ht, char *key) {
 	if (cur_hnode == NULL)
 		return;
 
+	free (cur_hnode->key); 
+	free (cur_hnode);
+	
 	ht->table [hashpos] = NULL;
 	ht->num_elem--;
 
