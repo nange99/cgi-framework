@@ -46,7 +46,7 @@ Exemplo:
 === condições ===
 
 
-Precedência da avaliação das expressões
+Precedência da avaliação das expressões (mais informações e exemplos em expr.html)
 <source>
 ( a ) && (b || d)
 op_type=[AND] 
