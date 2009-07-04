@@ -191,6 +191,7 @@ int template_draw (char *filename, htable *req, htable *resp) {
 	f = fopen (filename, "r");
 
 	if (f == NULL) {
+		printf ("could not open template file... [%s]\n", filename);
 		return 0;
 	}
 
