@@ -72,6 +72,7 @@ AC_CHECK_FUNCS([memset strchr strdup])
 AM_PROG_LIBTOOL
 
 AC_CONFIG_FILES([Makefile
+		 libcgiservlet.pc
                  lib/Makefile
                  lib/util/Makefile
 		 lib/template/Makefile
