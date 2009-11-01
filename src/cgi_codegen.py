@@ -151,8 +151,8 @@ autoconf
 		for handler in self.handlers:
 			self.create_html (handler['name'], handler['html'])
 
-c = cgilib()
-c.set_project_name ("test1")
-c.add_handler ("/do.list", "list_files", "list.html")
-c.add_handler ("/do.config", "configure", "config.html")
-c.generate()
+#c = cgilib()
+#c.set_project_name ("test1")
+#c.add_handler ("/do.list", "list_files", "list.html")
+#c.add_handler ("/do.config", "configure", "config.html")
+#c.generate()
