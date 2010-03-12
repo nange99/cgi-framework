@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: CgiServlet
+Description: A servlet like cgi API
+URL: http://www.pedro.kiefer.com.br
+Version: 0.1
+Libs: -L${libdir} -lcgiservlet
+Cflags: -I${includedir}/libcgiservlet
