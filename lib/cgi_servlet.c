@@ -10,19 +10,23 @@
 #include "cgi_servlet_private.h"
 #include "template/template.h"
 
-int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_length, struct filter_mapping *filters[]) {
+int cgi_servlet_init (struct config *conf,
+                      struct url_mapping *map[],
+                      int map_length,
+                      struct filter_mapping *filters[])
+{
 	int r;
 
 	struct request *req;
 	struct response *resp;
 
-	log_init(0);
+	log_init (0);
 	log_verbose (1);
 
 	log_info ("begin cgi_servlet\n");
 
-	req = malloc (sizeof (struct request));
-	resp = malloc (sizeof (struct response));
+	req = malloc (sizeof(struct request));
+	resp = malloc (sizeof(struct response));
 
 	req->parameters = create_htable (17);
 	resp->parameters = create_htable (17);
@@ -41,11 +45,10 @@ int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_le
 	if (r < 0) {
 		goto cleanup;
 	}
-	
+
 	draw_page (req, resp);
-	
-cleanup:
-	cgi_request_free (req);
+
+	cleanup: cgi_request_free (req);
 	cgi_response_free (resp);
 
 	log_info ("end cgi_servlet\n");
@@ -53,7 +56,8 @@ cleanup:
 	return 0;
 }
 
-int process_request (struct request *req) {
+int process_request (struct request *req)
+{
 
 	req->url = NULL;
 
@@ -66,13 +70,12 @@ int process_request (struct request *req) {
 		char *path;
 		path = getenv ("PATH_INFO");
 
-		path = strchr (path+1, '/');
+		path = strchr (path + 1, '/');
 
 		req->url = malloc ((strlen (path) + 1) * sizeof(char));
 		if (req->url == NULL) {
 			// FIXME: no memory, bailout!
 		}
-
 
 		strcpy (req->url, path);
 	}
@@ -146,16 +149,18 @@ char *cgi_url_decode (char *str) {
 	return result;
 }
 
-char *cgi_url_encode (char *str) {
+char *cgi_url_encode (char *str)
+{
 
-	static char safechars[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:[]/\\=+";
+	static char safechars[] =
+	                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,;:[]/\\=+";
 	char *result, *tmp;
 	int length;
 
 	length = strlen (str) + 1;
 
-	result = malloc ( length * sizeof (char));
-	memset (result, '\0', length );
+	result = malloc (length * sizeof(char));
+	memset (result, '\0', length);
 
 	tmp = result;
 
@@ -163,7 +168,7 @@ char *cgi_url_encode (char *str) {
 		if (strchr (safechars, *str) != NULL) {
 			*tmp++ = *str++;
 		} else {
-			char buf [4];
+			char buf[4];
 			char *pbuf;
 			int current_length;
 			int i;
@@ -171,7 +176,7 @@ char *cgi_url_encode (char *str) {
 			length += 3;
 			current_length = tmp - result;
 
-			result = realloc (result, (length) * sizeof (char));
+			result = realloc (result, (length) * sizeof(char));
 
 			tmp = result + current_length;
 
@@ -190,7 +195,8 @@ char *cgi_url_encode (char *str) {
 	return result;
 }
 
-int parse_data_string (struct request *req, char *string, int length) {
+int parse_data_string (struct request *req, char *string, int length)
+{
 
 	/* name=asdf&check[1]=on&check[3]=on;session=A1s2d3F4 */
 
@@ -252,7 +258,7 @@ int parse_data_string (struct request *req, char *string, int length) {
 
 		log_debug ("[%s]\n", value);
 
-		d = malloc (sizeof (cgi_object));
+		d = malloc (sizeof(cgi_object));
 
 		d->value.u_str = value;
 		d->type = CGI_STRING;
@@ -267,11 +273,16 @@ int parse_data_string (struct request *req, char *string, int length) {
 	return 0;
 }
 
-int do_filters (struct request *req, struct response *resp) {
+int do_filters (struct request *req, struct response *resp)
+{
 	return 0;
 }
 
-int do_handler (struct url_mapping *map[], int map_length, struct request *req, struct response *resp) {
+int do_handler (struct url_mapping *map[],
+                int map_length,
+                struct request *req,
+                struct response *resp)
+{
 
 	int i;
 	struct url_mapping *current, *tmp;
@@ -294,13 +305,14 @@ int do_handler (struct url_mapping *map[], int map_length, struct request *req, 
 		log_warn ("*** could not find a handler for %s\n", req->url);
 		return -1;
 	}
-	
+
 	current->handler (req, resp);
-	
+
 	return 0;
 }
 
-int print_headers (struct response *resp) {
+int print_headers (struct response *resp)
+{
 
 	cgi_object *o;
 
@@ -314,7 +326,8 @@ int print_headers (struct response *resp) {
 	return 1;
 }
 
-int draw_page (struct request *req, struct response *resp) {
+int draw_page (struct request *req, struct response *resp)
+{
 
 	print_headers (resp);
 

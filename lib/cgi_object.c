@@ -6,7 +6,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "cgi_object.h"
+#include "cgi_servlet.h"
 
 void cgi_object_destroy (cgi_object *o)
 {
@@ -19,6 +19,12 @@ void cgi_object_destroy (cgi_object *o)
 		break;
 	case CGI_LIST:
 		cgi_list_destroy (o->value.u_hash);
+		break;
+	case CGI_TABLE:
+		break;
+	case CGI_FLOAT:
+	case CGI_INTEGER:
+	default:
 		break;
 	}
 

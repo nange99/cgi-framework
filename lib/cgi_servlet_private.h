@@ -9,7 +9,7 @@
 
 struct request {
 	char *url;
-	char method [10];
+	char method[10];
 	htable *parameters;
 };
 
@@ -28,7 +28,10 @@ struct _list {
 int parse_data_string (struct request *req, char *string, int length);
 
 int do_filters (struct request *req, struct response *resp);
-int do_handler (struct url_mapping *map[], int map_length, struct request *req, struct response *resp);
+int do_handler (struct url_mapping *map[],
+                int map_length,
+                struct request *req,
+                struct response *resp);
 
 int print_headers (struct response *resp);
 
@@ -39,4 +42,4 @@ int process_request (struct request *req);
 void cgi_request_free (struct request *req);
 void cgi_response_free (struct response *resp);
 
-#endif
+#endif /* _CGI_SERVLET_PRIVATE_H */

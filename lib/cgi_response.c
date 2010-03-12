@@ -7,11 +7,15 @@
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
 
-int cgi_response_add_parameter(struct response *resp, char *key, void *value, cgi_object_type type) {
+int cgi_response_add_parameter (struct response *resp,
+                                char *key,
+                                void *value,
+                                cgi_object_type type)
+{
 
 	cgi_object *o;
 
-	o = malloc (sizeof (cgi_object));
+	o = malloc (sizeof(cgi_object));
 
 	o->type = type;
 	switch (type) {
@@ -22,7 +26,7 @@ int cgi_response_add_parameter(struct response *resp, char *key, void *value, cg
 		o->value.u_int = (int) value;
 		break;
 	case CGI_FLOAT:
-		o->value.u_double = *(double *)value;
+		o->value.u_double = *(double *) value;
 		break;
 	case CGI_LIST:
 		o->value.u_hash = value;
@@ -36,16 +40,25 @@ int cgi_response_add_parameter(struct response *resp, char *key, void *value, cg
 	return 1;
 }
 
-void cgi_response_set_html (struct response *resp, char *file) {
+void cgi_response_set_html (struct response *resp, char *file)
+{
 	resp->html = strdup (file);
 	return;
 }
 
-int cgi_response_set_content_type (struct response *resp) {
+int cgi_response_set_content_type (struct response *resp)
+{
 	return 1;
 }
 
-int cgi_response_add_cookie (struct response *resp, char *name, char *value, char *max_age, char *path, char *domain, int secure) {
+int cgi_response_add_cookie (struct response *resp,
+                             char *name,
+                             char *value,
+                             char *max_age,
+                             char *path,
+                             char *domain,
+                             int secure)
+{
 
 	int len;
 	char *cookie;
@@ -61,7 +74,8 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 	len = sprintf (cookie, "Set-Cookie: %s=%s;", name, value);
 
 	if (max_age) {
-		cookie = realloc (cookie, (len + strlen (max_age) + 12) * sizeof(char));
+		cookie = realloc (cookie, (len + strlen (max_age) + 12)
+		                * sizeof(char));
 		if (cookie == NULL) {
 			return 0;
 		}
@@ -69,7 +83,8 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 	}
 
 	if (path) {
-		cookie = realloc (cookie, (len + strlen (path) + 12) * sizeof(char));
+		cookie = realloc (cookie, (len + strlen (path) + 12)
+		                * sizeof(char));
 		if (cookie == NULL) {
 			return 0;
 		}
@@ -77,7 +92,8 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 	}
 
 	if (domain) {
-		cookie = realloc (cookie, (len + strlen (domain) + 12) * sizeof(char));
+		cookie = realloc (cookie, (len + strlen (domain) + 12)
+		                * sizeof(char));
 		if (cookie == NULL) {
 			return 0;
 		}
@@ -98,8 +114,7 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 	}
 	sprintf (cookie, "%s\r\n", cookie);
 
-
-	o = malloc (sizeof (cgi_object));
+	o = malloc (sizeof(cgi_object));
 
 	o->value.u_str = cookie;
 	o->type = CGI_STRING;
@@ -109,12 +124,14 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 	return 1;
 }
 
-int cgi_response_add_header (struct response *resp) {
+int cgi_response_add_header (struct response *resp)
+{
 
 	return 1;
 }
 
-void cgi_response_free (struct response *resp) {
+void cgi_response_free (struct response *resp)
+{
 
 	destroy_htable (resp->parameters);
 	destroy_htable (resp->headers);
