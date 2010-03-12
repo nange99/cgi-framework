@@ -4,12 +4,11 @@
 #include <ctype.h>
 #include "util/hashtable.h"
 #include "util/list.h"
+#include "cgi_log.h"
 #include "cgi_object.h"
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
 #include "template/template.h"
-
-FILE *errfile;
 
 int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_length, struct filter_mapping *filters[]) {
 	int r;
@@ -17,9 +16,10 @@ int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_le
 	struct request *req;
 	struct response *resp;
 
-	errfile = fopen ("/tmp/cgi_servlet.log", "a+");
+	log_init(0);
+	log_verbose (1);
 
-	fprintf (errfile, "begin cgi_servlet\n");
+	log_info ("begin cgi_servlet\n");
 
 	req = malloc (sizeof (struct request));
 	resp = malloc (sizeof (struct response));
@@ -48,9 +48,7 @@ cleanup:
 	cgi_request_free (req);
 	cgi_response_free (resp);
 
-	fprintf (errfile, "end cgi_servlet\n");
-
-	fclose (errfile);
+	log_info ("end cgi_servlet\n");
 
 	return 0;
 }
@@ -61,7 +59,7 @@ int process_request (struct request *req) {
 
 	if (getenv ("REQUEST_METHOD") != NULL) {
 		strcpy (req->method, getenv ("REQUEST_METHOD"));
-		fprintf (errfile, "got method = [%s]\n", req->method);
+		log_debug ("got method = [%s]\n", req->method);
 	}
 
 	if (getenv ("PATH_INFO") != NULL) {
@@ -95,7 +93,7 @@ int process_request (struct request *req) {
 		int read;
 		char *content_data;
 
-		fprintf (errfile, "parsing post...\n");
+		log_debug ("parsing post...\n");
 
 		if (getenv ("CONTENT_LENGTH") == NULL) {
 			return 0;
@@ -103,7 +101,7 @@ int process_request (struct request *req) {
 
 		content_length = atoi (getenv ("CONTENT_LENGTH"));
 
-		fprintf (errfile, "content_length = %d\n", content_length);
+		log_debug ("content_length = %d\n", content_length);
 
 		content_data = malloc ((content_length + 1) * sizeof(char));
 		if (content_data == NULL) {
@@ -113,7 +111,7 @@ int process_request (struct request *req) {
 		read = fread (content_data, content_length, 1, stdin);
 		content_data[content_length] = '\0';
 
-		fprintf (errfile, "got content = [%s]\n", content_data);
+		log_debug ("got content = [%s]\n", content_data);
 
 		parse_data_string (req, content_data, content_length);
 
@@ -224,7 +222,7 @@ int parse_data_string (struct request *req, char *string, int length) {
 		strncpy (key, string, position);
 		key[position] = '\0';
 
-		printf ("[%s] => ", key);
+		log_debug ("[%s] => ", key);
 
 		string = aux;
 		position = 0;
@@ -252,7 +250,7 @@ int parse_data_string (struct request *req, char *string, int length) {
 
 		value = tmp;
 
-		printf ("[%s]\n", value);
+		log_debug ("[%s]\n", value);
 
 		d = malloc (sizeof (cgi_object));
 
@@ -293,7 +291,7 @@ int do_handler (struct url_mapping *map[], int map_length, struct request *req, 
 	}
 
 	if (current == NULL) {
-		fprintf (errfile, "*** could not find a handler for %s\n", req->url);
+		log_warn ("*** could not find a handler for %s\n", req->url);
 		return -1;
 	}
 	

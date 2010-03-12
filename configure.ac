@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Created by Anjuta application wizard.
 
-AC_INIT(cgi_servlet, 0.1)
+AC_INIT([cgi_servlet],[0.1])
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AC_CONFIG_HEADERS([config.h])
@@ -37,11 +37,18 @@ CFLAGS="$CFLAGS $MAYBE_WARN"
   AC_DEFINE([lint], 1, [Define to 1 if the compiler is checking for lint.])
 fi
 
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_CC
-AM_PROG_CC_STDC
+AC_PROG_CC
+AC_DIAGNOSE([obsolete],[AM_PROG_CC_STDC:
+	your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
+	`ac_cv_prog_cc_stdc'.  Remove this warning and the assignment when
+	you adjust the code.  You can also remove the above call to
+	AC_PROG_CC if you already called it elsewhere.])
+am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
+
 AC_PROG_LEX
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -53,7 +60,7 @@ YFLAGS="-d"
 
 # Checks for header files.
 AC_FUNC_ALLOCA
-AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdlib.h string.h syslog.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_INT16_T
@@ -67,9 +74,9 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memset strchr strdup])
+AC_CHECK_FUNCS([memset strchr strdup strerror tzset])
 
-AM_PROG_LIBTOOL
+LT_INIT
 
 SHAVE_INIT([m4], [enable]) # dnl Make the output pretty
 
@@ -77,9 +84,9 @@ AC_CONFIG_FILES([m4/shave
 		 m4/shave-libtool
 		 Makefile
 		 libcgiservlet.pc
-                 lib/Makefile
-                 lib/util/Makefile
+		 lib/Makefile
+         lib/util/Makefile
 		 lib/template/Makefile
-                 test/Makefile])
+         test/Makefile])
 AC_OUTPUT
 
