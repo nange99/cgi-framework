@@ -71,7 +71,11 @@ AC_CHECK_FUNCS([memset strchr strdup])
 
 AM_PROG_LIBTOOL
 
-AC_CONFIG_FILES([Makefile
+SHAVE_INIT([m4], [enable]) # dnl Make the output pretty
+
+AC_CONFIG_FILES([m4/shave
+		 m4/shave-libtool
+		 Makefile
                  lib/Makefile
                  lib/util/Makefile
 		 lib/template/Makefile
