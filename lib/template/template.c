@@ -1,71 +1,72 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "hashtable.h"
+#include "../util/hashtable.h"
 #include "tree.h"
 #include "template.h"
 #include "template_scanner.h"
 #include "template_parser.h"
+#include "../cgi_object.h"
 
-data *template_get_variable (context *c, char *variable) {
+cgi_object *template_get_variable (context *c, char *variable) {
 
 	char *v;
-	data *d;
+	cgi_object *o;
 
 	v = variable;
-	
+
 	if (strncmp (v, "request", 7) == 0) {
 		v += 8;
-		d = htable_lookup(c->request, v);
-		
-		if (d != NULL)
-			return d;
+		o = htable_lookup(c->request, v);
+
+		if (o != NULL)
+			return o;
 	} else if (strncmp (v, "response", 8) == 0) {
 		v += 9;
-		d = htable_lookup(c->response, v);
-		
-		if (d != NULL)
-			return d;
-	} else {
-		d = htable_lookup(c->variables, v);
+		o = htable_lookup(c->response, v);
 
-		if (d != NULL) {
-			return d;
+		if (o != NULL)
+			return o;
+	} else {
+		o = htable_lookup(c->variables, v);
+
+		if (o != NULL) {
+			return o;
 		}
 	}
-	
+
 	return NULL;
 }
 
-int template_register_variable_data (context *c, char *variable, data *d) {
-	
+int template_register_variable_data (context *c, char *variable, cgi_object *d) {
+
 	return htable_insert (c->variables, variable, d);
 }
 
 int template_register_variable (context *c, char *variable, void *v, int type) {
 
-	data *d;
-	
-	d = malloc (sizeof (data));
+	cgi_object *d;
+
+	d = malloc (sizeof (cgi_object));
 
 	if (type == STR) {
 		d->value.u_str = strdup ((char *) v);
-		d->type = STRING;
+		d->type = CGI_STRING;
 	}
 
 	if (type == LONG) {
 		d->value.u_int = (int) v;
-		d->type = INTEGER;
+		d->type = CGI_INTEGER;
 	}
-	
+
 	return htable_insert (c->variables, variable, d);
 }
 
-int template_register_update_variable_data (context *c, char *variable, data *d) {
-	data *tmp;
+int template_register_update_variable_data (context *c, char *variable, cgi_object *d) {
+	cgi_object *tmp;
 
 	tmp = htable_lookup (c->variables, variable);
-	
+
 	if (tmp == NULL) {
 		htable_insert (c->variables, variable, d);
 	} else {
@@ -73,21 +74,21 @@ int template_register_update_variable_data (context *c, char *variable, data *d)
 	}
 }
 
-int template_update_variable_data (context *c, char *variable, data *d) {
+int template_update_variable_data (context *c, char *variable, cgi_object *d) {
 
 	return htable_update (c->variables, variable, d);
 }
 
 int template_update_variable (context *c, char *variable, void *v, int type) {
 
-	data *d;
+	cgi_object *d;
 
 	d = htable_lookup (c->variables, variable);
 
-	if (type == LONG && d->type == INTEGER) {
+	if (type == LONG && d->type == CGI_INTEGER) {
 		d->value.u_int = (int) v;
 	}
-	
+
 	return 1;
 }
 
@@ -98,16 +99,16 @@ int template_unregister_free_variable (context *c, char *variable) {
 }
 
 int template_unregister_variable (context *c, char *variable) {
-	
+
 	htable_remove_entry (c->variables, variable);
 	return 1;
 }
 
 void template_print (node *n, context *c) {
-	
+
 	int i;
 	node *tmp;
-	
+
 	if (n->type == ROOT) {
 		if (n->children_count > 0) {
 			for (i = 0; i < n->children_count; i++) {
@@ -141,10 +142,10 @@ context * template_context_alloc (htable *req, htable *resp) {
 }
 
 int template_context_destroy (context *c) {
-	
+
 	destroy_htable (c->variables);
 	destroy_tree (c->root);
-	
+
 	free (c);
 	return 1;
 }
@@ -154,14 +155,14 @@ node *template_parse_include (context *c, char *filename) {
 	node *n;
 	FILE *f;
 	context *local;
-	
+
 	f = fopen (filename, "r");
 
 	if (f == NULL) {
 		// printf ("include not found. [%s]", filename);
 		return NULL;
 	}
-	
+
 	local = template_context_alloc (c->request, c->response);
 	destroy_htable (local->variables);
 	local->variables = c->variables;
@@ -195,10 +196,10 @@ int template_draw (char *filename, htable *req, htable *resp) {
 	}
 
 	c = template_context_alloc (req, resp);
-	
+
 	template_lex_init (&(c->scanner));
 	template_set_in (f, c->scanner);
-	
+
 	if (template_parse (c) == 0) {
 		template_print (c->root, c);
 	}
@@ -207,7 +208,7 @@ int template_draw (char *filename, htable *req, htable *resp) {
 
 	template_context_destroy (c);
 	fclose (f);
-	
+
 	return 1;
 }
 
@@ -216,7 +217,7 @@ int main (int argc, char *argv[]) {
 
 	context *c;
 	FILE *f;
-	data *d1;
+	cgi_object *d1;
 
 	f = fopen ("teste.html", "r");
 
@@ -229,7 +230,7 @@ int main (int argc, char *argv[]) {
 		printf ("no memory!\n");
 		return 1;
 	}
-	
+
 	c->root = malloc (sizeof (node));
 	c->root->type = ROOT;
 	c->root->children = NULL;
@@ -239,19 +240,19 @@ int main (int argc, char *argv[]) {
 	c->response = create_htable (3);
 	c->variables = create_htable (3);
 
-	d1 = malloc (sizeof (data));
+	d1 = malloc (sizeof (cgi_object));
 	d1->value.u_str = strdup ("teste");
 	d1->type = STRING;
 
 	htable_insert (c->request, "pedro", d1);
-	
+
 	template_lex_init (&(c->scanner));
 	template_set_in (f, c->scanner);
-	
+
 	if (template_parse (c) == 0) {
 		template_print (c->root, c);
 	}
-	
+
 	//print_tree (c->root, 0);
 
 	destroy_htable (c->request);
@@ -260,7 +261,7 @@ int main (int argc, char *argv[]) {
 	destroy_tree (c->root);
 
 	template_lex_destroy (c->scanner);
-	
+
 	free (c);
 
 	fclose (f);

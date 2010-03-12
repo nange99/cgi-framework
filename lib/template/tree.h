@@ -32,7 +32,7 @@ int destroy_elseif (node *n);
 int destroy_else (node *n);
 int destroy_foreach (node *n);
 
-void destroy_tree (node *n);
+int destroy_tree (node *n);
 
 /* recursive printer */
 int print_value (node *n, struct _context *c);

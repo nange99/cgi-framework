@@ -1,7 +1,7 @@
 #ifndef _CGI_SERVLET_PRIVATE_H
 #define _CGI_SERVLET_PRIVATE_H
 
-#include "util/data.h"
+#include "cgi_object.h"
 #include "util/hashtable.h"
 #include "util/list.h"
 
@@ -22,7 +22,7 @@ struct response {
 
 struct _list {
 	struct list_head list;
-	data *data;
+	cgi_object *data;
 };
 
 int parse_data_string (struct request *req, char *string, int length);

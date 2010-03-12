@@ -1,40 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "util/data.h"
 #include "util/hashtable.h"
 #include "util/list.h"
+#include "cgi_object.h"
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
 
-int cgi_response_add_parameter(struct response *resp, char *key, void *value, parameter_type type) {
+int cgi_response_add_parameter(struct response *resp, char *key, void *value, cgi_object_type type) {
 
-	data *d;
+	cgi_object *o;
 
-	d = malloc (sizeof (data));
-	
+	o = malloc (sizeof (cgi_object));
+
+	o->type = type;
 	switch (type) {
 	case CGI_STRING:
-		d->value.u_str = strdup (value);
-		d->type = STRING;
-		break;	
-	case CGI_INT:
-		d->value.u_int = (int) value;
-		d->type = INTEGER;
+		o->value.u_str = strdup (value);
 		break;
-	case CGI_DOUBLE:
-		d->value.u_double = *(double *)value;
-		d->type = FLOAT;
+	case CGI_INTEGER:
+		o->value.u_int = (int) value;
+		break;
+	case CGI_FLOAT:
+		o->value.u_double = *(double *)value;
 		break;
 	case CGI_LIST:
-		d->value.u_hash = value;
-		d->type = LIST;
+		o->value.u_hash = value;
 		break;
-	case CGI_ARRAY:
+	case CGI_TABLE:
 		break;
 	}
 
-	htable_insert (resp->parameters, key, d);
+	htable_insert (resp->parameters, key, o);
 
 	return 1;
 }
@@ -52,7 +49,7 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 
 	int len;
 	char *cookie;
-	data *d;
+	cgi_object *o;
 
 	cookie = malloc ((20 + strlen (name) + strlen (value)) * sizeof(char));
 
@@ -60,7 +57,7 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 		// FIXME: no memory, bailout;
 		return 0;
 	}
-	
+
 	len = sprintf (cookie, "Set-Cookie: %s=%s;", name, value);
 
 	if (max_age) {
@@ -102,13 +99,13 @@ int cgi_response_add_cookie (struct response *resp, char *name, char *value, cha
 	sprintf (cookie, "%s\r\n", cookie);
 
 
-	d = malloc (sizeof (data));
+	o = malloc (sizeof (cgi_object));
 
-	d->value.u_str = cookie;
-	d->type = STRING;
+	o->value.u_str = cookie;
+	o->type = CGI_STRING;
 
-	htable_insert (resp->headers, "cookie", d);
-	
+	htable_insert (resp->headers, "cookie", o);
+
 	return 1;
 }
 
@@ -121,9 +118,9 @@ void cgi_response_free (struct response *resp) {
 
 	destroy_htable (resp->parameters);
 	destroy_htable (resp->headers);
-	
+
 	if (resp->html != NULL)
 		free (resp->html);
-	
+
 	free (resp);
 }

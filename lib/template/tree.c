@@ -5,7 +5,7 @@
 #include "eval.h"
 #include "template.h"
 #include "../cgi_servlet_private.h"
-#include "list.h"
+#include "../util/list.h"
 
 int destroy_value (node *n) {
 
@@ -28,7 +28,7 @@ node *create_value_node (int type, void *value) {
 	n->type = VALUE;
 
 	n->destroy = destroy_value;
-	
+
 	switch (type) {
 
 	case STR:
@@ -74,7 +74,7 @@ node *create_variable_node (char *name) {
 int destroy_html (node *n) {
 	int i;
 	node *tmp;
-	
+
 	if (n->children_count > 0) {
 		for (i = 0; i < n->children_count; i++) {
 			tmp = n->children[i];
@@ -92,9 +92,9 @@ int destroy_html (node *n) {
 int print_html (node *n, struct  _context *c) {
 	int i;
 	node *tmp;
-	
+
 	printf ("%s", n->value.str);
-	
+
 	if (n->children_count > 0) {
 		for (i = 0; i < n->children_count; i++) {
 			tmp = n->children[i];
@@ -117,7 +117,7 @@ node *create_html_node (char *html) {
 
 	n->destroy = destroy_html;
 	n->print = print_html;
-	
+
 	return n;
 }
 
@@ -127,7 +127,7 @@ int destroy_include (node *n) {
 	tmp = n->children[0];
 
 	tmp->destroy (tmp);
-	
+
 	if (n->children[1] != NULL) {
 		tmp = n->children[1];
 		tmp->destroy (tmp);
@@ -148,7 +148,7 @@ int print_include (node *n, struct _context *c) {
 
 	if (root == NULL)
 		return -1;
-	
+
 	if (root->children_count > 0) {
 		for (i = 0; i < root->children_count; i++) {
 			tmp = root->children[i];
@@ -179,11 +179,11 @@ node *create_include_node (struct _context *c, node *n) {
 
 	nn->destroy = destroy_include;
 	nn->print = print_include;
-	
+
 	n->parent = nn;
 
 	free (filename);
-	
+
 	return nn;
 }
 
@@ -202,7 +202,7 @@ int destroy_echo (node *n) {
 
 int print_echo (node *n, struct _context *c) {
 	node *tmp;
-	data *value;
+	cgi_object *value;
 	tmp = n->children[0];
 
 	if (tmp->type == VARIABLE) {
@@ -210,12 +210,12 @@ int print_echo (node *n, struct _context *c) {
 
 		if (value == NULL)
 			return -1;
-		
-		if (value->type == STRING) {		
-			printf ("%s", value->value.u_str);	
-		} else if (value->type == INTEGER) {
+
+		if (value->type == CGI_STRING) {
+			printf ("%s", value->value.u_str);
+		} else if (value->type == CGI_INTEGER) {
 			printf ("%d", value->value.u_int);
-		} else if (value->type == FLOAT) {
+		} else if (value->type == CGI_FLOAT) {
 			printf ("%f", value->value.u_double);
 		}
 	} else if (tmp->type == VALUE) {
@@ -237,7 +237,7 @@ node *create_echo_node (node *n) {
 
 	nn->destroy = destroy_echo;
 	nn->print = print_echo;
-	
+
 	n->parent = nn;
 
 	return nn;
@@ -257,30 +257,30 @@ int destroy_if (node *n) {
 		tmp = n->children[1];
 		tmp->destroy (tmp);
 	}
-	
+
 	if (n->children_count > 2) {
 		for (i = 2; i < n->children_count; i++) {
 			tmp = n->children [i];
 			tmp->destroy (tmp);
 		}
 	}
-	
+
 	exp = n->value.exp;
 	exp->destroy (exp);
-	
+
 	free (n->children);
 	free (n);
 	return 1;
 }
 
 int print_if (node *n, struct _context *c) {
-	
+
 	int i, result;
 	node *tmp;
 	expr_node *exp;
 
 	exp = n->value.exp;
-	
+
 	result = eval_expression (c, exp);
 
 	if (result == 1) {
@@ -299,7 +299,7 @@ int print_if (node *n, struct _context *c) {
 			tmp->print (tmp, c);
 		}
 	}
-	
+
 	return 1;
 }
 
@@ -316,10 +316,10 @@ node *create_if_node (expr_node *exp, node *block, node *e) {
 	nn->children[1] = e;
 
 	nn->children_count = 2;
-	
+
 	nn->destroy = destroy_if;
 	nn->print = print_if;
-	
+
 	if (block != NULL)
 		block->parent = nn;
 
@@ -327,7 +327,7 @@ node *create_if_node (expr_node *exp, node *block, node *e) {
 		e->parent = nn;
 
 	return nn;
-	
+
 }
 
 int destroy_elseif (node *n) {
@@ -343,17 +343,17 @@ int destroy_elseif (node *n) {
 		tmp = n->children[1];
 		tmp->destroy (tmp);
 	}
-	
+
 	if (n->children_count > 2) {
 		for (i = 2; i < n->children_count; i++) {
 			tmp = n->children [i];
 			tmp->destroy (tmp);
 		}
 	}
-	
+
 	exp = n->value.exp;
 	exp->destroy (exp);
-	
+
 	free (n->children);
 	free (n);
 	return 1;
@@ -365,7 +365,7 @@ int print_elseif (node *n, struct _context *c) {
 	expr_node *exp;
 
 	exp = n->value.exp;
-	
+
 	result = eval_expression (c, exp);
 
 	if (result == 1) {
@@ -396,13 +396,13 @@ node *create_elseif_node (expr_node *exp, node *block, node *e) {
 
 	nn->destroy = destroy_elseif;
 	nn->print = print_elseif;
-	
+
 	if (block != NULL)
 		block->parent = nn;
 
 	if (e != NULL)
 		e->parent = nn;
-	
+
 	return nn;
 }
 
@@ -421,10 +421,10 @@ int destroy_else (node *n) {
 int print_else (node *n, struct _context *c) {
 
 	node *tmp;
-	
+
 	tmp = n->children [0];
 	tmp->print (tmp, c);
-	
+
 	return 1;
 }
 
@@ -442,7 +442,7 @@ node *create_else_node (node *block) {
 
 	nn->destroy = destroy_else;
 	nn->print = print_else;
-	
+
 	block->parent = nn;
 
 	return nn;
@@ -470,54 +470,53 @@ int print_foreach_list (list *l, node *var, node *block, struct _context *c) {
 	list *tmp;
 	struct list_head *pos;
 	char *varname;
-	data *d;
-	
+
 	varname = var->value.str;
-	
+
 	pos = (&l->list)->next;
 	tmp = list_entry (pos, list, list);
-	
+
 	template_register_variable (c, "count_", 0, LONG);
 	template_register_variable (c, "odd_", 0, LONG);
-	
+
 	list_for_each (pos, &l->list) {
 		tmp = list_entry(pos, list, list);
-		
+
 		template_register_update_variable_data (c, varname, tmp->data);
-		
+
 		block->print (block, c);
-		
+
 		template_update_variable (c, "count_", (void *) (i+1), LONG);
 		template_update_variable (c, "odd_", (void *) ((i+1)%2), LONG);
 		i++;
 	}
-	
+
 	template_unregister_variable (c, varname);
 
 	template_unregister_free_variable (c, "count_");
 	template_unregister_free_variable (c, "odd_");
-	
+
 	return 1;
 }
 
 int print_foreach (node *n, struct _context *c) {
 	node *items;
-	data *value;
-	
+	cgi_object *value;
+
 	items = n->children[1];
 	value = template_get_variable (c, items->value.str);
 
 	if (value == NULL)
 		return 0;
-	
-	if (value->type == LIST) {
+
+	if (value->type == CGI_LIST) {
 		return print_foreach_list ( (list *) value->value.u_hash, n->children[0], n->children[2], c);
 	}
-	
+
 	/*
 	template_register_variable (c, "count_", 0, LONG);
 	template_register_variable (c, "odd_", 0, LONG);
-	
+
 	for (i = 0; i < 10; i++) {
 		block->print (block, c);
 		template_update_variable (c, "count_", (void *) (i+1), LONG);
@@ -540,12 +539,12 @@ node *create_foreach_node (node *var, node *items, node *block) {
 	nn->children[1] = items;
 	nn->children[2] = block;
 	nn->children_count = 3;
-	
+
 	nn->destroy = destroy_foreach;
 	nn->print = print_foreach;
-	
+
 	return nn;
-	
+
 }
 
 node *add_chunk_node (node *cur, node *n) {
@@ -556,7 +555,7 @@ node *add_chunk_node (node *cur, node *n) {
 	int i;
 
 	new_children = NULL;
-	
+
 	if (cur != NULL) {
 		nn = cur;
 	} else {
@@ -575,11 +574,11 @@ node *add_chunk_node (node *cur, node *n) {
 	for (i = 0; i < children_count; i++ ) {
 		new_children[i] = nn->children[i];
 	}
-	
+
 	new_children[children_count] = n;
 
 	children_count++;
-	
+
 	if (nn->children != NULL)
 		free (nn->children);
 
@@ -587,11 +586,11 @@ node *add_chunk_node (node *cur, node *n) {
 	nn->children_count = children_count;
 
 	n->parent = nn;
-	
+
 	return nn;
 }
 
-void destroy_tree (node *n) {
+int destroy_tree (node *n) {
 
 	int i = 0;
 	node *tmp;
@@ -606,6 +605,8 @@ void destroy_tree (node *n) {
 
 	free (n->children);
 	free (n);
+
+	return 0;
 }
 
 void debug_print_tree (node *n, int level) {
@@ -613,7 +614,7 @@ void debug_print_tree (node *n, int level) {
 	int i = 0;
 	char *tabs;
 	node *tmp;
-	
+
 	if (n == NULL) {
 		return;
 	}
@@ -627,7 +628,7 @@ void debug_print_tree (node *n, int level) {
 	printf ("%slevel:%d -> type: %d op_type=[%d] \n", tabs, level, n->type, n->op_type);
 
 	//printf ("%s%s", tabs, n->value.str != NULL ? n->value.str : "-");
-	
+
 	if (n->children_count > 0) {
 		level++;
 		for (i = 0; i < n->children_count; i++) {

@@ -1,4 +1,3 @@
-#include "data.h"
 #ifndef HASHTABLE_H_
 #define HASHTABLE_H_
 
@@ -19,11 +18,11 @@ struct _htable_node {
   /**> next node */
   struct _htable_node *next;
   /**> calculated hash for the node */
-  unsigned long int hash; 
+  unsigned long int hash;
   /**> key */
-  char *key; 
+  char *key;
   /**> value */
-  data *data; 
+  void *data;
 };
 
 /**
@@ -31,27 +30,27 @@ struct _htable_node {
  */
 struct _htable {
   /**> maximum number of elements */
-  int size; 
+  int size;
   /**> number of allocated elements */
-  int num_elem; 
+  int num_elem;
   /**> high density factor, default is 70% full */
-  int high_fill_factor; 
+  int high_fill_factor;
   /**> low density factor, default is 30% full */
-  int low_fill_factor; 
+  int low_fill_factor;
   /**> the table containing the nodes */
-  struct _htable_node **table; 
+  struct _htable_node **table;
 };
 
 htable * create_htable (int size);
 void destroy_htable (htable *ht);
 
-int htable_insert (htable *ht, char *key, data *v);
+int htable_insert (htable *ht, char *key, void *v);
 void htable_remove (htable *ht, char *key);
 void htable_remove_entry (htable *ht, char *key);
 
 struct _htable_node *_htable_lookup (htable *ht, char *key);
-data *htable_lookup (htable *ht, char *key);
-int htable_update (htable *ht, char *key, data *d);
+void *htable_lookup (htable *ht, char *key);
+int htable_update (htable *ht, char *key, void *d);
 
 void htable_print (htable *ht);
 

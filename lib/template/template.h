@@ -1,7 +1,8 @@
 #ifndef _TEMPLATE_H
 #define _TEMPLATE_H
 
-#include "hashtable.h"
+#include "../util/hashtable.h"
+#include "../cgi_object.h"
 #include "node.h"
 
 typedef struct _context {
@@ -21,13 +22,13 @@ void template_print (node *n, context *c);
 
 int template_draw (char *filename, htable *req, htable *resp);
 
-data *template_get_variable (context *c, char *variable);
+cgi_object *template_get_variable (context *c, char *variable);
 int template_register_variable (context *c, char *variable, void *v, int type);
-int template_register_variable_data (context *c, char *variable, data *d);
+int template_register_variable_data (context *c, char *variable, cgi_object *o);
 int template_update_variable (context *c, char *variable, void *v, int type);
-int template_update_variable_data (context *c, char *variable, data *d);
+int template_update_variable_data (context *c, char *variable, cgi_object *o);
 
-int template_register_update_variable_data (context *c, char *variable, data *d);
+int template_register_update_variable_data (context *c, char *variable, cgi_object *o);
 
 int template_unregister_variable (context *c, char *variable);
 int template_unregister_free_variable (context *c, char *variable);

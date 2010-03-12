@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hashtable.h"
-#include "data.h"
+#include "../cgi_object.h"
 #include "hash.h"
 
 #ifdef DEBUG
@@ -34,8 +34,8 @@
 htable * create_htable (int size) {
 
 	htable *ht;
-	
-	if (size < 1) 
+
+	if (size < 1)
 		return NULL;
 
 	if ( (ht = malloc (sizeof (htable))) == NULL )
@@ -63,16 +63,16 @@ void destroy_htable (htable *ht) {
 	int i;
 	struct _htable_node *hnode, *temp;
 
-	if (ht == NULL) 
+	if (ht == NULL)
 		return;
 
 	for (i=0; i<ht->size; i++) {
-		hnode = ht -> table [i]; 
+		hnode = ht -> table [i];
 		while (hnode != NULL) {
 			temp = hnode;
 			hnode = hnode -> next;
 			free (temp->key);
-			destroy_data (temp->data);
+			cgi_object_destroy ((cgi_object *)temp->data);
 			free (temp);
 		}
 	}
@@ -83,13 +83,13 @@ void destroy_htable (htable *ht) {
 }
 
 /**
- * Insert a pair key -> value to the hash table. 
+ * Insert a pair key -> value to the hash table.
  *
  * @param ht a hash table object.
  * @param key the key.
  * @param v a data object as value.
  */
-int htable_insert (htable *ht, char *key, data *v) {
+int htable_insert (htable *ht, char *key, void *v) {
 
 	struct _htable_node *new_hnode;
 	struct _htable_node *cur_hnode;
@@ -103,7 +103,7 @@ int htable_insert (htable *ht, char *key, data *v) {
 	if (new_hnode == NULL)
 		return 1;
 
-	//printf ("looking up...\n"); 
+	//printf ("looking up...\n");
 
 	cur_hnode = _htable_lookup (ht, key);
 
@@ -117,7 +117,7 @@ int htable_insert (htable *ht, char *key, data *v) {
 	new_hnode->data = v;
 	new_hnode->next = ht->table [hashpos];
 
-	ht->table [hashpos] = new_hnode; 
+	ht->table [hashpos] = new_hnode;
 	ht->num_elem++;
 
 	// tries to expand the hashtable
@@ -145,8 +145,8 @@ void htable_remove (htable *ht, char *key) {
 	if (cur_hnode == NULL)
 		return;
 
-	free (cur_hnode->key); 
-	destroy_data (cur_hnode->data);
+	free (cur_hnode->key);
+	cgi_object_destroy ((cgi_object *) cur_hnode->data);
 	free (cur_hnode);
 
 	ht->table [hashpos] = NULL;
@@ -170,9 +170,9 @@ void htable_remove_entry (htable *ht, char *key) {
 	if (cur_hnode == NULL)
 		return;
 
-	free (cur_hnode->key); 
+	free (cur_hnode->key);
 	free (cur_hnode);
-	
+
 	ht->table [hashpos] = NULL;
 	ht->num_elem--;
 
@@ -183,7 +183,7 @@ void htable_remove_entry (htable *ht, char *key) {
 
 }
 
-int htable_update (htable *ht, char *key, data *d) {
+int htable_update (htable *ht, char *key, void *d) {
 
 	struct _htable_node *cur_hnode;
 	unsigned long int hashval = hash (key, strlen(key), HASH_INIT_VAL);
@@ -201,7 +201,7 @@ int htable_update (htable *ht, char *key, data *d) {
 }
 /**
  * Internal hash table lookup implementation.
- * 
+ *
  * @param ht a hash table object.
  * @param key the key to be found in the hash table.
  * @return an _htable_node object.
@@ -233,7 +233,7 @@ struct _htable_node *_htable_lookup (htable *ht, char *key) {
  * @param key the key to be found in the hash table.
  * @return returns the data object if the key exists in the hash table, otherwise returns null.
  */
-data *htable_lookup (htable *ht, char *key) {
+void *htable_lookup (htable *ht, char *key) {
 
 	struct _htable_node *cur_hnode;
 
@@ -241,7 +241,7 @@ data *htable_lookup (htable *ht, char *key) {
 
 	cur_hnode = _htable_lookup (ht, key);
 
-	if (cur_hnode != NULL) 
+	if (cur_hnode != NULL)
 		return cur_hnode -> data;
 
 	return NULL;
@@ -261,9 +261,10 @@ void htable_print (htable *ht) {
 	printf ("{\n");
 
 	for (i=0; i<ht->size; i++) {
-		hnode = ht -> table [i]; 
+		hnode = ht -> table [i];
 		while (hnode != NULL) {
 			printf ("\t[%s]->", hnode -> key);
+			/*
 			switch (hnode -> data -> type) {
 				case STRING:
 					printf ("[%s]\n", hnode->data->value.u_str);
@@ -274,6 +275,7 @@ void htable_print (htable *ht) {
 				case FLOAT:
 					printf ("[%f]\n", hnode->data->value.u_double);
 			}
+			*/
 			hnode = hnode -> next;
 		}
 	}
@@ -297,7 +299,7 @@ int htable_num_elements (htable *ht) {
 /**
  * Set the high density factor, that is, when should the hash table expand
  * its maximum number of stored elements
- * 
+ *
  *
  * @param ht a hash table object.
  * @param fill_factor the high density factor.
@@ -309,7 +311,7 @@ void htable_set_resize_high_density (htable *ht, int fill_factor) {
 /**
  * Set the low density factor, that is, when should the hash table shrink
  * its maximum number of stored elements
- * 
+ *
  *
  * @param ht a hash table object.
  * @param fill_factor the low density factor.
@@ -319,7 +321,7 @@ void htable_set_resize_low_density (htable *ht, int fill_factor) {
 }
 
 /**
- * Internal expand function. If the number of stored elements exceeds 
+ * Internal expand function. If the number of stored elements exceeds
  * one of the density factors it expands the hashtable size by a
  * factor of 2.
  *
@@ -343,7 +345,7 @@ void _htable_expand (htable *ht) {
 }
 
 /**
- * Internal shrink function. If the number of stored elements exceeds 
+ * Internal shrink function. If the number of stored elements exceeds
  * one of the density factors it shrink the hashtable size by a
  * factor of 2.
  *
