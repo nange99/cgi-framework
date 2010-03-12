@@ -76,6 +76,7 @@ SHAVE_INIT([m4], [enable]) # dnl Make the output pretty
 AC_CONFIG_FILES([m4/shave
 		 m4/shave-libtool
 		 Makefile
+		 libcgiservlet.pc
                  lib/Makefile
                  lib/util/Makefile
 		 lib/template/Makefile

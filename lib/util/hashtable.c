@@ -396,8 +396,6 @@ void _htable_resize_size (htable *ht, int size) {
 	for (i=0; i<ht->size; i++) {
 		cur_hnode = old_table [i];
 		while (cur_hnode != NULL) {
-			//printf ("i=>[%d] adding to new ht!\n", i);
-
 			temp = cur_hnode;
 			next_temp = (cur_hnode -> next) ? cur_hnode -> next : NULL;
 
@@ -410,7 +408,6 @@ void _htable_resize_size (htable *ht, int size) {
 			ht->num_elem++;
 
 			cur_hnode = next_temp;
-
 		}
 	}
 

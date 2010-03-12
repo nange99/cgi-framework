@@ -38,8 +38,13 @@ int cgi_servlet_init (struct config *conf, struct url_mapping *map[], int map_le
 
 	r = do_handler (map, map_length, req, resp);
 
+	if (r < 0) {
+		goto cleanup;
+	}
+	
 	draw_page (req, resp);
-
+	
+cleanup:
 	cgi_request_free (req);
 	cgi_response_free (resp);
 
@@ -287,10 +292,13 @@ int do_handler (struct url_mapping *map[], int map_length, struct request *req, 
 		}
 	}
 
-	if (current != NULL) {
-		current->handler (req, resp);
+	if (current == NULL) {
+		fprintf (errfile, "*** could not find a handler for %s\n", req->url);
+		return -1;
 	}
-
+	
+	current->handler (req, resp);
+	
 	return 0;
 }
 
