@@ -11,6 +11,7 @@ struct request {
 	char *url;
 	char method[10];
 	htable *parameters;
+	void *session;
 };
 
 struct response {

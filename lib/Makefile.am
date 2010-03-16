@@ -10,6 +10,10 @@ libcgiservlet_la_SOURCES = \
 	cgi_servlet.h     \
 	cgi_request.c \
 	cgi_response.c \
+	cgi_session.c \
+	cgi_session.h \
+	cgi_cookie.c \
+	cgi_cookie.h \
 	cgi_object.c \
 	cgi_log.c \
 	cgi_list.c \

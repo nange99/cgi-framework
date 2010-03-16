@@ -11,7 +11,7 @@
 #include "template/template.h"
 
 int cgi_servlet_init (struct config *conf,
-                      struct url_mapping *map[],
+                      struct url_mapping **map,
                       int map_length,
                       struct filter_mapping *filters[])
 {
@@ -27,6 +27,8 @@ int cgi_servlet_init (struct config *conf,
 
 	req = malloc (sizeof(struct request));
 	resp = malloc (sizeof(struct response));
+
+	req->session = NULL;
 
 	req->parameters = create_htable (17);
 	resp->parameters = create_htable (17);
@@ -48,7 +50,8 @@ int cgi_servlet_init (struct config *conf,
 
 	draw_page (req, resp);
 
-	cleanup: cgi_request_free (req);
+cleanup:
+	cgi_request_free (req);
 	cgi_response_free (resp);
 
 	log_info ("end cgi_servlet\n");

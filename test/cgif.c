@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../lib/cgi_servlet.h"
+#include "../lib/cgi_session.h"
 
 int handle_test (struct request *req, struct response *resp);
 int handle_list (struct request *req, struct response *resp);
@@ -57,6 +58,8 @@ int handle_list (struct request *req, struct response *resp) {
 	char *v;
 	void *valor;
 	int type;
+
+	cgi_session_init (req);
 
 	l = cgi_list_create ();
 
