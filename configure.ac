@@ -60,7 +60,7 @@ YFLAGS="-d"
 
 # Checks for header files.
 AC_FUNC_ALLOCA
-AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdlib.h string.h syslog.h unistd.h])
+AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdarg.h stdlib.h string.h [sys/param.h] syslog.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_INT16_T
@@ -72,9 +72,11 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT8_T
 
 # Checks for library functions.
+AC_FUNC_VPRINTF
+AC_FUNC_MEMCMP
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memset strchr strdup strerror tzset])
+AC_CHECK_FUNCS([memset strchr strdup strerror tzset strndup strerror vsnprintf vasprintf open vsyslog strncasecmp])
 
 LT_INIT
 
@@ -86,6 +88,7 @@ AC_CONFIG_FILES([m4/shave
 		 libcgiservlet.pc
 		 lib/Makefile
          lib/util/Makefile
+         lib/json/Makefile
 		 lib/template/Makefile
          test/Makefile])
 AC_OUTPUT

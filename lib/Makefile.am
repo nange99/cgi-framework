@@ -1,6 +1,7 @@
 SUBDIRS = \
 	util \
-	template
+    json \
+	template 
 
 lib_LTLIBRARIES = \
 	libcgiservlet.la
@@ -21,6 +22,7 @@ libcgiservlet_la_SOURCES = \
 
 libcgiservlet_la_LIBADD = \
 	./util/libutil.la \
+    ./json/libjson.la \
 	./template/libtemplate.la
 
 libcgiservlet_la_includedir=$(includedir)/libcgiservlet
