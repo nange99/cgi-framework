@@ -5,6 +5,8 @@ noinst_LTLIBRARIES = \
 libutil_la_SOURCES = \
 	hash.h \
 	hash.c \
+	sha1.h \
+	sha1.c \
 	hashtable.h \
 	hashtable.c \
 	list.h
