@@ -53,7 +53,6 @@ AC_PROG_LEX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 AC_HEADER_STDC
 
 YFLAGS="-d"
@@ -78,7 +77,7 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset strchr strdup strerror tzset strndup strerror vsnprintf vasprintf open vsyslog strncasecmp])
 
-LT_INIT
+AM_PROG_LIBTOOL
 
 SHAVE_INIT([m4], [enable]) # dnl Make the output pretty
 
