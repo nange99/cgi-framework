@@ -22,16 +22,16 @@ configure:
 	autoreconf -i
 
 install:
-	if [ ! -f Makefile ]; then \
+	if [ -f Makefile ]; then \
 		$(MAKE) install; \
 	fi
 
 clean:
-	if [ ! -f Makefile ]; then \
+	if [ -f Makefile ]; then \
 		$(MAKE) clean; \
 	fi
 
 distclean:
-	if [ ! -f Makefile ]; then \
+	if [ -f Makefile ]; then \
 		$(MAKE) distclean; \
 	fi
