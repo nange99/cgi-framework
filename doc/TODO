@@ -1,0 +1,21 @@
+- receber arrays pelo request dos tipos:
+  
+  a)
+    list[0][xyz] = a
+    list[0][abc] = b
+    list[1][xyz] = c
+    list[1][abc] = d
+    list[3][qwer] = asdf
+  
+  b) 
+    list[0] = asdf
+    list[1] = qwer
+    list[2] = zxcv
+    list[4] = poiu
+    
+- passar env do servlet para o template (request e response);
+  - implementar foreach
+  - implementar echo
+  
+- terminar include (80% feito)
+

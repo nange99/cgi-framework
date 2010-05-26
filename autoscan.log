@@ -1,0 +1,36 @@
+autoscan: warning: missing AC_CHECK_FUNCS([strerror]) wanted by: 
+	lib/cgi_log.c:86
+	lib/cgi_log.c:90
+	lib/cgi_log.c:93
+	lib/cgi_log.c:134
+	lib/cgi_log.c:136
+autoscan: warning: missing AC_CHECK_FUNCS([tzset]) wanted by: 
+	lib/cgi_log.c:44
+autoscan: warning: missing AC_CHECK_HEADERS([syslog.h]) wanted by: 
+	lib/cgi_log.c:24
+autoscan: warning: missing AC_C_INLINE wanted by: 
+	lib/util/list.h:39
+	lib/util/list.h:57
+	lib/util/list.h:70
+	lib/util/list.h:82
+	lib/util/list.h:93
+	lib/util/list.h:104
+	lib/util/list.h:115
+	lib/util/list.h:126
+	lib/util/list.h:137
+	lib/util/list.h:142
+	lib/util/list.h:161
+	lib/util/list.h:174
+autoscan: warning: missing AC_PROG_CXX wanted by: 
+	ltmain.sh:677
+	ltmain.sh:1015
+	ltmain.sh:1022
+	ltmain.sh:1022
+	ltmain.sh:1022
+	ltmain.sh:1022
+	ltmain.sh:1031
+	ltmain.sh:1037
+	ltmain.sh:1037
+	ltmain.sh:1037
+	ltmain.sh:1037
+	autogen.sh:90

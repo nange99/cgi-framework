@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>Asdf</title>
+<style>
+
+body {
+  background-color: #ccc;
+}
+
+.odd {
+  background-color: #eee;
+}
+
+</style>
+</head>
+<body>
+
+<?include "html/header.html" ?><br/>
+
+Request parameter asdf=[<?echo request.asdf ?>]<br/>
+
+<br/>
+<br/>
+
+<form method="POST" action="/app/do.list">
+<input type="hidden" name="detail" value="1"/>
+Nome: <input type="text" name="nome"/>
+<input type="submit" value="Enviar" />
+</form>
+
+<p>
+Response values:<br/>
+var teste = <?echo response.teste ?> <br/>
+var number = <?echo response.number ?><br/>
+var pi = <?echo response.pi ?></br>
+</p>
+
+
+<?if (request.asdf == "teste") then ?>
+if teste;<br/>
+<?elseif (request.asdf == "pedro") then?>
+elseif pedro;<br/>
+<?else ?>
+else none;<br/>
+<?endif ?>
+
+<table border="1">
+<?foreach row in request.table?>
+<?if (odd_ == 1) then?>
+<tr class="odd">
+<?else ?>
+<tr>
+<?endif?>
+<td> <?echo count_ ?> </td>
+<td> line_count: <?echo odd_ ?> </td>
+</tr>
+<?endforeach ?>
+</table>
+
+</body>
+</html>

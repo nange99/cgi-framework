@@ -1,0 +1,126 @@
+
+Linguagem dos templates:
+
+Todos os comandos ficam entre <? ?>
+
+existem duas variáveis globais registradas, que contém todos os dados necessários para gerar a página
+  - request:
+  	contém todos os dados enviados no request (tanto do GET quanto POST).
+  - response:
+  	contém os dados definidos pelo usuário do framework
+  	
+os dados são acessados sempre da seguinte maneira:
+   response.teste => retorna variável registrada como teste na aplicação
+   request.detail => retorna variável detail do request (ie.: app/do.list?detail=1)
+
+A linguagem possui os seguintes comandos disponíveis:
+
+  - echo	escreve variáveis exportadas pelo cgi;
+  - include	inclui arquivos (base é o document_root do wnserver)
+
+  - if		
+  - elseif
+  - else
+  - endif
+
+  - foreach	itera sobre list / tabela
+  - endforeach
+ 
+=== echo ===
+Escreve variáveis exportadas pelo CGI; Também pode escrever strings entre aspas duplas;
+
+Exemplos:
+  <? echo request.asdf ?>
+  escreve o parametro asdf que está armazenado em request;
+  
+  <? echo response.qwer ?>
+  escreve o parametro qwer que está armazenado em response;
+ 
+=== include ===
+Inclui arquivo definido entre aspas ou através de uma variável após a keyword include.
+O arquivo incluido será processado pelo mesmo sistema de templates, com todas as variáveis expostas que
+foram exportadas para o arquivo que está sendo processado atualmente.
+
+Exemplo:
+  <?include "html/menu.html" ?>
+  <?include resquest.inc ?>
+  
+=== condições ===
+
+Exemplo de bloco de if:
+
+<?if ( response.valor1 == 2 ) then?>
+...
+<?elseif ( response.valor1 == 3) then?>
+
+<?else ?>
+
+<?endif ?>
+
+Os parenteses nas expressões são opcionais.
+
+Os seguintes operadores são suportados:
+ == -> compara se é igual, aceita variáveis, expressões, strings e inteiros
+ != -> compara se é diferente, aceita variáveis, expressões, strings e inteiros
+ >= -> aceita variáveis e inteiros em ambos lados da expressão 
+ >  -> aceita variáveis e inteiros em ambos lados da expressão 
+ <= -> aceita variáveis e inteiros em ambos lados da expressão 
+ <  -> aceita variáveis e inteiros em ambos lados da expressão 
+ && -> realiza a operação AND entre duas expressões
+ || -> realiza a operação OR entre duas expressões
+ 
+Precedência da avaliação das expressões (mais informações e exemplos em expr.html)
+<source>
+( a ) && (b || d)
+op_type=[AND] 
+ |--> op_type=[VALUE] 
+ |--> op_type=[OR] 
+	|--> op_type=[VALUE] 
+	|--> op_type=[VALUE] 
+
+( a ) || b && d
+op_type=[OR] 
+ |--> op_type=[VALUE] 
+ |--> op_type=[AND] 
+	 |--> op_type=[VALUE] 
+	 |--> op_type=[VALUE] 
+
+a || b < 2
+op_type=[OR] 
+ |--> op_type=[VALUE] 
+ |--> op_type=[LESS] 
+	|--> op_type=[VALUE] 
+	|--> op_type=[VALUE] 
+
+a < 2 == 0
+op_type=[EQUAL] 
+ |--> op_type=[LESS] 
+	 |--> op_type=[VALUE] 
+	 |--> op_type=[VALUE] 
+ |--> op_type=[VALUE] 
+
+a <= 2 == 0
+op_type=[EQUAL] 
+ |--> op_type=[LESS_EQUAL] 
+	 |--> op_type=[VALUE] 
+	 |--> op_type=[VALUE] 
+ |--> op_type=[VALUE] 
+</source>
+
+
+=== foreach ===
+
+O comando foreach intera sobre o conteúdo de um array ou de uma lista que foi exportada pela aplicação / request.
+
+Possui a seguinte sintaxe:
+<?foreach row in request.table ?>
+  ...
+  <?echo row.valor2 ?>
+  ...
+<?endforeach ?>
+
+A variável row vai receber o valor da linha para cada interação do loop, até que se tenha percorrido toda a lista/tabela.
+O conteúdo até a tag endforeach é repetido as n vezes conforme o número de linhas da tabela.
+
+Além da variável definida para receber o valor da linha, também são geradas mais duas variáveis a count_ e a odd_,
+a primeira é um contador, incrementado a cada interação, a segunda indica se a linha é par ou impar.
