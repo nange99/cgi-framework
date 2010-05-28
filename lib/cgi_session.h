@@ -10,10 +10,11 @@
 
 #include "cgi_servlet_private.h"
 
-#define SESSION_COOKIE	"CGISID"
+#define SESSION_COOKIE	"sid"
 
 struct _session {
 	char *id;
+	char *filename;
 	int initialized;
 	int headers;
 };
@@ -21,6 +22,6 @@ struct _session {
 char *_session_create_id();
 
 int cgi_session_init (struct request *req);
-int cgi_session_destroy (struct request *req);
+int cgi_session_free (struct request *req);
 
 #endif /* CGI_SESSION_H_ */

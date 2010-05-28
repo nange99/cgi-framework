@@ -8,11 +8,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
 #include "util/sha1.h"
 #include "cgi_cookie.h"
 #include "cgi_session.h"
 
-char *_session_create_id ()
+#define SESSION_PATH	"/var/tmp"
+
+char *_session_create_id()
 {
 	sha_ctx hashctx;
 	char buf[58];
@@ -22,52 +29,140 @@ char *_session_create_id ()
 
 	gettimeofday(&tv, NULL);
 
-	if (getenv ("REMOTE_ADDR") != NULL) {
-		remote_addr = getenv ("REMOTE_ADDR");
+	if (getenv("REMOTE_ADDR") != NULL) {
+		remote_addr = getenv("REMOTE_ADDR");
 	}
 
-	snprintf ( (char * )&buf, 58, "%.15s%ld%ldcgif", remote_addr ? remote_addr : "", tv.tv_sec, (long int)tv.tv_usec);
+	snprintf((char * )&buf, 58, "%.15s%ld%ldcgif", remote_addr ? remote_addr : "", tv.tv_sec, (long int)tv.tv_usec);
 
-	sha1_init (&hashctx);
-	sha1_update (&hashctx, (unsigned char *) buf, strlen(buf));
-	sha1_final (sha1, &hashctx);
+	sha1_init(&hashctx);
+	sha1_update(&hashctx, (unsigned char *) buf, strlen(buf));
+	sha1_final(sha1, &hashctx);
 
-	return sha1_to_hex (sha1);
+	return strdup(sha1_to_hex(sha1));
 }
 
-int cgi_session_init (struct request *req)
+int _session_create_file(char *fname)
+{
+	int f;
+
+	f = open(fname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+	if (!f) {
+		return 0;
+	}
+	close(f);
+
+	return 1;
+}
+
+struct _session *_session_init(struct request *req)
+{
+	struct _session *s;
+	int len;
+
+	s = malloc(sizeof(struct _session));
+
+	if (s == NULL)
+		return 0;
+
+	s->id = _session_create_id();
+	printf("session id: %s\n", s->id);
+
+	len = strlen(s->id) + strlen(SESSION_PATH) + 2;
+	s->filename = malloc(len * sizeof(char));
+	if (s->filename == NULL)
+		return 0;
+
+	snprintf(s->filename, len, "%s/%s", SESSION_PATH, s->id);
+
+	_session_create_file(s->filename);
+
+	cgi_cookie_add(req, SESSION_COOKIE, s->id, 0, 0, 0, 0);
+
+	s->initialized = 1;
+
+	return s;
+}
+
+int cgi_session_init(struct request *req)
 {
 	char *sid;
+	int len;
+	int fp;
 	struct _session *s;
 
 	if (req->session != NULL) {
-		s = (struct _session *)req->session;
+		s = (struct _session *) req->session;
 		if (s->initialized) {
 			return 0;
 		}
 	}
 
-	if (cgi_cookie_get_value (req, SESSION_COOKIE) != NULL) {
-		sid = cgi_cookie_get_value (req, SESSION_COOKIE);
+	if (cgi_cookie_get_value(req, SESSION_COOKIE) != NULL) {
+		char *path;
+		sid = cgi_cookie_get_value(req, SESSION_COOKIE);
 
-	} else {
-		sid = _session_create_id();
-		printf ("session id: %s\n", sid);
+		len = strlen(sid) + strlen(SESSION_PATH) + 2;
+		path = malloc(len * sizeof(char));
+		if (path == NULL)
+			return 0;
 
-		s = malloc (sizeof (struct _session));
+		snprintf(path, len, "%s/%s", SESSION_PATH, sid);
 
-		s->id = sid;
+		errno = 0;
+		fp = open (path, O_RDWR);
+		if (errno == ENOENT) {
+			/* file doesn't exist */
+			s = _session_init(req);
+			req->session = s;
+
+			free(path);
+
+			return 1;
+		}
+
+		s = malloc(sizeof(struct _session));
+
+		if (s == NULL)
+			return 0;
+
+		s->id = strdup(sid);
+		s->filename = strdup (path);
 		s->initialized = 1;
 
 		req->session = s;
 
+		free(path);
+	} else {
+		s = _session_init(req);
+		req->session = s;
 		return 1;
 	}
 
 }
 
-int cgi_session_destroy (struct request *req)
+int cgi_session_free(struct request *req)
 {
+	struct _session *s;
+
+	s = (struct _session *)req->session;
+
+	free(s->id);
+	free(s->filename);
+	free(s);
+
+	req->session = NULL;
 
 	return 0;
+}
+
+void cgi_session_destroy(struct request *req)
+{
+	struct _session *s;
+
+	s = (struct _session *)req->session;
+
+	remove (s->filename);
+
+	cgi_cookie_remove(req, SESSION_COOKIE);
 }
