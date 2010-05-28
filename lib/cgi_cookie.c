@@ -219,9 +219,25 @@ void cgi_cookie_add(struct request *req,
 
 	cookie->name = strdup (name);
 	cookie->value = strdup (value);
-	cookie->max_age = strdup (max_age);
-	cookie->path = strdup (path);
-	cookie->domain = strdup (domain);
+
+	if (max_age) {
+		cookie->max_age = strdup (max_age);
+	} else {
+		cookie->max_age = NULL;
+	}
+
+	if (path) {
+		cookie->path = strdup (path);
+	} else {
+		cookie->path = NULL;
+	}
+
+	if (domain) {
+		cookie->domain = strdup (domain);
+	} else {
+		cookie->domain = NULL;
+	}
+
 	cookie->secure = secure;
 	cookie->send = 1;
 
