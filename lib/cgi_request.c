@@ -22,7 +22,9 @@ char *cgi_request_get_parameter (struct request *req, char *name)
 
 void cgi_request_free (struct request *req)
 {
+	cgi_cookie_destroy(req);
 
+	destroy_htable (req->headers);
 	destroy_htable (req->parameters);
 
 	if (req->url != NULL)

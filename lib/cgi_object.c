@@ -8,6 +8,14 @@
 #include <stdlib.h>
 #include "cgi_servlet.h"
 
+cgi_object *cgi_object_init()
+{
+	cgi_object *o;
+
+	o = malloc(sizeof(cgi_object));
+
+	return o;
+}
 void cgi_object_destroy (cgi_object *o)
 {
 	if (o == NULL)
@@ -24,6 +32,7 @@ void cgi_object_destroy (cgi_object *o)
 		break;
 	case CGI_FLOAT:
 	case CGI_INTEGER:
+	case CGI_COOKIES:
 	default:
 		break;
 	}

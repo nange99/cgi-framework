@@ -9,7 +9,7 @@
 #define CGI_OBJECT_H_
 
 typedef enum cgi_object_type {
-	CGI_STRING, CGI_INTEGER, CGI_FLOAT, CGI_LIST, CGI_TABLE
+	CGI_STRING, CGI_INTEGER, CGI_FLOAT, CGI_LIST, CGI_TABLE, CGI_COOKIES
 } cgi_object_type;
 
 typedef struct {
@@ -22,6 +22,7 @@ typedef struct {
 	} value;
 } cgi_object;
 
+cgi_object *cgi_object_init();
 void cgi_object_destroy (cgi_object *o);
 
 #endif /* CGI_OBJECT_H_ */

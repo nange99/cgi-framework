@@ -33,8 +33,11 @@ int cgi_servlet_init (struct config *conf,
 	req->parameters = create_htable (17);
 	resp->parameters = create_htable (17);
 
+	req->headers = create_htable(13);
 	resp->headers = create_htable (13);
 	resp->html = NULL;
+
+	cgi_cookie_init(req);
 
 	r = process_request (req);
 
