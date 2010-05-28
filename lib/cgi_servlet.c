@@ -10,54 +10,54 @@
 #include "cgi_servlet_private.h"
 #include "template/template.h"
 
-int cgi_servlet_init (struct config *conf,
-                      struct url_mapping **map,
-                      int map_length,
-                      struct filter_mapping *filters[])
+int cgi_servlet_init(struct config *conf,
+                     struct url_mapping **map,
+                     int map_length,
+                     struct filter_mapping *filters[])
 {
 	int r;
 
 	struct request *req;
 	struct response *resp;
 
-	log_init (0);
-	log_verbose (1);
+	log_init(0);
+	log_verbose(1);
 
-	log_info ("begin cgi_servlet\n");
+	log_info("begin cgi_servlet\n");
 
-	req = malloc (sizeof(struct request));
-	resp = malloc (sizeof(struct response));
+	req = malloc(sizeof(struct request));
+	resp = malloc(sizeof(struct response));
 
 	req->session = NULL;
 
-	req->parameters = create_htable (17);
-	resp->parameters = create_htable (17);
+	req->parameters = create_htable(17);
+	resp->parameters = create_htable(17);
 
 	req->headers = create_htable(13);
-	resp->headers = create_htable (13);
+	resp->headers = create_htable(13);
 	resp->html = NULL;
 
 	cgi_cookie_init(req);
 
-	r = process_request (req);
+	r = process_request(req);
 
 	/*printf("method: %s\n", req.method);*/
 
 	/*r = do_filters (&req, &resp);*/
 
-	r = do_handler (map, map_length, req, resp);
+	r = do_handler(map, map_length, req, resp);
 
 	if (r < 0) {
 		goto cleanup;
 	}
 
-	draw_page (req, resp);
+	draw_page(req, resp);
 
 cleanup:
-	cgi_request_free (req);
-	cgi_response_free (resp);
+	cgi_request_free(req);
+	cgi_response_free(resp);
 
-	log_info ("end cgi_servlet\n");
+	log_info("end cgi_servlet\n");
 
 	return 0;
 }
@@ -80,7 +80,7 @@ int process_request (struct request *req)
 
 		req->url = malloc ((strlen (path) + 1) * sizeof(char));
 		if (req->url == NULL) {
-			// FIXME: no memory, bailout!
+			/* FIXME: no memory, bailout! */
 		}
 
 		strcpy (req->url, path);
@@ -201,7 +201,7 @@ char *cgi_url_encode (char *str)
 	return result;
 }
 
-int parse_data_string (struct request *req, char *string, int length)
+int parse_data_string(struct request *req, char *string, int length)
 {
 
 	/* name=asdf&check[1]=on&check[3]=on;session=A1s2d3F4 */
@@ -214,7 +214,7 @@ int parse_data_string (struct request *req, char *string, int length)
 	char *key, *value;
 	cgi_object *d;
 
-	str_length = strlen (string);
+	str_length = strlen(string);
 	aux = string;
 	while (*string) {
 		position = 0;
@@ -227,14 +227,14 @@ int parse_data_string (struct request *req, char *string, int length)
 			aux++;
 		}
 
-		key = malloc ((position + 1) * sizeof(char));
+		key = malloc((position + 1) * sizeof(char));
 		if (key == NULL) {
 			// FIXME: no memory, bailout!
 		}
-		strncpy (key, string, position);
+		strncpy(key, string, position);
 		key[position] = '\0';
 
-		log_debug ("[%s] => ", key);
+		log_debug("[%s] => ", key);
 
 		string = aux;
 		position = 0;
@@ -247,31 +247,31 @@ int parse_data_string (struct request *req, char *string, int length)
 			aux++;
 		}
 
-		value = malloc ((position + 1) * sizeof(char));
+		value = malloc((position + 1) * sizeof(char));
 		if (value == NULL) {
 			// FIXME: no memory, bailout!
 		}
-		strncpy (value, string, position);
+		strncpy(value, string, position);
 		value[position] = '\0';
 
-		tmp = cgi_url_decode (value);
+		tmp = cgi_url_decode(value);
 
 		if (tmp != NULL) {
-			free (value);
+			free(value);
 		}
 
 		value = tmp;
 
-		log_debug ("[%s]\n", value);
+		log_debug("[%s]\n", value);
 
-		d = malloc (sizeof(cgi_object));
+		d = malloc(sizeof(cgi_object));
 
 		d->value.u_str = value;
 		d->type = CGI_STRING;
 
-		htable_insert (req->parameters, key, d);
+		htable_insert(req->parameters, key, d);
 
-		free (key);
+		free(key);
 
 		string = aux;
 	}
@@ -284,10 +284,10 @@ int do_filters (struct request *req, struct response *resp)
 	return 0;
 }
 
-int do_handler (struct url_mapping *map[],
-                int map_length,
-                struct request *req,
-                struct response *resp)
+int do_handler(struct url_mapping *map[],
+               int map_length,
+               struct request *req,
+               struct response *resp)
 {
 
 	int i;
@@ -301,43 +301,43 @@ int do_handler (struct url_mapping *map[],
 
 	for (i = 0; i < map_length; i++) {
 		tmp = (struct url_mapping *) &map[i * 2];
-		if (strcmp (req->url, tmp->url) == 0) {
+		if (strcmp(req->url, tmp->url) == 0) {
 			current = tmp;
 			break;
 		}
 	}
 
 	if (current == NULL) {
-		log_warn ("*** could not find a handler for %s\n", req->url);
+		log_warn("*** could not find a handler for %s\n", req->url);
 		return -1;
 	}
 
-	current->handler (req, resp);
+	current->handler(req, resp);
 
 	return 0;
 }
 
-int print_headers (struct response *resp)
+int print_headers(struct response *resp)
 {
 
 	cgi_object *o;
 
-	o = htable_lookup (resp->headers, "cookie");
+	o = htable_lookup(resp->headers, "cookie");
 
 	if (o != NULL)
-		printf ("%s", o->value.u_str);
+		printf("%s", o->value.u_str);
 
-	printf ("Content-Type: text/html\r\n\r\n");
+	printf("Content-Type: text/html\r\n\r\n");
 
 	return 1;
 }
 
-int draw_page (struct request *req, struct response *resp)
+int draw_page(struct request *req, struct response *resp)
 {
 
-	print_headers (resp);
+	print_headers(resp);
 
-	template_draw (resp->html, req->parameters, resp->parameters);
+	template_draw(resp->html, req->parameters, resp->parameters);
 
 	return 0;
 }
