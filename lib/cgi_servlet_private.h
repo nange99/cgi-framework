@@ -35,7 +35,7 @@ int do_handler(struct url_mapping *map[],
                struct request *req,
                struct response *resp);
 
-int print_headers(struct response *resp);
+int print_headers(struct request *req, struct response *resp);
 
 int draw_page(struct request *req, struct response *resp);
 

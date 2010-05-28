@@ -317,15 +317,9 @@ int do_handler(struct url_mapping *map[],
 	return 0;
 }
 
-int print_headers(struct response *resp)
+int print_headers(struct request *req, struct response *resp)
 {
-
-	cgi_object *o;
-
-	o = htable_lookup(resp->headers, "cookie");
-
-	if (o != NULL)
-		printf("%s", o->value.u_str);
+	cgi_cookie_print_headers(req);
 
 	printf("Content-Type: text/html\r\n\r\n");
 
@@ -335,7 +329,7 @@ int print_headers(struct response *resp)
 int draw_page(struct request *req, struct response *resp)
 {
 
-	print_headers(resp);
+	print_headers(req, resp);
 
 	template_draw(resp->html, req->parameters, resp->parameters);
 
