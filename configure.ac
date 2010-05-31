@@ -26,12 +26,8 @@ MAYBE_WARN="-Wall -Wextra -std=c99 -pedantic \
 -Wstrict-aliasing=2 -Winit-self  \
 -Wdeclaration-after-statement -Wold-style-definition \
 -Wno-missing-field-initializers -Wno-unused-parameter \
- -Wno-long-long -Winline"
-
-#MAYBE_WARN="$MAYBE_WARN -Wunsafe-loop-optimizations -Wno-attributes"
-MAYBE_WARN="$MAYBE_WARN -fno-strict-aliasing -fno-common"
-
-MAYBE_WARN="$MAYBE_WARN -Wp,-D_FORTIFY_SOURCE=2"
+-Wno-long-long -Winline -Wunsafe-loop-optimizations -Wno-attributes \
+-fno-strict-aliasing -fno-common"
 
 CFLAGS="$CFLAGS $MAYBE_WARN"
   AC_DEFINE([lint], 1, [Define to 1 if the compiler is checking for lint.])
@@ -73,6 +69,11 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_FUNC_VPRINTF
 AC_FUNC_MEMCMP
+<<<<<<< HEAD
+=======
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+>>>>>>> 5a42dd724511277af637e8af5786fe785997eaee
 AC_CHECK_FUNCS([memset strchr strdup strerror tzset strndup strerror vsnprintf vasprintf open vsyslog strncasecmp])
 
 AM_PROG_LIBTOOL
