@@ -69,11 +69,6 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_FUNC_VPRINTF
 AC_FUNC_MEMCMP
-<<<<<<< HEAD
-=======
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
->>>>>>> 5a42dd724511277af637e8af5786fe785997eaee
 AC_CHECK_FUNCS([memset strchr strdup strerror tzset strndup strerror vsnprintf vasprintf open vsyslog strncasecmp])
 
 AM_PROG_LIBTOOL
