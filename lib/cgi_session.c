@@ -147,6 +147,9 @@ int cgi_session_free(struct request *req)
 
 	s = (struct _session *)req->session;
 
+	if (s == NULL)
+		return -1;
+
 	free(s->id);
 	free(s->filename);
 	free(s);
