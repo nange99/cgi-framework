@@ -27,8 +27,10 @@ libcgiservlet_la_LIBADD = \
 
 libcgiservlet_la_includedir=$(includedir)/libcgiservlet
 libcgiservlet_la_include_HEADERS = cgi_servlet.h \
-			 	   cgi_object.h
-
+			 	   cgi_object.h \
+			 	   cgi_session.h \
+			 	   cgi_servlet_private.h
+			 	   
 AM_CFLAGS = \
 	-I$(top_srcdir)/lib/util \
 	-I$(top_srcdir)/lib/template
