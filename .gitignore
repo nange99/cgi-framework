@@ -19,6 +19,7 @@ install-sh
 ltmain.sh
 stamp-*
 autom4te.cache
+*.pc
 *.o
 *.lo
 *.la

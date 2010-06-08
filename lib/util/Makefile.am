@@ -10,4 +10,8 @@ libutil_la_SOURCES = \
 	hashtable.h \
 	hashtable.c \
 	list.h
-
+	
+libutil_la_includedir = $(includedir)/libcgiservlet/util
+libutil_la_include_HEADERS = hash.h \
+					hashtable.h \
+					list.h
