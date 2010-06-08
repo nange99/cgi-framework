@@ -89,7 +89,26 @@ static struct _session *_session_init(struct request *req)
 }
 
 /**
+ * Check if session exists
+ *
+ * Public function usable by external programs
+ * using this library.
+ *
+ * @param req
+ * @return 1 if session exists, 0 otherwise.
+ */
+int cgi_session_exists(struct request *req)
+{
+	if (req->session != NULL)
+		return 1;
+
+	return 0;
+}
+
+/**
  * Have a established session?
+ *
+ * Private function used inside cgi_servlet_init
  *
  * @param req
  * @return
@@ -120,8 +139,7 @@ int cgi_session_try_init(struct request *req)
 	fp = open(path, O_RDWR);
 	if (errno == ENOENT) {
 		/* file doesn't exist */
-		s = _session_init(req);
-		req->session = s;
+		req->session = NULL;
 
 		free(path);
 
