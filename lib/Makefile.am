@@ -29,7 +29,8 @@ libcgiservlet_la_includedir=$(includedir)/libcgiservlet
 libcgiservlet_la_include_HEADERS = cgi_servlet.h \
 			 	   cgi_object.h \
 			 	   cgi_session.h \
-			 	   cgi_list.h
+			 	   cgi_list.h \
+			 	   cgi_cookie.h
 
 AM_CFLAGS = \
 	-I$(top_srcdir)/lib/util \

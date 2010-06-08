@@ -38,13 +38,6 @@ int cgi_response_add_parameter(struct response *resp,
                                cgi_object_type type);
 
 int cgi_response_set_content_type(struct response *resp);
-int cgi_response_add_cookie(struct response *resp,
-                            char *name,
-                            char *value,
-                            char *max_age,
-                            char *path,
-                            char *domain,
-                            int secure);
 int cgi_response_add_header(struct response *resp);
 
 #endif

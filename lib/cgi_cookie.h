@@ -8,19 +8,7 @@
 #ifndef CGI_COOKIE_H_
 #define CGI_COOKIE_H_
 
-#include "util/list.h"
-#include "cgi_servlet_private.h"
-
-struct _cookie {
-	struct list_head list;
-	char *name;
-	char *value;
-	char *max_age;
-	char *path;
-	char *domain;
-	int secure;
-	int send;
-};
+#include "cgi_servlet.h"
 
 char *cgi_cookie_get_value (struct request *req, const char *name);
 void cgi_cookie_remove(struct request *req, const char *name);

@@ -8,7 +8,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "util/list.h"
+#include "cgi_servlet.h"
+#include "cgi_servlet_private.h"
+#include "cgi_list.h"
 #include "cgi_cookie.h"
+
+struct _cookie {
+	struct list_head list;
+	char *name;
+	char *value;
+	char *max_age;
+	char *path;
+	char *domain;
+	int secure;
+	int send;
+};
 
 void _cgi_cookie_process_request(struct request *req)
 {
