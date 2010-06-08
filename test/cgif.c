@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../lib/cgi_servlet.h"
 #include "../lib/cgi_list.h"
+#include "../lib/cgi_cookie.h"
 #include "../lib/cgi_session.h"
 
 int handle_test (struct request *req, struct response *resp);
@@ -42,7 +43,7 @@ int handle_test (struct request *req, struct response *resp) {
 	} else {
 		cgi_response_set_html (resp, "html/teste.html");
 
-		cgi_response_add_parameter (resp, "teste", "valor de teste$!", CGI_STRING);
+		cgi_response_add_parameter (resp, "teste", (char *)"valor de teste$!", CGI_STRING);
 		cgi_response_add_parameter (resp, "number", (void *)3222, CGI_INTEGER);
 		cgi_response_add_parameter (resp, "pi", (double *) &d, CGI_FLOAT);
 	}
@@ -57,8 +58,6 @@ int handle_list (struct request *req, struct response *resp) {
 	int i;
 	cgi_list *l;
 	char *v;
-	void *valor;
-	int type;
 
 	cgi_session_init (req);
 
