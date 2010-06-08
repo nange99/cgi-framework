@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../lib/cgi_servlet.h"
+#include "../lib/cgi_list.h"
 #include "../lib/cgi_session.h"
 
 int handle_test (struct request *req, struct response *resp);

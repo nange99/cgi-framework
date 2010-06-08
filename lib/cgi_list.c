@@ -5,6 +5,7 @@
 #include "cgi_object.h"
 #include "cgi_servlet.h"
 #include "cgi_servlet_private.h"
+#include "cgi_list.h"
 
 list *cgi_list_create ()
 {

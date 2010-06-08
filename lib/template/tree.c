@@ -5,6 +5,7 @@
 #include "eval.h"
 #include "template.h"
 #include "../cgi_servlet_private.h"
+#include "../cgi_list.h"
 #include "../util/list.h"
 
 int destroy_value (node *n) {
