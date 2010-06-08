@@ -26,6 +26,8 @@ struct _cookie {
 	int send;
 };
 
+char _cgi_cookie_str[] = "cookies";
+
 static void _cgi_cookie_process_request(struct request *req)
 {
 	cgi_object *olist;
@@ -38,7 +40,7 @@ static void _cgi_cookie_process_request(struct request *req)
 	if (getenv("HTTP_COOKIE") == NULL)
 		return;
 
-	olist = htable_lookup(req->headers, "cookies");
+	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 
 	if (olist == NULL)
 		return;
@@ -125,7 +127,7 @@ void cgi_cookie_init(struct request *req)
 	obj->value.u_hash = cookies;
 	obj->type = CGI_COOKIES;
 
-	htable_insert(req->headers, "cookies", obj);
+	htable_insert(req->headers, (char *) &_cgi_cookie_str, obj);
 
 	_cgi_cookie_process_request(req);
 }
@@ -154,7 +156,7 @@ void cgi_cookie_destroy(struct request *req)
 	struct _cookie *cookies;
 	struct _cookie *tmp;
 
-	olist = htable_lookup(req->headers, "cookies");
+	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 
 	if (olist == NULL)
 		return;
@@ -170,7 +172,7 @@ void cgi_cookie_destroy(struct request *req)
 	free(olist->value.u_hash);
 	olist->value.u_hash = NULL;
 
-	htable_remove(req->headers, "cookies");
+	htable_remove(req->headers, (char *) &_cgi_cookie_str);
 	return;
 }
 
@@ -196,7 +198,7 @@ char *cgi_cookie_get_value(struct request *req, const char *name)
 	cgi_object *olist;
 	struct _cookie *cookie;
 
-	olist = htable_lookup(req->headers, "cookies");
+	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 
 	if (olist == NULL)
 		return;
@@ -221,7 +223,7 @@ void cgi_cookie_add(struct request *req,
 	struct _cookie *cookie;
 	struct _cookie *cookies;
 
-	olist = htable_lookup(req->headers, "cookies");
+	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 
 	if (olist == NULL)
 		return;
@@ -264,7 +266,7 @@ void cgi_cookie_remove(struct request *req, const char *name)
 	cgi_object *olist;
 	struct _cookie *c;
 
-	olist = htable_lookup(req->headers, "cookies");
+	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 
 	if (olist == NULL)
 		return;
@@ -318,7 +320,7 @@ void cgi_cookie_print_headers(struct request *req)
 	struct _cookie *cookie = NULL;
 	int len;
 
-	olist = htable_lookup(req->headers, "cookies");
+	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 
 	if (olist == NULL)
 		return;
