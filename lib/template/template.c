@@ -64,14 +64,16 @@ int template_register_variable (context *c, const char *variable, void *v, int t
 
 int template_register_update_variable_data (context *c, char *variable, cgi_object *d) {
 	cgi_object *tmp;
+	int ret;
 
 	tmp = htable_lookup (c->variables, variable);
 
 	if (tmp == NULL) {
-		htable_insert (c->variables, variable, d);
+		ret = htable_insert (c->variables, variable, d);
 	} else {
-		htable_update (c->variables, variable, d);
+		ret = htable_update (c->variables, variable, d);
 	}
+	return ret;
 }
 
 int template_update_variable_data (context *c, const char *variable, cgi_object *d) {
