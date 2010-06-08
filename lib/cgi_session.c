@@ -16,12 +16,14 @@
 
 #include "util/sha1.h"
 #include "json/json.h"
+#include "cgi_servlet.h"
+#include "cgi_servlet_private.h"
 #include "cgi_cookie.h"
 #include "cgi_session.h"
 
 #define SESSION_PATH	"/var/tmp"
 
-char *_session_create_id()
+static char *_session_create_id()
 {
 	sha_ctx hashctx;
 	char buf[58];
@@ -44,7 +46,7 @@ char *_session_create_id()
 	return strdup(sha1_to_hex(sha1));
 }
 
-int _session_create_file(char *fname)
+static int _session_create_file(char *fname)
 {
 	int f;
 
@@ -57,7 +59,7 @@ int _session_create_file(char *fname)
 	return 1;
 }
 
-struct _session *_session_init(struct request *req)
+static struct _session *_session_init(struct request *req)
 {
 	struct _session *s;
 	int len;
@@ -85,11 +87,70 @@ struct _session *_session_init(struct request *req)
 	return s;
 }
 
-int cgi_session_init(struct request *req)
+/**
+ * Have a established session?
+ *
+ * @param req
+ * @return
+ */
+int cgi_session_try_init(struct request *req)
 {
+	char *path;
 	char *sid;
 	int len;
 	int fp;
+	struct _session *s;
+
+	if (cgi_cookie_get_value(req, SESSION_COOKIE) == NULL) {
+		req->session = NULL;
+		return 0;
+	}
+
+	sid = cgi_cookie_get_value(req, SESSION_COOKIE);
+
+	len = strlen(sid) + strlen(SESSION_PATH) + 2;
+	path = malloc(len * sizeof(char));
+	if (path == NULL)
+		return 1;
+
+	snprintf(path, len, "%s/%s", SESSION_PATH, sid);
+
+	errno = 0;
+	fp = open(path, O_RDWR);
+	if (errno == ENOENT) {
+		/* file doesn't exist */
+		s = _session_init(req);
+		req->session = s;
+
+		free(path);
+
+		return 1;
+	}
+
+	s = malloc(sizeof(struct _session));
+
+	if (s == NULL)
+		return 0;
+
+	s->id = strdup(sid);
+	s->filename = strdup(path);
+	s->initialized = 1;
+
+	req->session = s;
+
+	free(path);
+
+	return 0;
+}
+
+/**
+ * Initializes a session;
+ *
+ * @param req
+ * @return
+ */
+int cgi_session_init(struct request *req)
+{
 	struct _session *s;
 
 	if (req->session != NULL) {
@@ -99,47 +160,10 @@ int cgi_session_init(struct request *req)
 		}
 	}
 
-	if (cgi_cookie_get_value(req, SESSION_COOKIE) != NULL) {
-		char *path;
-		sid = cgi_cookie_get_value(req, SESSION_COOKIE);
-
-		len = strlen(sid) + strlen(SESSION_PATH) + 2;
-		path = malloc(len * sizeof(char));
-		if (path == NULL)
-			return 0;
-
-		snprintf(path, len, "%s/%s", SESSION_PATH, sid);
-
-		errno = 0;
-		fp = open (path, O_RDWR);
-		if (errno == ENOENT) {
-			/* file doesn't exist */
-			s = _session_init(req);
-			req->session = s;
-
-			free(path);
-
-			return 1;
-		}
-
-		s = malloc(sizeof(struct _session));
-
-		if (s == NULL)
-			return 0;
-
-		s->id = strdup(sid);
-		s->filename = strdup (path);
-		s->initialized = 1;
-
-		req->session = s;
-
-		free(path);
-	} else {
-		s = _session_init(req);
-		req->session = s;
-		return 1;
-	}
-
+	/* creates a new session */
+	s = _session_init(req);
+	req->session = s;
+	return 0;
 }
 
 int cgi_session_free(struct request *req)

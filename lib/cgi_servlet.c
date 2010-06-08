@@ -38,6 +38,7 @@ int cgi_servlet_init(struct config *conf,
 	resp->html = NULL;
 
 	cgi_cookie_init(req);
+	cgi_session_try_init(req);
 
 	r = process_request(req);
 
