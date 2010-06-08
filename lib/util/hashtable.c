@@ -31,23 +31,24 @@
  * @param size the size of the initial hash table.
  * @return a newlly-allocated hash table object.
  */
-htable * create_htable (int size) {
+htable * create_htable(int size)
+{
 
 	htable *ht;
 
 	if (size < 1)
 		return NULL;
 
-	if ( (ht = malloc (sizeof (htable))) == NULL )
+	if ((ht = malloc(sizeof(htable))) == NULL)
 		return NULL;
 
-	if ( (ht->table = calloc (size, sizeof (struct _htable_node))) == NULL )
+	if ((ht->table = calloc(size, sizeof(struct _htable_node))) == NULL)
 		return NULL;
 
-	ht -> size = size;
-	ht -> num_elem = 0;
-	ht -> high_fill_factor = 70;
-	ht -> low_fill_factor = 30;
+	ht->size = size;
+	ht->num_elem = 0;
+	ht->high_fill_factor = 70;
+	ht->low_fill_factor = 30;
 
 	return ht;
 
@@ -58,7 +59,8 @@ htable * create_htable (int size) {
  *
  * @param ht a hash table object.
  */
-void destroy_htable (htable *ht) {
+void destroy_htable(htable *ht)
+{
 
 	int i;
 	struct _htable_node *hnode, *temp;
@@ -66,19 +68,19 @@ void destroy_htable (htable *ht) {
 	if (ht == NULL)
 		return;
 
-	for (i=0; i<ht->size; i++) {
-		hnode = ht -> table [i];
+	for (i = 0; i < ht->size; i++) {
+		hnode = ht->table[i];
 		while (hnode != NULL) {
 			temp = hnode;
-			hnode = hnode -> next;
-			free (temp->key);
-			cgi_object_destroy ((cgi_object *)temp->data);
-			free (temp);
+			hnode = hnode->next;
+			free(temp->key);
+			cgi_object_destroy((cgi_object *) temp->data);
+			free(temp);
 		}
 	}
 
-	free (ht -> table);
-	free (ht);
+	free(ht->table);
+	free(ht);
 
 }
 
@@ -89,39 +91,36 @@ void destroy_htable (htable *ht) {
  * @param key the key.
  * @param v a data object as value.
  */
-int htable_insert (htable *ht, char *key, void *v) {
+int htable_insert(htable *ht, char *key, void *v)
+{
 
 	struct _htable_node *new_hnode;
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash (key, strlen (key), HASH_INIT_VAL);
+	unsigned long int hashval = hash(key, strlen(key), HASH_INIT_VAL);
 	unsigned long int hashpos = hashval % ht->size;
 
-	DEBUGP ("+++ insert key[%s] as [%lu] [%lu]\n", key, hashpos, hashval );
+	DEBUGP ("+++ insert key[%s] as [%lu] [%lu]\n", key, hashpos, hashval);
 
-	new_hnode = calloc (1, sizeof (struct _htable_node));
+	new_hnode = calloc(1, sizeof(struct _htable_node));
 
 	if (new_hnode == NULL)
 		return 1;
 
-	//printf ("looking up...\n");
-
-	cur_hnode = _htable_lookup (ht, key);
+	cur_hnode = _htable_lookup(ht, key);
 
 	if (cur_hnode != NULL)
 		return 2;
 
-	//printf ("inserting...\n");
-
-	new_hnode->key = strdup (key);
+	new_hnode->key = strdup(key);
 	new_hnode->hash = hashval;
 	new_hnode->data = v;
-	new_hnode->next = ht->table [hashpos];
+	new_hnode->next = ht->table[hashpos];
 
-	ht->table [hashpos] = new_hnode;
+	ht->table[hashpos] = new_hnode;
 	ht->num_elem++;
 
-	// tries to expand the hashtable
-	_htable_expand (ht);
+	/* tries to expand the hashtable */
+	_htable_expand(ht);
 
 	return 0;
 
@@ -134,60 +133,63 @@ int htable_insert (htable *ht, char *key, void *v) {
  * @param key the key to be removed.
  */
 
-void htable_remove (htable *ht, char *key) {
+void htable_remove(htable *ht, char *key)
+{
 
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash (key, strlen(key), HASH_INIT_VAL);
-	unsigned long int hashpos = hashval % ht -> size;
+	unsigned long int hashval = hash(key, strlen(key), HASH_INIT_VAL);
+	unsigned long int hashpos = hashval % ht->size;
 
-	cur_hnode = _htable_lookup (ht, key);
+	cur_hnode = _htable_lookup(ht, key);
 
 	if (cur_hnode == NULL)
 		return;
 
-	free (cur_hnode->key);
-	cgi_object_destroy ((cgi_object *) cur_hnode->data);
-	free (cur_hnode);
+	free(cur_hnode->key);
+	cgi_object_destroy((cgi_object *) cur_hnode->data);
+	free(cur_hnode);
 
-	ht->table [hashpos] = NULL;
+	ht->table[hashpos] = NULL;
 	ht->num_elem--;
 
-	// tries to shrink the hashtable
-	_htable_shrink (ht);
+	/* tries to shrink the hashtable */
+	_htable_shrink(ht);
 
 	return;
 
 }
 
-void htable_remove_entry (htable *ht, char *key) {
+void htable_remove_entry(htable *ht, char *key)
+{
 
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash (key, strlen(key), HASH_INIT_VAL);
-	unsigned long int hashpos = hashval % ht -> size;
+	unsigned long int hashval = hash(key, strlen(key), HASH_INIT_VAL);
+	unsigned long int hashpos = hashval % ht->size;
 
-	cur_hnode = _htable_lookup (ht, key);
+	cur_hnode = _htable_lookup(ht, key);
 
 	if (cur_hnode == NULL)
 		return;
 
-	free (cur_hnode->key);
-	free (cur_hnode);
+	free(cur_hnode->key);
+	free(cur_hnode);
 
-	ht->table [hashpos] = NULL;
+	ht->table[hashpos] = NULL;
 	ht->num_elem--;
 
-	// tries to shrink the hashtable
-	_htable_shrink (ht);
+	/* tries to shrink the hashtable */
+	_htable_shrink(ht);
 
 	return;
 
 }
 
-int htable_update (htable *ht, char *key, void *d) {
+int htable_update(htable *ht, char *key, void *d)
+{
 
 	struct _htable_node *cur_hnode;
 
-	cur_hnode = _htable_lookup (ht, key);
+	cur_hnode = _htable_lookup(ht, key);
 
 	if (cur_hnode == NULL)
 		return 0;
@@ -204,21 +206,22 @@ int htable_update (htable *ht, char *key, void *d) {
  * @param key the key to be found in the hash table.
  * @return an _htable_node object.
  */
-struct _htable_node *_htable_lookup (htable *ht, char *key) {
+struct _htable_node *_htable_lookup(htable *ht, char *key)
+{
 
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash (key, strlen (key), HASH_INIT_VAL);
+	unsigned long int hashval = hash(key, strlen(key), HASH_INIT_VAL);
 	unsigned long int hashpos = hashval % ht -> size;
 
-	DEBUGP ("+++ looking up key[%s] with pos [%lu] - hash [%lu]\n", key, hashpos, hashval );
+	DEBUGP("+++ looking up key[%s] with pos [%lu] - hash [%lu]\n", key, hashpos, hashval);
 
-	for ( cur_hnode = ht -> table [hashpos];
-	     cur_hnode != NULL;
-	     cur_hnode = cur_hnode -> next ) {
+	for (cur_hnode = ht -> table[hashpos];
+		cur_hnode != NULL;
+		cur_hnode = cur_hnode -> next) {
 
-		     if (strcmp (key, cur_hnode -> key) == 0)
-			     return cur_hnode;
-	     }
+		if (strcmp(key, cur_hnode -> key) == 0)
+			return cur_hnode;
+	}
 
 	return NULL;
 
@@ -231,16 +234,17 @@ struct _htable_node *_htable_lookup (htable *ht, char *key) {
  * @param key the key to be found in the hash table.
  * @return returns the data object if the key exists in the hash table, otherwise returns null.
  */
-void *htable_lookup (htable *ht, char *key) {
+void *htable_lookup(htable *ht, char *key)
+{
 
 	struct _htable_node *cur_hnode;
 
 	DEBUGP ("key=[%s]\n", key);
 
-	cur_hnode = _htable_lookup (ht, key);
+	cur_hnode = _htable_lookup(ht, key);
 
 	if (cur_hnode != NULL)
-		return cur_hnode -> data;
+		return cur_hnode->data;
 
 	return NULL;
 
@@ -251,34 +255,35 @@ void *htable_lookup (htable *ht, char *key) {
  *
  * @param ht a hash table object.
  */
-void htable_print (htable *ht) {
+void htable_print(htable *ht)
+{
 
 	struct _htable_node *hnode;
 	int i;
 
-	printf ("{\n");
+	printf("{\n");
 
-	for (i=0; i<ht->size; i++) {
-		hnode = ht -> table [i];
+	for (i = 0; i < ht->size; i++) {
+		hnode = ht->table[i];
 		while (hnode != NULL) {
-			printf ("\t[%s]->", hnode -> key);
+			printf("\t[%s]->", hnode->key);
 			/*
-			switch (hnode -> data -> type) {
-				case STRING:
-					printf ("[%s]\n", hnode->data->value.u_str);
-					break;
-				case INTEGER:
-					printf ("[%d]\n", hnode->data->value.u_int);
-					break;
-				case FLOAT:
-					printf ("[%f]\n", hnode->data->value.u_double);
-			}
-			*/
-			hnode = hnode -> next;
+			 switch (hnode -> data -> type) {
+			 case STRING:
+			 printf ("[%s]\n", hnode->data->value.u_str);
+			 break;
+			 case INTEGER:
+			 printf ("[%d]\n", hnode->data->value.u_int);
+			 break;
+			 case FLOAT:
+			 printf ("[%f]\n", hnode->data->value.u_double);
+			 }
+			 */
+			hnode = hnode->next;
 		}
 	}
 
-	printf ("}\n");
+	printf("}\n");
 
 }
 
@@ -288,10 +293,9 @@ void htable_print (htable *ht) {
  * @param ht a hash table object.
  * @return number of elements stored.
  */
-int htable_num_elements (htable *ht) {
-	//printf ("htable_num_elements pointer ht=[%p]\n", ht);
-	//printf ("%x\n", (&ht) );
-	return ht -> num_elem;
+int htable_num_elements(htable *ht)
+{
+	return ht->num_elem;
 }
 
 /**
@@ -302,8 +306,9 @@ int htable_num_elements (htable *ht) {
  * @param ht a hash table object.
  * @param fill_factor the high density factor.
  */
-void htable_set_resize_high_density (htable *ht, int fill_factor) {
-	ht -> high_fill_factor = fill_factor;
+void htable_set_resize_high_density(htable *ht, int fill_factor)
+{
+	ht->high_fill_factor = fill_factor;
 }
 
 /**
@@ -314,8 +319,9 @@ void htable_set_resize_high_density (htable *ht, int fill_factor) {
  * @param ht a hash table object.
  * @param fill_factor the low density factor.
  */
-void htable_set_resize_low_density (htable *ht, int fill_factor) {
-	ht -> low_fill_factor = fill_factor;
+void htable_set_resize_low_density(htable *ht, int fill_factor)
+{
+	ht->low_fill_factor = fill_factor;
 }
 
 /**
@@ -325,19 +331,15 @@ void htable_set_resize_low_density (htable *ht, int fill_factor) {
  *
  * @param ht a hash table object.
  */
-void _htable_expand (htable *ht) {
+void _htable_expand(htable *ht)
+{
 
 	float fill_factor;
 
-	fill_factor = (((float)ht->num_elem) / (ht -> size)) * 100.0;
+	fill_factor = (((float) ht->num_elem) / (ht->size)) * 100.0;
 
-	//printf ("fill_factor [%f]\n", fill_factor);
-
-	if ( fill_factor > (float) ht -> high_fill_factor) {
-
-		//printf ("==>expand\n");
-		_htable_resize_size (ht, ht->size * 2);
-
+	if (fill_factor > (float) ht->high_fill_factor) {
+		_htable_resize_size(ht, ht->size * 2);
 	}
 
 }
@@ -349,19 +351,15 @@ void _htable_expand (htable *ht) {
  *
  * @param ht a hash table object.
  */
-void _htable_shrink (htable *ht) {
+void _htable_shrink(htable *ht)
+{
 
 	float fill_factor;
 
-	fill_factor = (((float)ht->num_elem) / (ht -> size)) * 100.0;
+	fill_factor = (((float) ht->num_elem) / (ht->size)) * 100.0;
 
-	//printf ("fill_factor [%f]\n", fill_factor);
-
-	if ( fill_factor < (float) ht -> low_fill_factor) {
-
-		//printf ("==>shrink\n");
-		_htable_resize_size (ht, (int) ht->size / 2);
-
+	if (fill_factor < (float) ht->low_fill_factor) {
+		_htable_resize_size(ht, (int) ht->size / 2);
 	}
 
 }
@@ -372,7 +370,8 @@ void _htable_shrink (htable *ht) {
  * @param ht a hash table object.
  * @param size the maximum number of elements in the new hash table.
  */
-void _htable_resize_size (htable *ht, int size) {
+void _htable_resize_size(htable *ht, int size)
+{
 
 	int i;
 	unsigned long int hashval;
@@ -383,26 +382,26 @@ void _htable_resize_size (htable *ht, int size) {
 	old_table = ht->table;
 
 	ht->num_elem = 0;
-	ht->table = malloc (sizeof (struct _htable_node) * size );
+	ht->table = malloc(sizeof(struct _htable_node) * size);
 
-	// reset the new table
-	for (i=0; i<size; i++) {
+	/* reset the new table */
+	for (i = 0; i < size; i++) {
 		ht->table[i] = NULL;
 	}
 
-	// move the data to the new table
-	for (i=0; i<ht->size; i++) {
-		cur_hnode = old_table [i];
+	/* move the data to the new table */
+	for (i = 0; i < ht->size; i++) {
+		cur_hnode = old_table[i];
 		while (cur_hnode != NULL) {
 			temp = cur_hnode;
 			next_temp = (cur_hnode -> next) ? cur_hnode -> next : NULL;
 
-			hashval = hash (temp->key, strlen(temp->key), HASH_INIT_VAL);
+			hashval = hash(temp->key, strlen(temp->key), HASH_INIT_VAL);
 			hashpos = hashval % size;
 
-			temp->next = ht->table [hashpos];
+			temp->next = ht->table[hashpos];
 
-			ht->table [hashpos] = temp;
+			ht->table[hashpos] = temp;
 			ht->num_elem++;
 
 			cur_hnode = next_temp;
@@ -410,8 +409,8 @@ void _htable_resize_size (htable *ht, int size) {
 	}
 
 	ht->size = size;
-	DEBUGP("new_ht - num_elem [%d] - size [%d]\n", ht -> num_elem, ht -> size);
-	free (old_table);
+	DEBUGP("new_ht - num_elem [%d] - size [%d]\n", ht->num_elem, ht->size);
+	free(old_table);
 
 }
 

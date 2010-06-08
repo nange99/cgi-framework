@@ -17,24 +17,11 @@ typedef enum {
 } node_type;
 
 typedef enum {
-	LONG = 1,
-	DOUBLE,
-	STR,
-	BOOL,
-	VAR,
-	OP
+	LONG = 1, DOUBLE, STR, BOOL, VAR, OP
 } value_type;
 
 typedef enum {
-	EQUAL = 1,
-	NOT_EQUAL,
-	MORE,
-	MORE_EQUAL,
-	LESS,
-	LESS_EQUAL,
-	OR,
-	AND,
-	NONE
+	EQUAL = 1, NOT_EQUAL, MORE, MORE_EQUAL, LESS, LESS_EQUAL, OR, AND, NONE
 } op_type;
 
 struct _context;
@@ -47,7 +34,7 @@ typedef struct _expr_node {
 		char *str;
 	} value;
 	value_type type;
-	int (*destroy) (struct _expr_node *node);
+	int (*destroy)(struct _expr_node *node);
 	struct _expr_node *right;
 	struct _expr_node *left;
 } expr_node;
@@ -63,8 +50,8 @@ typedef struct _node {
 	int value_type;
 	int children_count;
 	int op_type;
-	int (*print) (struct _node *node, struct _context *c);
-	int (*destroy) (struct _node *node);
+	int (*print)(struct _node *node, struct _context *c);
+	int (*destroy)(struct _node *node);
 	struct _node *parent;
 	struct _node **children;
 } node;
