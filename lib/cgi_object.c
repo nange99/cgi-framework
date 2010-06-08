@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include "cgi_servlet.h"
 
-cgi_object *cgi_object_init()
+cgi_object *cgi_object_init(void)
 {
 	cgi_object *o;
 

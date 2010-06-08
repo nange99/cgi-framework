@@ -24,7 +24,7 @@
 
 #define SESSION_PATH	"/var/tmp"
 
-static char *_session_create_id()
+static char *_session_create_id(void)
 {
 	sha_ctx hashctx;
 	char buf[58];

@@ -26,7 +26,7 @@ struct _cookie {
 	int send;
 };
 
-void _cgi_cookie_process_request(struct request *req)
+static void _cgi_cookie_process_request(struct request *req)
 {
 	cgi_object *olist;
 	int position;
@@ -130,7 +130,7 @@ void cgi_cookie_init(struct request *req)
 	_cgi_cookie_process_request(req);
 }
 
-void _cookie_free (struct _cookie *c)
+static void _cookie_free (struct _cookie *c)
 {
 	free(c->name);
 	free(c->value);
@@ -174,7 +174,7 @@ void cgi_cookie_destroy(struct request *req)
 	return;
 }
 
-struct _cookie *_cgi_cookie_find_by_name(cgi_list *cookies, const char *name)
+static struct _cookie *_cgi_cookie_find_by_name(cgi_list *cookies, const char *name)
 {
 	struct _cookie *tmp = NULL;
 	struct list_head *pos;
@@ -211,10 +211,10 @@ char *cgi_cookie_get_value(struct request *req, const char *name)
 
 void cgi_cookie_add(struct request *req,
                           const char *name,
-                          char *value,
-                          char *max_age,
-                          char *path,
-                          char *domain,
+                          const char *value,
+                          const char *max_age,
+                          const char *path,
+                          const char *domain,
                           int secure)
 {
 	cgi_object *olist;
@@ -280,7 +280,7 @@ void cgi_cookie_remove(struct request *req, const char *name)
 	return;
 }
 
-void _cookie_print(struct _cookie *c)
+static void _cookie_print(struct _cookie *c)
 {
 
 	if (c == NULL)

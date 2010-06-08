@@ -10,7 +10,7 @@
 
 typedef struct _list cgi_list;
 
-cgi_list *cgi_list_create();
+cgi_list *cgi_list_create(void);
 void cgi_list_destroy(cgi_list *l);
 
 int cgi_list_append(cgi_list *l, void *value, cgi_object_type t);

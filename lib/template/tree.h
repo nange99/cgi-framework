@@ -45,6 +45,7 @@ int print_echo (node *n, struct _context *c);
 int print_if (node *n, struct _context *c);
 int print_elseif (node *n, struct _context *c);
 int print_else (node *n, struct _context *c);
+int print_foreach_list (cgi_list *l, node *var, node *block, struct _context *c);
 int print_foreach (node *n, struct _context *c);
 
 /* debug */

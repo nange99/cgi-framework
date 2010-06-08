@@ -7,7 +7,7 @@
 #include "cgi_servlet_priv.h"
 #include "cgi_list.h"
 
-cgi_list *cgi_list_create ()
+cgi_list *cgi_list_create (void)
 {
 	cgi_list *l;
 
@@ -34,7 +34,7 @@ void cgi_list_destroy (cgi_list *l)
 	return;
 }
 
-cgi_list * _cgi_list_init (void *value, cgi_object_type t)
+static cgi_list * _cgi_list_init (void *value, cgi_object_type t)
 {
 	cgi_list *new;
 	new = malloc (sizeof(cgi_list));
