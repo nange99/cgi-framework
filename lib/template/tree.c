@@ -466,22 +466,22 @@ int destroy_foreach (node *n) {
 	return 1;
 }
 
-int print_foreach_list (list *l, node *var, node *block, struct _context *c) {
+int print_foreach_list (cgi_list *l, node *var, node *block, struct _context *c) {
 	int i = 0;
-	list *tmp;
+	cgi_list *tmp;
 	struct list_head *pos;
 	char *varname;
 
 	varname = var->value.str;
 
 	pos = (&l->list)->next;
-	tmp = list_entry (pos, list, list);
+	tmp = list_entry (pos, cgi_list, list);
 
 	template_register_variable (c, "count_", 0, LONG);
 	template_register_variable (c, "odd_", 0, LONG);
 
 	list_for_each (pos, &l->list) {
-		tmp = list_entry(pos, list, list);
+		tmp = list_entry(pos, cgi_list, list);
 
 		template_register_update_variable_data (c, varname, tmp->data);
 
@@ -511,7 +511,7 @@ int print_foreach (node *n, struct _context *c) {
 		return 0;
 
 	if (value->type == CGI_LIST) {
-		return print_foreach_list ( (list *) value->value.u_hash, n->children[0], n->children[2], c);
+		return print_foreach_list ( (cgi_list *) value->value.u_hash, n->children[0], n->children[2], c);
 	}
 
 	/*

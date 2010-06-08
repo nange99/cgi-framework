@@ -55,7 +55,7 @@ int handle_test (struct request *req, struct response *resp) {
 int handle_list (struct request *req, struct response *resp) {
 
 	int i;
-	list *l;
+	cgi_list *l;
 	char *v;
 	void *valor;
 	int type;

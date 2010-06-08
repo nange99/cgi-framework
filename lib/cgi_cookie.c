@@ -173,7 +173,7 @@ void cgi_cookie_destroy(struct request *req)
 	return;
 }
 
-struct _cookie *_cgi_cookie_find_by_name(list *cookies, const char *name)
+struct _cookie *_cgi_cookie_find_by_name(cgi_list *cookies, const char *name)
 {
 	struct _cookie *tmp = NULL;
 	struct list_head *pos;
