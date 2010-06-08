@@ -20,10 +20,10 @@ extern void mc_set_debug(int debug);
 extern int mc_get_debug(void);
 
 extern void mc_set_syslog(int syslog);
-extern void mc_abort(const char *msg, ...);
-extern void mc_debug(const char *msg, ...);
-extern void mc_error(const char *msg, ...);
-extern void mc_info(const char *msg, ...);
+extern void mc_abort(const char *msg, ...) __attribute__ ((format (printf, 1, 2)));
+extern void mc_debug(const char *msg, ...) __attribute__ ((format (printf, 1, 2)));
+extern void mc_error(const char *msg, ...) __attribute__ ((format (printf, 1, 2)));
+extern void mc_info(const char *msg, ...) __attribute__ ((format (printf, 1, 2)));
 
 #ifdef MC_MAINTAINER_MODE
 #define MC_SET_DEBUG(x) mc_set_debug(x)
