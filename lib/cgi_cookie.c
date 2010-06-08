@@ -69,8 +69,6 @@ static void _cgi_cookie_process_request(struct request *req)
 		strncpy(c->name, cookie_str, position);
 		c->name[position] = '\0';
 
-		printf("name:[%s]\n", c->name);
-
 		position = 0;
 		cookie_str = aux;
 		if ((strchr(cookie_str, ';')) == NULL) {
@@ -201,7 +199,7 @@ char *cgi_cookie_get_value(struct request *req, const char *name)
 	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 
 	if (olist == NULL)
-		return;
+		return NULL;
 
 	cookie = _cgi_cookie_find_by_name(olist->value.u_hash, name);
 
@@ -318,7 +316,6 @@ void cgi_cookie_print_headers(struct request *req)
 	struct list_head *pos;
 	struct _cookie *cookies;
 	struct _cookie *cookie = NULL;
-	int len;
 
 	olist = htable_lookup(req->headers, (char *) &_cgi_cookie_str);
 

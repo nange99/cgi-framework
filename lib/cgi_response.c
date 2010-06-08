@@ -33,6 +33,9 @@ int cgi_response_add_parameter (struct response *resp,
 		break;
 	case CGI_TABLE:
 		break;
+	case CGI_COOKIES:
+		return 0;
+		break;
 	}
 
 	htable_insert (resp->parameters, (char *)key, o);

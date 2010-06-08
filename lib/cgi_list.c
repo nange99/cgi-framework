@@ -55,6 +55,8 @@ static cgi_list * _cgi_list_init (void *value, cgi_object_type t)
 		break;
 	case CGI_TABLE:
 		break;
+	case CGI_COOKIES:
+		break;
 	}
 
 	return new;
@@ -86,7 +88,7 @@ int cgi_list_preppend (cgi_list *l, void *value, cgi_object_type t)
 int cgi_list_insert_after (cgi_list *l, int index, void *value, cgi_object_type t)
 {
 	int i = 0;
-	cgi_list *new, *tmp;
+	cgi_list *new, *tmp = NULL;
 	struct list_head *pos;
 
 	list_for_each (pos, &l->list) {
@@ -109,7 +111,7 @@ int cgi_list_insert_after (cgi_list *l, int index, void *value, cgi_object_type 
 void *cgi_list_get (cgi_list *l, int index, int *type)
 {
 	int i = 0;
-	cgi_list *tmp;
+	cgi_list *tmp = NULL;
 	struct list_head *pos;
 
 	list_for_each (pos, &l->list) {

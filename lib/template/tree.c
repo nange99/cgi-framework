@@ -160,7 +160,7 @@ int print_include (node *n, struct _context *c) {
 }
 
 node *create_include_node (struct _context *c, node *n) {
-	char *filename;
+	char *filename = NULL;
 	node *nn;
 
 	nn = malloc (sizeof (node));
@@ -168,7 +168,8 @@ node *create_include_node (struct _context *c, node *n) {
 	nn->type = INCLUDE;
 
 	if (n->type == VARIABLE) {
-
+		/* TODO: should handle variables */
+		filename = NULL;
 	} else if (n->type == VALUE) {
 		filename = strdup (n->value.str);
 	}

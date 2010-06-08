@@ -2,6 +2,8 @@
 #define _TREE_H
 
 #include "node.h"
+#include "../cgi_servlet_priv.h"
+#include "../cgi_list.h"
 
 /* leaf node */
 node *create_value_node (int type, void *value);
