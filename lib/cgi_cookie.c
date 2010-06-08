@@ -13,6 +13,7 @@
 #include "cgi_servlet_priv.h"
 #include "cgi_list.h"
 #include "cgi_cookie.h"
+#include "cgi_cookie_priv.h"
 
 struct _cookie {
 	struct list_head list;

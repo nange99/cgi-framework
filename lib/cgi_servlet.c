@@ -8,6 +8,7 @@
 #include "cgi_object.h"
 #include "cgi_servlet.h"
 #include "cgi_servlet_priv.h"
+#include "cgi_cookie_priv.h"
 #include "template/template.h"
 
 int cgi_servlet_init(struct config *conf,
