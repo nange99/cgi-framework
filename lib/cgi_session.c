@@ -13,7 +13,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+
 #include "util/sha1.h"
+#include "json/json.h"
 #include "cgi_cookie.h"
 #include "cgi_session.h"
 
@@ -66,7 +68,6 @@ struct _session *_session_init(struct request *req)
 		return 0;
 
 	s->id = _session_create_id();
-	printf("session id: %s\n", s->id);
 
 	len = strlen(s->id) + strlen(SESSION_PATH) + 2;
 	s->filename = malloc(len * sizeof(char));
