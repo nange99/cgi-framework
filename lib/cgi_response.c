@@ -8,7 +8,7 @@
 #include "cgi_servlet_priv.h"
 
 int cgi_response_add_parameter (struct response *resp,
-                                char *key,
+                                const char *key,
                                 void *value,
                                 cgi_object_type type)
 {
@@ -35,12 +35,12 @@ int cgi_response_add_parameter (struct response *resp,
 		break;
 	}
 
-	htable_insert (resp->parameters, key, o);
+	htable_insert (resp->parameters, (char *)key, o);
 
 	return 1;
 }
 
-void cgi_response_set_html (struct response *resp, char *file)
+void cgi_response_set_html (struct response *resp, const char *file)
 {
 	resp->html = strdup (file);
 	return;

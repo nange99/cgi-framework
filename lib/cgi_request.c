@@ -9,12 +9,12 @@
 #include "cgi_cookie_priv.h"
 #include "cgi_session_priv.h"
 
-char *cgi_request_get_parameter (struct request *req, char *name)
+char *cgi_request_get_parameter (struct request *req, const char *name)
 {
 
 	cgi_object *o;
 
-	o = htable_lookup (req->parameters, name);
+	o = htable_lookup (req->parameters, (char *)name);
 
 	if (o != NULL)
 		return o->value.u_str;

@@ -38,12 +38,12 @@ cgi_object *template_get_variable (context *c, char *variable) {
 	return NULL;
 }
 
-int template_register_variable_data (context *c, char *variable, cgi_object *d) {
+int template_register_variable_data (context *c, const char *variable, cgi_object *d) {
 
-	return htable_insert (c->variables, variable, d);
+	return htable_insert (c->variables, (char *) variable, d);
 }
 
-int template_register_variable (context *c, char *variable, void *v, int type) {
+int template_register_variable (context *c, const char *variable, void *v, int type) {
 
 	cgi_object *d;
 
@@ -59,7 +59,7 @@ int template_register_variable (context *c, char *variable, void *v, int type) {
 		d->type = CGI_INTEGER;
 	}
 
-	return htable_insert (c->variables, variable, d);
+	return htable_insert (c->variables, (char *) variable, d);
 }
 
 int template_register_update_variable_data (context *c, char *variable, cgi_object *d) {
@@ -74,16 +74,16 @@ int template_register_update_variable_data (context *c, char *variable, cgi_obje
 	}
 }
 
-int template_update_variable_data (context *c, char *variable, cgi_object *d) {
+int template_update_variable_data (context *c, const char *variable, cgi_object *d) {
 
-	return htable_update (c->variables, variable, d);
+	return htable_update (c->variables, (char *) variable, d);
 }
 
-int template_update_variable (context *c, char *variable, void *v, int type) {
+int template_update_variable (context *c, const char *variable, void *v, int type) {
 
 	cgi_object *d;
 
-	d = htable_lookup (c->variables, variable);
+	d = htable_lookup (c->variables, (char *) variable);
 
 	if (type == LONG && d->type == CGI_INTEGER) {
 		d->value.u_int = (int) v;
@@ -92,15 +92,15 @@ int template_update_variable (context *c, char *variable, void *v, int type) {
 	return 1;
 }
 
-int template_unregister_free_variable (context *c, char *variable) {
+int template_unregister_free_variable (context *c, const char *variable) {
 
-	htable_remove (c->variables, variable);
+	htable_remove (c->variables, (char *) variable);
 	return 1;
 }
 
-int template_unregister_variable (context *c, char *variable) {
+int template_unregister_variable (context *c, const char *variable) {
 
-	htable_remove_entry (c->variables, variable);
+	htable_remove_entry (c->variables, (char *) variable);
 	return 1;
 }
 

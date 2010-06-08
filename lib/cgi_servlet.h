@@ -29,11 +29,11 @@ int cgi_servlet_init(struct config *conf,
 char *cgi_url_decode(char *str);
 char *cgi_url_encode(char *str);
 
-char *cgi_request_get_parameter(struct request *req, char *name);
+char *cgi_request_get_parameter(struct request *req, const char *name);
 
-void cgi_response_set_html(struct response *resp, char *file);
+void cgi_response_set_html(struct response *resp, const char *file);
 int cgi_response_add_parameter(struct response *resp,
-                               char *key,
+                               const char *key,
                                void *value,
                                cgi_object_type type);
 
