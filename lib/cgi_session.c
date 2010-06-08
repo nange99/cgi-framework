@@ -20,6 +20,7 @@
 #include "cgi_servlet_priv.h"
 #include "cgi_cookie.h"
 #include "cgi_session.h"
+#include "cgi_session_priv.h"
 
 #define SESSION_PATH	"/var/tmp"
 

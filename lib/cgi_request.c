@@ -7,6 +7,7 @@
 #include "cgi_servlet.h"
 #include "cgi_servlet_priv.h"
 #include "cgi_cookie_priv.h"
+#include "cgi_session_priv.h"
 
 char *cgi_request_get_parameter (struct request *req, char *name)
 {
