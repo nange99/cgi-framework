@@ -17,7 +17,7 @@
 #include "util/sha1.h"
 #include "json/json.h"
 #include "cgi_servlet.h"
-#include "cgi_servlet_private.h"
+#include "cgi_servlet_priv.h"
 #include "cgi_cookie.h"
 #include "cgi_session.h"
 

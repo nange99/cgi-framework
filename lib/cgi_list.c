@@ -4,7 +4,7 @@
 #include "util/list.h"
 #include "cgi_object.h"
 #include "cgi_servlet.h"
-#include "cgi_servlet_private.h"
+#include "cgi_servlet_priv.h"
 #include "cgi_list.h"
 
 cgi_list *cgi_list_create ()

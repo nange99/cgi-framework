@@ -7,7 +7,7 @@
 #include "cgi_log.h"
 #include "cgi_object.h"
 #include "cgi_servlet.h"
-#include "cgi_servlet_private.h"
+#include "cgi_servlet_priv.h"
 #include "template/template.h"
 
 int cgi_servlet_init(struct config *conf,

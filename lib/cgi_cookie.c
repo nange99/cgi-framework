@@ -10,7 +10,7 @@
 #include <string.h>
 #include "util/list.h"
 #include "cgi_servlet.h"
-#include "cgi_servlet_private.h"
+#include "cgi_servlet_priv.h"
 #include "cgi_list.h"
 #include "cgi_cookie.h"
 

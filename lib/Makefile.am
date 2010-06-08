@@ -18,7 +18,7 @@ libcgiservlet_la_SOURCES = \
 	cgi_object.c \
 	cgi_log.c \
 	cgi_list.c \
-	cgi_servlet_private.h
+	cgi_servlet_priv.h
 
 libcgiservlet_la_LIBADD = \
 	./util/libutil.la \

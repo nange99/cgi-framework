@@ -5,7 +5,7 @@
 #include "util/list.h"
 #include "cgi_object.h"
 #include "cgi_servlet.h"
-#include "cgi_servlet_private.h"
+#include "cgi_servlet_priv.h"
 
 int cgi_response_add_parameter (struct response *resp,
                                 char *key,

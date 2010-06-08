@@ -4,7 +4,7 @@
 #include "tree.h"
 #include "eval.h"
 #include "template.h"
-#include "../cgi_servlet_private.h"
+#include "../cgi_servlet_priv.h"
 #include "../cgi_list.h"
 #include "../util/list.h"
 
