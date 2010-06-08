@@ -186,8 +186,6 @@ void htable_remove_entry (htable *ht, char *key) {
 int htable_update (htable *ht, char *key, void *d) {
 
 	struct _htable_node *cur_hnode;
-	unsigned long int hashval = hash (key, strlen(key), HASH_INIT_VAL);
-	unsigned long int hashpos = hashval % ht -> size;
 
 	cur_hnode = _htable_lookup (ht, key);
 
