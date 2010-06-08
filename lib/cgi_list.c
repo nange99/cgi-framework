@@ -7,44 +7,44 @@
 #include "cgi_servlet_priv.h"
 #include "cgi_list.h"
 
-cgi_list *cgi_list_create (void)
+cgi_list *cgi_list_create(void)
 {
 	cgi_list *l;
 
-	l = malloc (sizeof(cgi_list));
+	l = malloc(sizeof(cgi_list));
 
 	INIT_LIST_HEAD (&l->list);
 
 	return l;
 }
 
-void cgi_list_destroy (cgi_list *l)
+void cgi_list_destroy(cgi_list *l)
 {
 	cgi_list *tmp;
 	struct list_head *pos, *q;
 
 	list_for_each_safe(pos, q, &l->list) {
 		tmp = list_entry(pos, cgi_list, list);
-		list_del (pos);
-		cgi_object_destroy (tmp->data);
-		free (tmp);
+		list_del(pos);
+		cgi_object_destroy(tmp->data);
+		free(tmp);
 	}
 
-	free (l);
+	free(l);
 	return;
 }
 
-static cgi_list * _cgi_list_init (void *value, cgi_object_type t)
+static cgi_list * _cgi_list_init(void *value, cgi_object_type t)
 {
 	cgi_list *new;
-	new = malloc (sizeof(cgi_list));
+	new = malloc(sizeof(cgi_list));
 
-	new->data = malloc (sizeof(cgi_object));
+	new->data = malloc(sizeof(cgi_object));
 
 	new->data->type = t;
 	switch (t) {
 	case CGI_STRING:
-		new->data->value.u_str = strdup ((char *) value);
+		new->data->value.u_str = strdup((char *) value);
 		break;
 	case CGI_INTEGER:
 		new->data->value.u_int = (int) value;
@@ -62,30 +62,30 @@ static cgi_list * _cgi_list_init (void *value, cgi_object_type t)
 	return new;
 }
 
-int cgi_list_append (cgi_list *l, void *value, cgi_object_type t)
+int cgi_list_append(cgi_list *l, void *value, cgi_object_type t)
 {
-
 	cgi_list *new;
+	new = _cgi_list_init(value, t);
 
-	new = _cgi_list_init (value, t);
-
-	list_add_tail (&(new->list), &(l->list));
+	list_add_tail(&(new->list), &(l->list));
 
 	return 1;
 }
 
-int cgi_list_preppend (cgi_list *l, void *value, cgi_object_type t)
+int cgi_list_preppend(cgi_list *l, void *value, cgi_object_type t)
 {
 	cgi_list *new;
+	new = _cgi_list_init(value, t);
 
-	new = _cgi_list_init (value, t);
-
-	list_add (&(new->list), &(l->list));
+	list_add(&(new->list), &(l->list));
 
 	return 1;
 }
 
-int cgi_list_insert_after (cgi_list *l, int index, void *value, cgi_object_type t)
+int cgi_list_insert_after(cgi_list *l,
+                          int index,
+                          void *value,
+                          cgi_object_type t)
 {
 	int i = 0;
 	cgi_list *new, *tmp = NULL;
@@ -102,13 +102,13 @@ int cgi_list_insert_after (cgi_list *l, int index, void *value, cgi_object_type 
 	if (tmp == NULL)
 		return 0;
 
-	new = _cgi_list_init (value, t);
-	list_add (&(new->list), &(tmp->list));
+	new = _cgi_list_init(value, t);
+	list_add(&(new->list), &(tmp->list));
 
 	return 1;
 }
 
-void *cgi_list_get (cgi_list *l, int index, int *type)
+void *cgi_list_get(cgi_list *l, int index, int *type)
 {
 	int i = 0;
 	cgi_list *tmp = NULL;
@@ -138,7 +138,7 @@ void *cgi_list_get (cgi_list *l, int index, int *type)
 	return NULL;
 }
 
-int cgi_list_remove (cgi_list *l, int index)
+int cgi_list_remove(cgi_list *l, int index)
 {
 	int i = 0;
 	cgi_list *tmp;
@@ -147,9 +147,9 @@ int cgi_list_remove (cgi_list *l, int index)
 	list_for_each_safe(pos, q, &l->list) {
 		if (i == index) {
 			tmp = list_entry (pos, cgi_list, list);
-			list_del (pos);
-			cgi_object_destroy (tmp->data);
-			free (tmp);
+			list_del(pos);
+			cgi_object_destroy(tmp->data);
+			free(tmp);
 			return 1;
 		}
 		i++;
@@ -157,7 +157,7 @@ int cgi_list_remove (cgi_list *l, int index)
 	return 0;
 }
 
-int cgi_list_size (cgi_list *l)
+int cgi_list_size(cgi_list *l)
 {
 	int i = 0;
 	struct list_head *pos;

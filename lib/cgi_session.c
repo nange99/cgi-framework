@@ -171,7 +171,7 @@ int cgi_session_free(struct request *req)
 {
 	struct _session *s;
 
-	s = (struct _session *)req->session;
+	s = (struct _session *) req->session;
 
 	if (s == NULL)
 		return -1;
@@ -189,9 +189,9 @@ void cgi_session_destroy(struct request *req)
 {
 	struct _session *s;
 
-	s = (struct _session *)req->session;
+	s = (struct _session *) req->session;
 
-	remove (s->filename);
+	remove(s->filename);
 
 	cgi_cookie_remove(req, SESSION_COOKIE);
 }

@@ -23,6 +23,6 @@ typedef struct _cgi_object {
 } cgi_object;
 
 cgi_object *cgi_object_init(void);
-void cgi_object_destroy (cgi_object *o);
+void cgi_object_destroy(cgi_object *o);
 
 #endif /* CGI_OBJECT_H_ */

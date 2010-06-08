@@ -11,7 +11,7 @@
 #include "cgi_servlet.h"
 
 /* public */
-int cgi_session_init (struct request *req);
+int cgi_session_init(struct request *req);
 void cgi_session_destroy(struct request *req);
 
 #endif /* CGI_SESSION_H_ */

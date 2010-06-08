@@ -9,12 +9,12 @@
 #include "cgi_cookie_priv.h"
 #include "cgi_session_priv.h"
 
-char *cgi_request_get_parameter (struct request *req, const char *name)
+char *cgi_request_get_parameter(struct request *req, const char *name)
 {
 
 	cgi_object *o;
 
-	o = htable_lookup (req->parameters, (char *)name);
+	o = htable_lookup(req->parameters, (char *) name);
 
 	if (o != NULL)
 		return o->value.u_str;
@@ -22,16 +22,16 @@ char *cgi_request_get_parameter (struct request *req, const char *name)
 	return NULL;
 }
 
-void cgi_request_free (struct request *req)
+void cgi_request_free(struct request *req)
 {
 	cgi_cookie_destroy(req);
 	cgi_session_free(req);
 
-	destroy_htable (req->headers);
-	destroy_htable (req->parameters);
+	destroy_htable(req->headers);
+	destroy_htable(req->parameters);
 
 	if (req->url != NULL)
-		free (req->url);
+		free(req->url);
 
-	free (req);
+	free(req);
 }

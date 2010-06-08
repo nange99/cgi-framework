@@ -45,7 +45,7 @@ static void _cgi_cookie_process_request(struct request *req)
 	if (olist == NULL)
 		return;
 
-	cookies = (struct _cookie *)olist->value.u_hash;
+	cookies = (struct _cookie *) olist->value.u_hash;
 
 	cookie_str = getenv("HTTP_COOKIE");
 	aux = cookie_str;
@@ -102,7 +102,7 @@ static void _cgi_cookie_process_request(struct request *req)
 		c->secure = 0;
 		c->send = 0;
 
-		list_add_tail (&(c->list), &(cookies->list));
+		list_add_tail(&(c->list), &(cookies->list));
 		cookie_str = aux;
 	}
 
@@ -130,7 +130,7 @@ void cgi_cookie_init(struct request *req)
 	_cgi_cookie_process_request(req);
 }
 
-static void _cookie_free (struct _cookie *c)
+static void _cookie_free(struct _cookie *c)
 {
 	free(c->name);
 	free(c->value);
@@ -159,12 +159,12 @@ void cgi_cookie_destroy(struct request *req)
 	if (olist == NULL)
 		return;
 
-	cookies = (struct _cookie *)olist->value.u_hash;
+	cookies = (struct _cookie *) olist->value.u_hash;
 
 	list_for_each_safe(pos, q, &cookies->list) {
 		tmp = list_entry(pos, struct _cookie, list);
-		list_del (pos);
-		_cookie_free (tmp);
+		list_del(pos);
+		_cookie_free(tmp);
 	}
 
 	free(olist->value.u_hash);
@@ -174,7 +174,8 @@ void cgi_cookie_destroy(struct request *req)
 	return;
 }
 
-static struct _cookie *_cgi_cookie_find_by_name(cgi_list *cookies, const char *name)
+static struct _cookie *_cgi_cookie_find_by_name(cgi_list *cookies,
+                                                const char *name)
 {
 	struct _cookie *tmp = NULL;
 	struct list_head *pos;
@@ -210,12 +211,12 @@ char *cgi_cookie_get_value(struct request *req, const char *name)
 }
 
 void cgi_cookie_add(struct request *req,
-                          const char *name,
-                          const char *value,
-                          const char *max_age,
-                          const char *path,
-                          const char *domain,
-                          int secure)
+                    const char *name,
+                    const char *value,
+                    const char *max_age,
+                    const char *path,
+                    const char *domain,
+                    int secure)
 {
 	cgi_object *olist;
 	struct _cookie *cookie;
@@ -226,30 +227,30 @@ void cgi_cookie_add(struct request *req,
 	if (olist == NULL)
 		return;
 
-	cookies = (struct _cookie *)olist->value.u_hash;
+	cookies = (struct _cookie *) olist->value.u_hash;
 
 	cookie = malloc(sizeof(struct _cookie));
 
 	if (cookie == NULL)
 		return;
 
-	cookie->name = strdup (name);
-	cookie->value = strdup (value);
+	cookie->name = strdup(name);
+	cookie->value = strdup(value);
 
 	if (max_age) {
-		cookie->max_age = strdup (max_age);
+		cookie->max_age = strdup(max_age);
 	} else {
 		cookie->max_age = NULL;
 	}
 
 	if (path) {
-		cookie->path = strdup (path);
+		cookie->path = strdup(path);
 	} else {
 		cookie->path = NULL;
 	}
 
 	if (domain) {
-		cookie->domain = strdup (domain);
+		cookie->domain = strdup(domain);
 	} else {
 		cookie->domain = NULL;
 	}
@@ -257,8 +258,9 @@ void cgi_cookie_add(struct request *req,
 	cookie->secure = secure;
 	cookie->send = 1;
 
-	list_add_tail (&(cookie->list), &(cookies->list));
+	list_add_tail(&(cookie->list), &(cookies->list));
 }
+
 void cgi_cookie_remove(struct request *req, const char *name)
 {
 	cgi_object *olist;
@@ -322,7 +324,7 @@ void cgi_cookie_print_headers(struct request *req)
 	if (olist == NULL)
 		return;
 
-	cookies = (struct _cookie *)olist->value.u_hash;
+	cookies = (struct _cookie *) olist->value.u_hash;
 
 	list_for_each (pos, &cookies->list) {
 		cookie = list_entry (pos, struct _cookie, list);

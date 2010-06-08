@@ -65,87 +65,87 @@ cleanup:
 	return 0;
 }
 
-int process_request (struct request *req)
+int process_request(struct request *req)
 {
 
 	req->url = NULL;
 
-	if (getenv ("REQUEST_METHOD") != NULL) {
-		strcpy (req->method, getenv ("REQUEST_METHOD"));
-		log_debug ("got method = [%s]\n", req->method);
+	if (getenv("REQUEST_METHOD") != NULL) {
+		strcpy(req->method, getenv("REQUEST_METHOD"));
+		log_debug("got method = [%s]\n", req->method);
 	}
 
-	if (getenv ("PATH_INFO") != NULL) {
+	if (getenv("PATH_INFO") != NULL) {
 		char *path;
-		path = getenv ("PATH_INFO");
+		path = getenv("PATH_INFO");
 
-		path = strchr (path + 1, '/');
+		path = strchr(path + 1, '/');
 
-		req->url = malloc ((strlen (path) + 1) * sizeof(char));
+		req->url = malloc((strlen(path) + 1) * sizeof(char));
 		if (req->url == NULL) {
 			/* FIXME: no memory, bailout! */
 		}
 
-		strcpy (req->url, path);
+		strcpy(req->url, path);
 	}
 
-	if (getenv ("QUERY_STRING") != NULL) {
+	if (getenv("QUERY_STRING") != NULL) {
 
 		int content_length = 0;
 
-		if (getenv ("CONTENT_LENGTH") != NULL) {
-			content_length = atoi (getenv ("CONTENT_LENGTH"));
+		if (getenv("CONTENT_LENGTH") != NULL) {
+			content_length = atoi(getenv("CONTENT_LENGTH"));
 		}
 
-		parse_data_string (req, getenv ("QUERY_STRING"), content_length);
+		parse_data_string(req, getenv("QUERY_STRING"), content_length);
 	}
 
-	if (strcmp (req->method, "POST") == 0) {
+	if (strcmp(req->method, "POST") == 0) {
 		int content_length;
 		int read;
 		char *content_data;
 
-		log_debug ("parsing post...\n");
+		log_debug("parsing post...\n");
 
-		if (getenv ("CONTENT_LENGTH") == NULL) {
+		if (getenv("CONTENT_LENGTH") == NULL) {
 			return 0;
 		}
 
-		content_length = atoi (getenv ("CONTENT_LENGTH"));
+		content_length = atoi(getenv("CONTENT_LENGTH"));
 
-		log_debug ("content_length = %d\n", content_length);
+		log_debug("content_length = %d\n", content_length);
 
-		content_data = malloc ((content_length + 1) * sizeof(char));
+		content_data = malloc((content_length + 1) * sizeof(char));
 		if (content_data == NULL) {
 			// FIXME: no memory, bailout!
 		}
 
-		read = fread (content_data, content_length, 1, stdin);
+		read = fread(content_data, content_length, 1, stdin);
 		content_data[content_length] = '\0';
 
-		log_debug ("got content = [%s]\n", content_data);
+		log_debug("got content = [%s]\n", content_data);
 
-		parse_data_string (req, content_data, content_length);
+		parse_data_string(req, content_data, content_length);
 
-		free (content_data);
+		free(content_data);
 	}
 
 	return 0;
 }
 
-char *cgi_url_decode (char *str) {
+char *cgi_url_decode(char *str)
+{
 	int i;
 	char *result, *tmp;
 
-	result = malloc ( (strlen (str) + 1) * sizeof (char));
-	memset (result, '\0', strlen (str) + 1);
-
+	result = malloc((strlen(str) + 1) * sizeof(char));
+	memset(result, '\0', strlen(str) + 1);
 
 	tmp = result;
 	while (str != NULL && *str != '\0') {
 		if (*str == '%' && *(str + 1) != '\0' && *(str + 2) != '\0') {
 			for (i = 0, str++; i < 2; i++, str++) {
-				(*tmp) += ((isdigit(*str) ?  *str - '0' : ((tolower(*str) - 'a')) + 10) * ( i ? 1 : 16));
+				(*tmp) += ((isdigit(*str) ?  *str - '0' : ((tolower(*str) - 'a')) + 10) * (i ? 1 : 16));
 			}
 			tmp++;
 		} else if (*str == '+') {
@@ -158,7 +158,7 @@ char *cgi_url_decode (char *str) {
 	return result;
 }
 
-char *cgi_url_encode (char *str)
+char *cgi_url_encode(char *str)
 {
 
 	static char safechars[] =
@@ -166,15 +166,15 @@ char *cgi_url_encode (char *str)
 	char *result, *tmp;
 	int length;
 
-	length = strlen (str) + 1;
+	length = strlen(str) + 1;
 
-	result = malloc (length * sizeof(char));
-	memset (result, '\0', length);
+	result = malloc(length * sizeof(char));
+	memset(result, '\0', length);
 
 	tmp = result;
 
 	while (*str != '\0') {
-		if (strchr (safechars, *str) != NULL) {
+		if (strchr(safechars, *str) != NULL) {
 			*tmp++ = *str++;
 		} else {
 			char buf[4];
@@ -185,11 +185,11 @@ char *cgi_url_encode (char *str)
 			length += 3;
 			current_length = tmp - result;
 
-			result = realloc (result, (length) * sizeof(char));
+			result = realloc(result, (length) * sizeof(char));
 
 			tmp = result + current_length;
 
-			sprintf (buf, "%%%02x", (int) *str);
+			sprintf(buf, "%%%02x", (int) *str);
 
 			pbuf = buf;
 			for (i = 0; i < 3; i++) {
@@ -282,7 +282,7 @@ int parse_data_string(struct request *req, char *string, int length)
 	return 0;
 }
 
-int do_filters (struct request *req, struct response *resp)
+int do_filters(struct request *req, struct response *resp)
 {
 	return 0;
 }

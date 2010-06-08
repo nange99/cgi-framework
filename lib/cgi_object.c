@@ -19,17 +19,17 @@ cgi_object *cgi_object_init(void)
 	return o;
 }
 
-void cgi_object_destroy (cgi_object *o)
+void cgi_object_destroy(cgi_object *o)
 {
 	if (o == NULL)
 		return;
 
 	switch (o->type) {
 	case CGI_STRING:
-		free (o->value.u_str);
+		free(o->value.u_str);
 		break;
 	case CGI_LIST:
-		cgi_list_destroy (o->value.u_hash);
+		cgi_list_destroy(o->value.u_hash);
 		break;
 	case CGI_TABLE:
 		break;
@@ -40,5 +40,5 @@ void cgi_object_destroy (cgi_object *o)
 		break;
 	}
 
-	free (o);
+	free(o);
 }
