@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 int handle_test (struct request *req, struct response *resp) {
 
 	double d;
+	char *str;
 
 	d = 3.1415;
 
@@ -46,6 +47,13 @@ int handle_test (struct request *req, struct response *resp) {
 		cgi_response_add_parameter (resp, "teste", (char *)"valor de teste$!", CGI_STRING);
 		cgi_response_add_parameter (resp, "number", (void *)3222, CGI_INTEGER);
 		cgi_response_add_parameter (resp, "pi", (double *) &d, CGI_FLOAT);
+	}
+
+	if (cgi_session_exists(req)) {
+		str = cgi_session_get_value(req, "user");
+
+		if (str != NULL)
+			cgi_response_add_parameter (resp, "user", str, CGI_STRING);
 	}
 
 	cgi_cookie_add (req, "nome", "valor", NULL, NULL, NULL, 0);
@@ -60,6 +68,8 @@ int handle_list (struct request *req, struct response *resp) {
 	char *v;
 
 	cgi_session_init (req);
+
+	cgi_session_add_value(req, "user", (char *)"zemeyer", CGI_STRING);
 
 	l = cgi_list_create ();
 
