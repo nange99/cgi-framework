@@ -114,6 +114,72 @@ int cgi_session_exists(struct request *req)
 }
 
 /**
+ * Initializes a session;
+ *
+ * @param req
+ * @return
+ */
+int cgi_session_init(struct request *req)
+{
+	struct _session *s;
+
+	if (req->session != NULL) {
+		s = (struct _session *) req->session;
+		if (s->initialized) {
+			return 0;
+		}
+	}
+
+	/* creates a new session */
+	s = _session_init(req);
+	req->session = s;
+	return 0;
+}
+
+/**
+ * Destroy the current session
+ *
+ * @param req
+ */
+void cgi_session_destroy(struct request *req)
+{
+	struct _session *s;
+
+	s = (struct _session *) req->session;
+
+	remove(s->filename);
+
+	cgi_cookie_remove(req, SESSION_COOKIE);
+}
+
+/*
+ * Private Functions
+ */
+
+/**
+ * Frees the session
+ * @param req
+ * @return
+ */
+int cgi_session_free(struct request *req)
+{
+	struct _session *s;
+
+	s = (struct _session *) req->session;
+
+	if (s == NULL)
+		return -1;
+
+	free(s->id);
+	free(s->filename);
+	free(s);
+
+	req->session = NULL;
+
+	return 0;
+}
+
+/**
  * Have a established session?
  *
  * Private function used inside cgi_servlet_init
@@ -168,56 +234,4 @@ int cgi_session_try_init(struct request *req)
 	free(path);
 
 	return 0;
-}
-
-/**
- * Initializes a session;
- *
- * @param req
- * @return
- */
-int cgi_session_init(struct request *req)
-{
-	struct _session *s;
-
-	if (req->session != NULL) {
-		s = (struct _session *) req->session;
-		if (s->initialized) {
-			return 0;
-		}
-	}
-
-	/* creates a new session */
-	s = _session_init(req);
-	req->session = s;
-	return 0;
-}
-
-int cgi_session_free(struct request *req)
-{
-	struct _session *s;
-
-	s = (struct _session *) req->session;
-
-	if (s == NULL)
-		return -1;
-
-	free(s->id);
-	free(s->filename);
-	free(s);
-
-	req->session = NULL;
-
-	return 0;
-}
-
-void cgi_session_destroy(struct request *req)
-{
-	struct _session *s;
-
-	s = (struct _session *) req->session;
-
-	remove(s->filename);
-
-	cgi_cookie_remove(req, SESSION_COOKIE);
 }
