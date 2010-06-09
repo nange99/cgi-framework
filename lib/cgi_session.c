@@ -89,6 +89,8 @@ static struct _session *_session_init(struct request *req)
 
 	_session_create_file(s->filename);
 
+	s->json = json_object_new_object();
+
 	cgi_cookie_add(req, SESSION_COOKIE, s->id, 0, 0, 0, 0);
 
 	s->initialized = 1;
@@ -152,6 +154,67 @@ void cgi_session_destroy(struct request *req)
 	cgi_cookie_remove(req, SESSION_COOKIE);
 }
 
+char *cgi_session_get_value(struct request *req, const char *name)
+{
+	struct json_object *json;
+	struct json_object *obj;
+
+	json = ((struct _session *)req->session)->json;
+
+	obj = json_object_object_get(json, name);
+
+	if (obj == NULL)
+		return NULL;
+
+	return (char *)json_object_get_string(obj);
+}
+
+int cgi_session_has_value(struct request *req, const char *name)
+{
+	struct json_object *json;
+	struct json_object *obj;
+
+	json = ((struct _session *)req->session)->json;
+
+	obj = json_object_object_get(json, name);
+
+	if (obj == NULL)
+		return 0;
+
+	return 1;
+}
+
+int cgi_session_add_value(struct request *req,
+                          const char *name,
+                          void *value,
+                          cgi_object_type type)
+{
+	struct json_object *json;
+
+	json = ((struct _session *)req->session)->json;
+
+	switch (type) {
+	case CGI_STRING:
+		json_object_object_add(json, name,
+		                json_object_new_string(value));
+		break;
+	case CGI_INTEGER:
+		json_object_object_add(json, name,
+				json_object_new_int((int) value));
+		break;
+	case CGI_FLOAT:
+		json_object_object_add(json, name,
+				json_object_new_double(*(double *) value));
+		break;
+	case CGI_LIST:
+	case CGI_TABLE:
+	case CGI_COOKIES:
+		break;
+	}
+
+	return 1;
+}
+
 /*
  * Private Functions
  */
@@ -169,6 +232,9 @@ int cgi_session_free(struct request *req)
 
 	if (s == NULL)
 		return -1;
+
+	json_object_to_file(s->filename, s->json);
+	json_object_put(s->json);
 
 	free(s->id);
 	free(s->filename);
@@ -228,6 +294,12 @@ int cgi_session_try_init(struct request *req)
 	s->id = strdup(sid);
 	s->filename = strdup(path);
 	s->initialized = 1;
+
+	s->json = json_object_from_file(s->filename);
+
+	if (s->json == NULL) {
+		printf ("we don't have the file yet... should create a json object!\n"); /* TODO */
+	}
 
 	req->session = s;
 
