@@ -20,6 +20,7 @@ libjson_la_SOURCES = \
 	debug.c \
 	json_object.c \
 	json_tokener.c \
+	json_util.c \
 	linkhash.c \
 	printbuf.c
 

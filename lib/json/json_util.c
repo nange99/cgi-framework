@@ -94,7 +94,7 @@ int json_object_to_file(char *filename, struct json_object *obj)
     return -1;
   }
 
-  if((fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0644)) < 0) {
+  if((fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0600)) < 0) {
     MC_ERROR("json_object_to_file: error opening file %s: %s\n",
 	     filename, strerror(errno));
     return -1;

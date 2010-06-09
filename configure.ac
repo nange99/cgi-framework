@@ -55,7 +55,7 @@ YFLAGS="-d"
 
 # Checks for header files.
 AC_FUNC_ALLOCA
-AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdarg.h stdlib.h string.h [sys/param.h] syslog.h unistd.h])
+AC_CHECK_HEADERS([inttypes.h libintl.h malloc.h stddef.h stdarg.h stdlib.h string.h [sys/param.h] syslog.h unistd.h fcntl.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_INT16_T
