@@ -34,6 +34,7 @@ int cgi_response_add_parameter(struct response *resp,
 	case CGI_TABLE:
 		break;
 	case CGI_COOKIES:
+		free(o);
 		return 0;
 		break;
 	}
