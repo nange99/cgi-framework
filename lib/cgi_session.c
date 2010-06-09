@@ -24,6 +24,14 @@
 
 #define SESSION_PATH	"/var/tmp"
 
+struct _session {
+	char *id;
+	char *filename;
+	int initialized;
+	int headers;
+	struct json_object *json;
+};
+
 static char *_session_create_id(void)
 {
 	sha_ctx hashctx;
