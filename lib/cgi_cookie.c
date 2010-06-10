@@ -100,6 +100,7 @@ static void _cgi_cookie_process_request(struct request *req)
 		c->max_age = NULL;
 		c->domain = NULL;
 		c->path = NULL;
+		c->expires = NULL;
 		c->secure = 0;
 		c->send = 0;
 
