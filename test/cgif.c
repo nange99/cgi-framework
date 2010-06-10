@@ -42,7 +42,7 @@ int handle_test (struct request *req, struct response *resp) {
 	if (cgi_request_get_parameter (req, "detail") != NULL) {
 		cgi_response_set_html (resp, "html/detail.html");
 	} else {
-		cgi_response_set_html (resp, "html/teste.html");
+		cgi_response_set_html (resp, "html/error.html");
 
 		cgi_response_add_parameter (resp, "teste", (char *)"valor de teste$!", CGI_STRING);
 		cgi_response_add_parameter (resp, "number", (void *)3222, CGI_INTEGER);
