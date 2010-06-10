@@ -241,9 +241,8 @@ int template_draw(char *filename, htable *req, htable *resp)
 	return 1;
 }
 
-void template_send_error (char *fname, int linenum, char *err)
+void template_send_error(char *fname, int linenum, char *err)
 {
-
 	printf("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
 	printf("<html>\n");
 	printf("<head>\n");
@@ -258,7 +257,7 @@ void template_send_error (char *fname, int linenum, char *err)
 	printf("<h1>Error</h1>\n");
 	printf("<p>An error happend! Please contact the webmaster of this site and inform the folowing message:</p>\n");
 	printf("<pre>\n");
-	printf("<b>%s</b>\nLine %d: %s\n", fname, linenum - 1, err);
+	printf("<b>%s</b>\nLine %d: %s\n", fname, linenum, err);
 	printf("</pre>\n");
 	printf("</body>\n");
 	printf("</html>\n\n");

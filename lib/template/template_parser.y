@@ -125,7 +125,8 @@ expr:
 
 %%
 
-int template_error (YYLTYPE* locp, context *c, const char* err) {
-	template_send_error (c->filename, locp->first_line, (char *)err);
+int template_error (YYLTYPE* locp, context *c, const char* err)
+{
+	template_send_error(c->filename, locp->first_line, (char *)err);
 	return 1;
 }
