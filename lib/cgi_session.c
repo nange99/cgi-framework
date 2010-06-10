@@ -22,7 +22,7 @@
 #include "cgi_session.h"
 #include "cgi_session_priv.h"
 
-#define SESSION_PATH	"/var/tmp"
+#define SESSION_PATH	"/tmp"
 
 static char *_session_create_id(void)
 {
@@ -53,11 +53,11 @@ static int _session_create_file(char *fname)
 
 	f = open(fname, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
 	if (!f) {
-		return 0;
+		return -1;
 	}
 	close(f);
 
-	return 1;
+	return 0;
 }
 
 static struct _session *_session_init(struct request *req)
@@ -79,9 +79,10 @@ static struct _session *_session_init(struct request *req)
 
 	snprintf(s->filename, len, "%s/%s", SESSION_PATH, s->id);
 
-	_session_create_file(s->filename);
+	if (_session_create_file(s->filename) < 0)
+		return 0;
 
-	cgi_cookie_add(req, SESSION_COOKIE, s->id, 0, 0, 0, 0);
+	cgi_cookie_add(req, SESSION_COOKIE, s->id, 0, 0, 0, 0, 0);
 
 	s->initialized = 1;
 
@@ -128,6 +129,12 @@ int cgi_session_try_init(struct request *req)
 
 	sid = cgi_cookie_get_value(req, SESSION_COOKIE);
 
+	/* Does not accept an empty cookie */
+	if (strlen(sid) == 0) {
+		req->session = NULL;
+		return 0;
+	}
+
 	len = strlen(sid) + strlen(SESSION_PATH) + 2;
 	path = malloc(len * sizeof(char));
 	if (path == NULL)
@@ -140,9 +147,7 @@ int cgi_session_try_init(struct request *req)
 	if (errno == ENOENT) {
 		/* file doesn't exist */
 		req->session = NULL;
-
 		free(path);
-
 		return 1;
 	}
 
@@ -174,9 +179,8 @@ int cgi_session_init(struct request *req)
 
 	if (req->session != NULL) {
 		s = (struct _session *) req->session;
-		if (s->initialized) {
+		if (s->initialized)
 			return 0;
-		}
 	}
 
 	/* creates a new session */

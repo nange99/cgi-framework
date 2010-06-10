@@ -48,7 +48,7 @@ int handle_test (struct request *req, struct response *resp) {
 		cgi_response_add_parameter (resp, "pi", (double *) &d, CGI_FLOAT);
 	}
 
-	cgi_cookie_add (req, "nome", "valor", NULL, NULL, NULL, 0);
+	cgi_cookie_add (req, "nome", "valor", NULL, NULL, NULL, NULL, 0);
 
 	return 1;
 }
