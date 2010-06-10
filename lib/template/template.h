@@ -11,9 +11,10 @@ typedef struct _context {
 	htable *response;
 	htable *variables;
 	node *root;
+	char *filename;
 } context;
 
-context * template_context_alloc(htable *req, htable *resp);
+context * template_context_alloc(htable *req, htable *resp, char *filename);
 int template_context_destroy(context *c);
 
 node *template_parse_include(context *c, char *filename);
@@ -44,6 +45,8 @@ int template_register_update_variable_data(context *c,
 
 int template_unregister_variable(context *c, const char *variable);
 int template_unregister_free_variable(context *c, const char *variable);
+
+void template_send_error (char *fname, int linenum, char *err);
 
 extern int template_parse(context *c);
 

@@ -4,9 +4,8 @@
 #include "eval.h"
 #include "tree.h"
 
-/*
+
 #define YYERROR_VERBOSE 1
-*/
 
 #define scanner context->scanner
 
@@ -127,6 +126,6 @@ expr:
 %%
 
 int template_error (YYLTYPE* locp, context *c, const char* err) {
-	fprintf (stderr, "%s\n", err);
+	template_send_error (c->filename, locp->first_line, (char *)err);
 	return 1;
 }

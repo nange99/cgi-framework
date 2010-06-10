@@ -142,7 +142,7 @@ void template_print(node *n, context *c)
 	}
 }
 
-context * template_context_alloc(htable *req, htable *resp)
+context * template_context_alloc(htable *req, htable *resp, char *filename)
 {
 
 	context *c;
@@ -158,6 +158,7 @@ context * template_context_alloc(htable *req, htable *resp)
 	c->root->children = NULL;
 	c->root->children_count = 0;
 
+	c->filename = strdup(filename);
 	c->request = req;
 	c->response = resp;
 	c->variables = create_htable(17);
@@ -171,6 +172,7 @@ int template_context_destroy(context *c)
 	destroy_htable(c->variables);
 	destroy_tree(c->root);
 
+	free(c->filename);
 	free(c);
 	return 1;
 }
@@ -188,7 +190,7 @@ node *template_parse_include(context *c, char *filename)
 		return NULL;
 	}
 
-	local = template_context_alloc(c->request, c->response);
+	local = template_context_alloc(c->request, c->response, filename);
 	destroy_htable(local->variables);
 	local->variables = c->variables;
 
@@ -222,7 +224,7 @@ int template_draw(char *filename, htable *req, htable *resp)
 		return 0;
 	}
 
-	c = template_context_alloc(req, resp);
+	c = template_context_alloc(req, resp, filename);
 
 	template_lex_init(&(c->scanner));
 	template_set_in(f, c->scanner);
@@ -237,6 +239,30 @@ int template_draw(char *filename, htable *req, htable *resp)
 	fclose(f);
 
 	return 1;
+}
+
+void template_send_error (char *fname, int linenum, char *err)
+{
+
+	printf("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
+	printf("<html>\n");
+	printf("<head>\n");
+	printf("<title>CGI-Framework Error</title>\n");
+	printf("<style type=\"text/css\">\n");
+	printf("pre {\n");
+	printf("color: red;\n");
+	printf("}\n");
+	printf("</style>\n");
+	printf("</head>\n");
+	printf("<body>\n");
+	printf("<h1>Error</h1>\n");
+	printf("<p>An error happend! Please contact the webmaster of this site and inform the folowing message:</p>\n");
+	printf("<pre>\n");
+	printf("<b>%s</b>\nLine %d: %s\n", fname, linenum - 1, err);
+	printf("</pre>\n");
+	printf("</body>\n");
+	printf("</html>\n\n");
+
 }
 
 #if 0
