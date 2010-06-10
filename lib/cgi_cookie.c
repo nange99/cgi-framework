@@ -22,6 +22,7 @@ struct _cookie {
 	char *max_age;
 	char *path;
 	char *domain;
+	char *expires;
 	int secure;
 	int send;
 };
@@ -144,6 +145,9 @@ static void _cookie_free(struct _cookie *c)
 	if (c->domain != NULL)
 		free(c->domain);
 
+	if (c->expires != NULL)
+		free(c->expires);
+
 	free(c);
 }
 
@@ -216,6 +220,7 @@ void cgi_cookie_add(struct request *req,
                     const char *max_age,
                     const char *path,
                     const char *domain,
+                    const char *expires,
                     int secure)
 {
 	cgi_object *olist;
@@ -255,6 +260,12 @@ void cgi_cookie_add(struct request *req,
 		cookie->domain = NULL;
 	}
 
+	if (expires) {
+		cookie->expires = strdup(expires);
+	} else {
+		cookie->expires = NULL;
+	}
+
 	cookie->secure = secure;
 	cookie->send = 1;
 
@@ -274,9 +285,9 @@ void cgi_cookie_remove(struct request *req, const char *name)
 	c = _cgi_cookie_find_by_name(olist->value.u_hash, name);
 
 	free(c->value);
-	c->value = strdup("");
+	c->value = strdup("wakawaka");
 	/* make sure this cookie is in the past */
-	c->max_age = strdup("1234567890");
+	c->expires = strdup("Thu, 1 Jan 1970 00:00:01 GMT");
 	c->send = 1;
 
 	return;
@@ -303,6 +314,10 @@ static void _cookie_print(struct _cookie *c)
 
 	if (c->domain != NULL) {
 		printf(" Domain=%s;", c->domain);
+	}
+
+	if (c->expires != NULL) {
+		printf(" Expires=%s;", c->expires);
 	}
 
 	if (c->secure) {

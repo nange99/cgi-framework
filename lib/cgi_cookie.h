@@ -18,6 +18,7 @@ void cgi_cookie_add(struct request *req,
                     const char *max_age,
                     const char *path,
                     const char *domain,
+                    const char *expires,
                     int secure);
 
 #endif /* CGI_COOKIE_H_ */
