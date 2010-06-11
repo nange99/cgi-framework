@@ -51,8 +51,6 @@ static void _cgi_cookie_process_request(struct request *req)
 	cookie_str = getenv("HTTP_COOKIE");
 	aux = cookie_str;
 
-	printf("cookie_str=[%s]\n", cookie_str);
-
 	while (cookie_str) {
 		position = 0;
 
