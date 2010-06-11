@@ -324,7 +324,9 @@ int print_headers(struct request *req, struct response *resp)
 {
 	cgi_cookie_print_headers(req);
 
-	printf("Content-Type: text/html\r\n\r\n");
+	printf("Content-Type: text/html\r\n");
+	printf("Status: 200\r\n");
+	printf("\r\n");
 
 	return 1;
 }
@@ -335,6 +337,8 @@ int draw_page(struct request *req, struct response *resp)
 	print_headers(req, resp);
 
 	template_draw(resp->html, req->parameters, resp->parameters);
+
+	printf("\r\n");
 
 	return 0;
 }
