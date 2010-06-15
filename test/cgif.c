@@ -133,7 +133,7 @@ int handle_table(struct request *req, struct response *resp)
 
 	cgi_table_add_row(t);
 
-	if (cgi_table_add_value(t, "teste_1", (char *) "value1", CGI_STRING)) {
+	if (cgi_table_add_value(t, "teste_1", (char *) "primeiro valor", CGI_STRING)) {
 		printf ("should not fail!\n");
 	} else {
 		printf ("inserted\n");
@@ -144,8 +144,8 @@ int handle_table(struct request *req, struct response *resp)
 	}
 
 	cgi_table_add_row(t);
-	cgi_table_add_value(t, "teste_1", (char *) "value1", CGI_STRING);
-	cgi_table_add_value(t, "teste_2", (char *) "value2", CGI_STRING);
+	cgi_table_add_value(t, "teste_1", (char *) "segundo valor", CGI_STRING);
+	cgi_table_add_value(t, "teste_2", (char *) "terceiro valor", CGI_STRING);
 
 	cgi_response_add_parameter(resp, "table", (void *)t, CGI_TABLE);
 	cgi_response_set_html(resp, "html/table.html");

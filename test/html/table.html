@@ -8,13 +8,14 @@
 
 <table>
 <?foreach row in response.table?>
-<?if row_ then?>
+<?if odd_ then?>
 <tr>
 <?else?>
 <tr class="odd">
 <?endif?>
-  <td><?echo item?></td>
-  <td><?echo item?></td>
+  <td><?echo row.teste_1?></td>
+  <td><?echo row.teste_2?></td>
+  <td>will be empty: [<?echo row.asdf?>]</td>
 </tr>
 <?endforeach?>
 </table>
