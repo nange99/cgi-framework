@@ -324,7 +324,7 @@ int print_headers(struct request *req, struct response *resp)
 {
 	cgi_cookie_print_headers(req);
 
-	printf("Content-Type: text/html\r\n");
+	printf("Content-Type: text/html; charset=UTF-8\r\n");
 	printf("Status: 200 OK\r\n");
 	printf("\r\n");
 
