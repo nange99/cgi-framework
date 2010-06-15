@@ -90,6 +90,7 @@ atomdir:
 
 condition:
     T_IF expr T_THEN chunks else T_END_IF	{ $$ = create_if_node ($2, $4, $5); }
+    | T_IF expr error	{ template_append_error(NULL, 0, "Malformed if clause."); YYERROR; }
     ;
 
 else:
@@ -120,13 +121,15 @@ expr:
     | expr T_OR expr			{ $$ = create_expr_node ($1, $3, OR); }
     | expr T_AND expr			{ $$ = create_expr_node ($1, $3, AND); }
     | '(' expr ')'			{ $$ = $2; }
-    | term				{ $$ = create_expr_node_for_term ($1);}
+    | '(' expr error	{ template_append_error(NULL, 0, "Unmatched parenthesis."); YYERROR; }
+    | term				{ $$ = create_expr_node_for_term ($1); }
+    | term error		{ template_append_error(NULL, 0, "Invalid expression."); YYERROR; }
     ;
 
 %%
 
-int template_error (YYLTYPE* locp, context *c, const char* err)
+int template_error (YYLTYPE *locp, context *c, const char* err)
 {
-	template_send_error(c->filename, locp->first_line, (char *)err);
+	template_append_error(c, locp->first_line, (char *)err);
 	return 1;
 }

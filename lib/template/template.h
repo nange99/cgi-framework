@@ -2,8 +2,14 @@
 #define _TEMPLATE_H
 
 #include "../util/hashtable.h"
+#include "../util/list.h"
 #include "../cgi_object.h"
 #include "node.h"
+
+struct _error_list {
+	struct list_head errlist;
+	char *errmsg;
+};
 
 typedef struct _context {
 	void *scanner;
@@ -47,7 +53,8 @@ int template_register_update_variable_data(context *c,
 int template_unregister_variable(context *c, const char *variable);
 int template_unregister_free_variable(context *c, const char *variable);
 
-void template_send_error (char *fname, int linenum, char *err);
+void template_send_error(void);
+void template_append_error(context *c, int linenum, const char *err);
 
 extern int template_parse(context *c);
 

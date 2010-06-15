@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "../util/hashtable.h"
 #include "tree.h"
 #include "template.h"
 #include "template_scanner.h"
 #include "template_parser.h"
 #include "../cgi_object.h"
+
+struct _error_list _template_err;
 
 cgi_object *template_get_variable(context *c, char *variable)
 {
@@ -228,6 +231,8 @@ int template_draw(char *filename, htable *req, htable *resp)
 
 	context *c;
 	FILE *f;
+	struct _error_list *tmp;
+	struct list_head *pos, *q;
 
 	f = fopen(filename, "r");
 
@@ -238,11 +243,23 @@ int template_draw(char *filename, htable *req, htable *resp)
 
 	c = template_context_alloc(req, resp, filename);
 
+	INIT_LIST_HEAD(&_template_err.errlist);
+
 	template_lex_init(&(c->scanner));
 	template_set_in(f, c->scanner);
 
 	if (template_parse(c) == 0) {
 		template_print(c->root, c);
+	} else {
+		template_send_error();
+	}
+
+	list_for_each_safe(pos, q, &_template_err.errlist) {
+		tmp = list_entry(pos, struct _error_list, errlist);
+		list_del(pos);
+		if (tmp->errmsg)
+			free(tmp->errmsg);
+		free(tmp);
 	}
 
 	template_lex_destroy(c->scanner);
@@ -253,8 +270,11 @@ int template_draw(char *filename, htable *req, htable *resp)
 	return 1;
 }
 
-void template_send_error(char *fname, int linenum, char *err)
+void template_send_error(void)
 {
+	struct _error_list *tmp = NULL;
+	struct list_head *pos;
+
 	printf("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
 	printf("<html>\n");
 	printf("<head>\n");
@@ -269,11 +289,39 @@ void template_send_error(char *fname, int linenum, char *err)
 	printf("<h1>Error</h1>\n");
 	printf("<p>An error happend! Please contact the webmaster of this site and inform the folowing message:</p>\n");
 	printf("<pre>\n");
-	printf("<b>%s</b>\nLine %d: %s\n", fname, linenum, err);
+
+	list_for_each (pos, &_template_err.errlist) {
+		tmp = list_entry(pos, struct _error_list, errlist);
+		printf("%s\n", tmp->errmsg);
+	}
+
 	printf("</pre>\n");
 	printf("</body>\n");
 	printf("</html>\n\n");
 
+}
+
+void template_append_error(context *c, int linenum, const char *err)
+{
+	struct _error_list *new;
+	int size;
+	new = malloc(sizeof(struct _error_list));
+
+	if (c == NULL) {
+		new->errmsg = strdup(err);
+	} else {
+		size = (strlen(err) + strlen(c->filename) + 20) * sizeof(char);
+
+		if (size >= UINT_MAX) {
+			free(new);
+			return;
+		}
+
+		new->errmsg = malloc (size);
+		snprintf(new->errmsg, size, "<b>%s</b>\nLine %d: %s", c->filename, linenum, err);
+	}
+
+	list_add_tail(&(new->errlist), &(_template_err.errlist));
 }
 
 #if 0
