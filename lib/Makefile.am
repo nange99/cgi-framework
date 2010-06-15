@@ -18,6 +18,7 @@ libcgiservlet_la_SOURCES = \
 	cgi_object.c \
 	cgi_log.c \
 	cgi_list.c \
+	cgi_table.c \
 	cgi_servlet_priv.h
 
 libcgiservlet_la_LIBADD = \
@@ -30,6 +31,7 @@ libcgiservlet_la_include_HEADERS = cgi_servlet.h \
 			 	   cgi_object.h \
 			 	   cgi_session.h \
 			 	   cgi_list.h \
+			 	   cgi_table.h \
 			 	   cgi_cookie.h
 
 AM_CFLAGS = \

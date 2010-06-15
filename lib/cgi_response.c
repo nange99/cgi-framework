@@ -32,6 +32,7 @@ int cgi_response_add_parameter(struct response *resp,
 		o->value.u_hash = value;
 		break;
 	case CGI_TABLE:
+		o->value.u_hash = value;
 		break;
 	case CGI_COOKIES:
 		free(o);
