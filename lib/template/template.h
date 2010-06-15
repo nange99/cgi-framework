@@ -10,6 +10,7 @@ typedef struct _context {
 	htable *request;
 	htable *response;
 	htable *variables;
+	htable *cur_row;
 	node *root;
 	char *filename;
 } context;

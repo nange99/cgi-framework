@@ -12,28 +12,40 @@ cgi_object *template_get_variable(context *c, char *variable)
 {
 
 	char *v;
-	cgi_object *o;
+	cgi_object *obj;
 
 	v = variable;
 
 	if (strncmp(v, "request", 7) == 0) {
 		v += 8;
-		o = htable_lookup(c->request, v);
+		obj = htable_lookup(c->request, v);
 
-		if (o != NULL)
-			return o;
+		if (obj != NULL)
+			return obj;
+
 	} else if (strncmp(v, "response", 8) == 0) {
 		v += 9;
-		o = htable_lookup(c->response, v);
+		obj = htable_lookup(c->response, v);
 
-		if (o != NULL)
-			return o;
+		if (obj != NULL)
+			return obj;
+
+	} else if (strncmp(v, "row", 3) == 0) {
+
+		if (c->cur_row == NULL)
+			return NULL;
+
+		v += 4;
+		obj = htable_lookup(c->cur_row, v);
+
+		if (obj != NULL)
+			return obj;
+
 	} else {
-		o = htable_lookup(c->variables, v);
+		obj = htable_lookup(c->variables, v);
 
-		if (o != NULL) {
-			return o;
-		}
+		if (obj != NULL)
+			return obj;
 	}
 
 	return NULL;
@@ -162,13 +174,13 @@ context * template_context_alloc(htable *req, htable *resp, char *filename)
 	c->request = req;
 	c->response = resp;
 	c->variables = create_htable(17);
+	c->cur_row = NULL;
 
 	return c;
 }
 
 int template_context_destroy(context *c)
 {
-
 	destroy_htable(c->variables);
 	destroy_tree(c->root);
 

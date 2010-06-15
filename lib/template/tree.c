@@ -6,6 +6,8 @@
 #include "template.h"
 #include "../cgi_servlet_priv.h"
 #include "../cgi_list.h"
+#include "../cgi_table_priv.h"
+#include "../cgi_table.h"
 #include "../util/list.h"
 
 int destroy_value(node *n)
@@ -227,7 +229,8 @@ int print_echo(node *n, struct _context *c)
 			return -1;
 
 		if (value->type == CGI_STRING) {
-			printf("%s", value->value.u_str);
+			if (value->value.u_str != NULL)
+				printf("%s", value->value.u_str);
 		} else if (value->type == CGI_INTEGER) {
 			printf("%d", value->value.u_int);
 		} else if (value->type == CGI_FLOAT) {
@@ -514,12 +517,50 @@ int print_foreach_list(cgi_list *l, node *var, node *block, struct _context *c)
 		block->print(block, c);
 
 		template_update_variable(c, "count_", (void *) (i + 1), LONG);
-		template_update_variable(c, "odd_", (void *) ((i + 1) % 2),
-		                LONG);
+		template_update_variable(c, "odd_", (void *) ((i + 1) % 2), LONG);
 		i++;
 	}
 
 	template_unregister_variable(c, varname);
+
+	template_unregister_free_variable(c, "count_");
+	template_unregister_free_variable(c, "odd_");
+
+	return 1;
+}
+
+int print_foreach_table(cgi_table *t,
+                        node *var,
+                        node *block,
+                        struct _context *c)
+{
+	int i = 0;
+	struct _cgi_table_row *tmp;
+	struct list_head *pos;
+	char *varname;
+
+	varname = var->value.str;
+
+	pos = (&t->rows->list)->next;
+	tmp = list_entry (pos, struct _cgi_table_row, list);
+
+	template_register_variable(c, "count_", 0, LONG);
+	template_register_variable(c, "odd_", 0, LONG);
+
+	list_for_each (pos, &t->rows->list) {
+
+		tmp = list_entry(pos, struct _cgi_table_row, list);
+
+		c->cur_row = tmp->data;
+
+		block->print(block, c);
+
+		template_update_variable(c, "count_", (void *) (i + 1), LONG);
+		template_update_variable(c, "odd_", (void *) ((i + 1) % 2), LONG);
+		i++;
+	}
+
+	c->cur_row = NULL;
 
 	template_unregister_free_variable(c, "count_");
 	template_unregister_free_variable(c, "odd_");
@@ -540,6 +581,9 @@ int print_foreach(node *n, struct _context *c)
 
 	if (value->type == CGI_LIST) {
 		return print_foreach_list((cgi_list *) value->value.u_hash,
+		                n->children[0], n->children[2], c);
+	} else if (value->type == CGI_TABLE) {
+		return print_foreach_table((cgi_table *) value->value.u_hash,
 		                n->children[0], n->children[2], c);
 	}
 
