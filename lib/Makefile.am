@@ -34,7 +34,8 @@ libcgiservlet_la_include_HEADERS = cgi_servlet.h \
 			 	   cgi_session.h \
 			 	   cgi_list.h \
 			 	   cgi_table.h \
-			 	   cgi_cookie.h
+			 	   cgi_cookie.h \
+				   cgi_upload.h
 
 libcgiservlet_utils_include_HEADERS = util/sha1.h \
                                       util/list.h
