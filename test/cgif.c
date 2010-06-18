@@ -6,25 +6,23 @@
 #include "../lib/cgi_cookie.h"
 #include "../lib/cgi_session.h"
 #include "../lib/cgi_table.h"
+#include "../lib/cgi_upload.h"
 
 int handle_test(struct request *req, struct response *resp);
 int handle_list(struct request *req, struct response *resp);
 int handle_expr(struct request *req, struct response *resp);
 int handle_table(struct request *req, struct response *resp);
+int handle_fileupload(struct request *req, struct response *resp);
 
 int main(int argc, char *argv[])
 {
 
 	struct url_mapping map[] = {
-	                { .url = "/do.test", .handler = handle_test }, {
-	                                .url = "/do.expr",
-	                                .handler = handle_expr }, {
-	                                .url = "/do.list",
-	                                .handler = handle_list }, {
-	                                .url = "/do.table",
-	                                .handler = handle_table }, {
-	                                .url = "/do.zxcv",
-	                                .handler = handle_list } };
+	                { .url = "/do.test", .handler = handle_test },
+	                { .url = "/do.expr", .handler = handle_expr },
+	                { .url = "/do.list", .handler = handle_list },
+	                { .url = "/do.table", .handler = handle_table },
+	                { .url = "/do.upload", .handler = handle_fileupload } };
 
 	struct config conf = { NULL
 	/*default_error_html = "error.html";*/
@@ -149,6 +147,25 @@ int handle_table(struct request *req, struct response *resp)
 
 	cgi_response_add_parameter(resp, "table", (void *)t, CGI_TABLE);
 	cgi_response_set_html(resp, "html/table.html");
+
+	return 1;
+}
+
+int handle_fileupload(struct request *req, struct response *resp)
+{
+	cgi_file *f;
+
+	f = cgi_upload_get_file(req, "upfile");
+
+	if (f != NULL) {
+		cgi_response_add_parameter(resp, "filename", f->filename, CGI_STRING);
+		cgi_response_add_parameter(resp, "tmp_filename", f->tmp_filename, CGI_STRING);
+		cgi_response_add_parameter(resp, "err_msg", cgi_upload_get_error_str(f->error), CGI_STRING);
+	} else {
+		cgi_response_add_parameter(resp, "nofile", (void *) 1, CGI_INTEGER);
+	}
+
+	cgi_response_set_html(resp, "html/upload.html");
 
 	return 1;
 }

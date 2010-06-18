@@ -7,6 +7,10 @@
 struct request;
 struct response;
 
+enum err_type {
+	CGI_ERROR = 1, CGI_USER_ERROR, CGI_USER_WARNING, CGI_WARNING, CGI_NOTICE
+};
+
 struct url_mapping {
 	char *url;
 	int (*handler)(struct request *req, struct response *resp);

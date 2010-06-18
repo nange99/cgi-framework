@@ -1,0 +1,30 @@
+<html>
+<head>
+  <title> List </title>
+</head>
+<body>
+
+<h1> Teste de Upload </h1>
+
+<form method="POST" enctype="multipart/form-data" action="/app/do.upload">
+File to upload: <input type="file" name="upfile"><br>
+Notes about the file: <input type="text" name="note"><br>
+<input type="text" name="input2"><br/>
+<input type="password" name="passwd"><br/>
+<br>
+<input type="submit" value="Press"> to upload the file!
+</form>
+
+<?if response.nofile then?>
+<p>No file uploaded... try again</p>
+<?else?>
+<p>We received a file!</p>
+<p>
+filename:<?echo response.filename?><br/>
+tmp_filename:<?echo response.tmp_filename?><br/>
+err_msg:<?echo response.err_msg?><br/>
+</p>
+<?endif?>
+  
+</body>
+</html>

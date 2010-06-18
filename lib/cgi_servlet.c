@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdarg.h>
+
 #include "util/hashtable.h"
 #include "util/list.h"
 #include "cgi_log.h"
@@ -11,6 +13,7 @@
 #include "cgi_session_priv.h"
 #include "cgi_cookie_priv.h"
 #include "template/template.h"
+#include "cgi_upload.h"
 
 int cgi_servlet_init(struct config *conf,
                      struct url_mapping **map,
@@ -38,6 +41,8 @@ int cgi_servlet_init(struct config *conf,
 	req->headers = create_htable(13);
 	resp->headers = create_htable(13);
 	resp->html = NULL;
+
+	req->files = create_htable(5);
 
 	cgi_cookie_init(req);
 	cgi_session_try_init(req);
@@ -104,6 +109,7 @@ int process_request(struct request *req)
 		int content_length;
 		int read;
 		char *content_data;
+		char *content_type;
 
 		log_debug("parsing post...\n");
 
@@ -111,23 +117,31 @@ int process_request(struct request *req)
 			return 0;
 		}
 
+		content_type = getenv("CONTENT_TYPE");
 		content_length = atoi(getenv("CONTENT_LENGTH"));
 
-		log_debug("content_length = %d\n", content_length);
+		log_debug("content_type = [%s]\n", content_type);
+		log_debug("content_length = [%d]\n", content_length);
 
-		content_data = malloc((content_length + 1) * sizeof(char));
-		if (content_data == NULL) {
-			// FIXME: no memory, bailout!
+		if (strncmp(content_type, MULTIPART_CONTENT_TYPE, strlen(MULTIPART_CONTENT_TYPE)) == 0) {
+			log_debug("this is a multipart post");
+			rfc1867_post_handler(req, content_length, content_type);
+		} else {
+
+			content_data = malloc((content_length + 1) * sizeof(char));
+			if (content_data == NULL) {
+				// FIXME: no memory, bailout!
+			}
+
+			read = fread(content_data, content_length, 1, stdin);
+			content_data[content_length] = '\0';
+
+			log_debug("got content = [%s]\n", content_data);
+
+			parse_data_string(req, content_data, content_length);
+
+			free(content_data);
 		}
-
-		read = fread(content_data, content_length, 1, stdin);
-		content_data[content_length] = '\0';
-
-		log_debug("got content = [%s]\n", content_data);
-
-		parse_data_string(req, content_data, content_length);
-
-		free(content_data);
 	}
 
 	return 0;
@@ -341,4 +355,20 @@ int draw_page(struct request *req, struct response *resp)
 	printf("\r\n");
 
 	return 0;
+}
+
+void cgi_error (struct request *req, enum err_type err, char *msg, ...)
+{
+	char *buffer;
+	va_list args;
+
+	buffer = malloc (sizeof(char)*1024);
+
+	va_start(args, msg);
+	vsnprintf(buffer, 1024, msg, args);
+	va_end(args);
+
+	log_debug ("error [%s]\n", buffer);
+
+	return;
 }
