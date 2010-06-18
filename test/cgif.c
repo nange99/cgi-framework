@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	/*default_error_html = "error.html";*/
 	};
 
-	cgi_servlet_init(&conf, &map, 5, NULL);
+	cgi_servlet_init(&conf, (struct url_mapping **)&map, 5, NULL);
 
 	return 0;
 }
