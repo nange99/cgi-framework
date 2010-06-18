@@ -19,6 +19,7 @@ libcgiservlet_la_SOURCES = \
 	cgi_log.c \
 	cgi_list.c \
 	cgi_table.c \
+	cgi_upload.c \
 	cgi_servlet_priv.h
 
 libcgiservlet_la_LIBADD = \

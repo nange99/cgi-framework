@@ -209,6 +209,7 @@ int cgi_session_add_value(struct request *req,
 		break;
 	case CGI_LIST:
 	case CGI_TABLE:
+	case CGI_FILE:
 	case CGI_COOKIES:
 		break;
 	}

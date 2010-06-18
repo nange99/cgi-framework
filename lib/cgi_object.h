@@ -9,7 +9,7 @@
 #define CGI_OBJECT_H_
 
 typedef enum cgi_object_type {
-	CGI_STRING, CGI_INTEGER, CGI_FLOAT, CGI_LIST, CGI_TABLE, CGI_COOKIES
+	CGI_STRING, CGI_INTEGER, CGI_FLOAT, CGI_LIST, CGI_TABLE, CGI_COOKIES, CGI_FILE
 } cgi_object_type;
 
 typedef struct _cgi_object {

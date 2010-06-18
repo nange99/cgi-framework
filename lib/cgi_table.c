@@ -163,6 +163,7 @@ int cgi_table_add_value(cgi_table *t,
 		break;
 	case CGI_LIST:
 	case CGI_TABLE:
+	case CGI_FILE:
 	case CGI_COOKIES:
 		free(o);
 		return 0;

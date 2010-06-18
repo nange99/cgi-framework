@@ -29,6 +29,7 @@ void cgi_request_free(struct request *req)
 
 	destroy_htable(req->headers);
 	destroy_htable(req->parameters);
+	destroy_htable(req->files);
 
 	if (req->url != NULL)
 		free(req->url);

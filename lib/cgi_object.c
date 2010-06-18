@@ -10,6 +10,7 @@
 #include "cgi_servlet.h"
 #include "cgi_list.h"
 #include "cgi_table.h"
+#include "cgi_upload.h"
 
 cgi_object *cgi_object_init(void)
 {
@@ -34,6 +35,9 @@ void cgi_object_destroy(cgi_object *o)
 		break;
 	case CGI_TABLE:
 		cgi_table_destroy(o->value.u_hash);
+		break;
+	case CGI_FILE:
+		cgi_upload_file_destroy(o->value.u_hash);
 		break;
 	case CGI_FLOAT:
 	case CGI_INTEGER:

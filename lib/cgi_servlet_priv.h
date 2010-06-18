@@ -12,6 +12,7 @@ struct request {
 	char method[10];
 	htable *parameters;
 	htable *headers;
+	htable *files;
 	void *session;
 };
 
@@ -43,5 +44,7 @@ int process_request(struct request *req);
 
 void cgi_request_free(struct request *req);
 void cgi_response_free(struct response *resp);
+
+void cgi_error (struct request *req, enum err_type err, char *msg, ...);
 
 #endif /* _CGI_SERVLET_PRIVATE_H */

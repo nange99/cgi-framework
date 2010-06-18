@@ -55,6 +55,7 @@ static cgi_list * _cgi_list_init(void *value, cgi_object_type t)
 		break;
 	case CGI_TABLE:
 		break;
+	case CGI_FILE:
 	case CGI_COOKIES:
 		break;
 	}
