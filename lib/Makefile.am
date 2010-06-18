@@ -27,12 +27,16 @@ libcgiservlet_la_LIBADD = \
 	./template/libtemplate.la
 
 libcgiservlet_la_includedir=$(includedir)/libcgiservlet
+libcgiservlet_utils_includedir=$(includedir)/libcgiservlet/util
 libcgiservlet_la_include_HEADERS = cgi_servlet.h \
 			 	   cgi_object.h \
 			 	   cgi_session.h \
 			 	   cgi_list.h \
 			 	   cgi_table.h \
 			 	   cgi_cookie.h
+
+libcgiservlet_utils_include_HEADERS = util/sha1.h \
+                                      util/list.h
 
 AM_CFLAGS = \
 	-I$(top_srcdir)/lib/util \
