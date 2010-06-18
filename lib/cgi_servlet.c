@@ -16,7 +16,7 @@
 #include "cgi_upload.h"
 
 int cgi_servlet_init(struct config *conf,
-                     struct url_mapping **map,
+                     struct url_mapping *map,
                      int map_length,
                      struct filter_mapping *filters[])
 {
