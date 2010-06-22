@@ -33,6 +33,8 @@ int cgi_servlet_init(struct config *conf,
 char *cgi_url_decode(char *str);
 char *cgi_url_encode(char *str);
 
+int cgi_request_is_post(struct request *req);
+int cgi_request_is_get(struct request *req)
 char *cgi_request_get_parameter(struct request *req, const char *name);
 
 void cgi_response_set_html(struct response *resp, const char *file);

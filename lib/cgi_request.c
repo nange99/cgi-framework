@@ -9,6 +9,23 @@
 #include "cgi_cookie_priv.h"
 #include "cgi_session_priv.h"
 
+int cgi_request_is_post(struct request *req)
+{
+	if (strncmp("POST", req->method, 4) == 0)
+		return 1;
+
+	return 0;
+}
+
+int cgi_request_is_get(struct request *req)
+{
+	if (strncmp("GET", req->method, 3) == 0)
+		return 1;
+
+	return 0;
+}
+
+
 char *cgi_request_get_parameter(struct request *req, const char *name)
 {
 
