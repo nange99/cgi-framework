@@ -59,7 +59,13 @@ cgi_file *cgi_upload_get_file(struct request *req, const char *key)
 {
 	struct _cgi_object *o;
 
+	if (req->files == NULL)
+		return NULL;
+
 	o = (struct _cgi_object *) htable_lookup(req->files, (char *)key);
+
+	if (o == NULL)
+		return NULL;
 
 	return (cgi_file *)o->value.u_hash;
 }
@@ -116,7 +122,7 @@ static int mime_header_count(mime_headers *h)
 {
 	mime_headers *entry;
 	struct list_head *pos;
-	int i;
+	int i = 0;
 
 	list_for_each (pos, &h->list) {
 		entry = list_entry(pos, mime_headers, list);
@@ -339,7 +345,7 @@ static int find_boundary(multipart_buffer *self, char *boundary)
 static int multipart_buffer_headers(multipart_buffer *self, mime_headers *header)
 {
 	char *line;
-	mime_headers *prev_entry, *entry;
+	mime_headers *prev_entry = NULL, *entry = NULL;
 	int prev_len, cur_len;
 
 	/* didn't find boundary, abort */
