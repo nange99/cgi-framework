@@ -119,6 +119,7 @@ void log_info(const char *emsg, ...)
 	va_end(ap);
 }
 
+#ifdef DEBUG
 void log_debug(const char *emsg, ...)
 {
 	va_list ap;
@@ -129,6 +130,9 @@ void log_debug(const char *emsg, ...)
 		va_end(ap);
 	}
 }
+#else
+void log_debug(const char *emsg, ...) {}
+#endif
 
 void fatal(const char *emsg)
 {
