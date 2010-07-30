@@ -28,7 +28,7 @@ int cgi_servlet_init(struct config *conf,
 	log_init(0);
 	log_verbose(1);
 
-	log_info("begin cgi_servlet\n");
+	log_debug("begin cgi_servlet\n");
 
 	req = malloc(sizeof(struct request));
 	resp = malloc(sizeof(struct response));
@@ -65,7 +65,7 @@ cleanup:
 	cgi_request_free(req);
 	cgi_response_free(resp);
 
-	log_info("end cgi_servlet\n");
+	log_debug("end cgi_servlet\n");
 
 	return 0;
 }
