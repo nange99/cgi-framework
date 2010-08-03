@@ -28,6 +28,7 @@ LINEBREAK [\n\r]+
 TABS_AND_SPACES [ \t]*
 ANY_CHAR (.|[\n])*
 NEWLINE ("\r"|"\n"|"\r\n")
+STRING_REG	[a-zA-Z0-9\-_\x7f-\xff\/\.]*
 
 %x IN_SCRIPT IN_QUOTE
 %%
@@ -74,7 +75,8 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	free (string_buf_ptr);
 	return T_STRING;
 }
-<IN_QUOTE>({LABEL}|{TABS_AND_SPACES})((\.)?{LABEL}|{TABS_AND_SPACES})* 	{
+
+<IN_QUOTE>({STRING_REG}|{TABS_AND_SPACES})* {
 	string_buf_ptr = realloc (string_buf_ptr, sizeof(char)* (yyleng + 1));
 	strncpy (string_buf_ptr, yytext, yyleng);
 	string_buf_ptr[yyleng] = '\0';
