@@ -10,7 +10,7 @@
 
 #define MULTIPART_CONTENT_TYPE "multipart/form-data"
 #define UPLOAD_TMP_DIR "/tmp"
-#define CGI_MAX_POST_SIZE 8388608
+#define CGI_MAX_POST_SIZE (16 * 1024 * 1024)	/* 16MB */
 
 enum upload_err {
 	UPLOAD_ERROR_OK,
