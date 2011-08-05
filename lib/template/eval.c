@@ -169,7 +169,7 @@ int eval_op_not_equal(struct _context *c, expr_node *r, expr_node *l)
 		return (r->value.lnum != l->value.lnum);
 	}
 
-	if (r->type == STR && l->type != STR) {
+	if (r->type == STR && l->type == STR) {
 		return (strcmp(r->value.str, l->value.str) != 0);
 	}
 
